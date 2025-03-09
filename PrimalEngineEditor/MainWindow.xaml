@@ -16,8 +16,7 @@
             <ToggleButton Content="New Project" x:Name="newProjectButton" FontSize="30" Margin="30,0,0,0"/>
 
         </StackPanel>
-
-
+ 
 
     </Grid>
 </Window>
