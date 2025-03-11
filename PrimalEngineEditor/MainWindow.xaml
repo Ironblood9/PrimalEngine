@@ -10,13 +10,26 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
+
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="15">
-            <ToggleButton Content="Open Project" x:Name="openProjectButton"  FontSize="30"/> 
-            <ToggleButton Content="New Project" x:Name="newProjectButton" FontSize="30" Margin="30,0,0,0"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20">
+            <ToggleButton Content="Open Project" x:Name="openProjectButton"  FontSize="30"/>
+            <ToggleButton Content="Create Project" x:Name="newProjectButton" FontSize="30" Margin="30,0,0,0"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Border Width="800" Background="Crimson">
+                <TextBlock FontSize="72" Text="Open Project"/>
+
+            </Border>
+            <Border Width="800" Background="MediumBlue">
+                <TextBlock FontSize="72" Text="Create Project"/>
+
+            </Border>
+
+
 
         </StackPanel>
- 
+
 
     </Grid>
 </Window>

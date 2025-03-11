@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using PrimalEngineEditor.GameProject;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,5 +20,25 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Loaded += OnMainWindowLoaded;
+    }
+    private void OnMainWindowLoaded(object sender,RoutedEventArgs e)
+    {
+        Loaded -= OnMainWindowLoaded;
+        OpenProjectBrowserDialog();
+    }
+    private void OpenProjectBrowserDialog()
+    {
+        var projectBrowser = new GameProjectBrowser();
+        if (projectBrowser.ShowDialog() == false)
+        {
+            Application.Current.Shutdown();
+        }
+        else
+        {
+
+        }
+
     }
 }
+
