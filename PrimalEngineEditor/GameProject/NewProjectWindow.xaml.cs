@@ -23,6 +23,7 @@ namespace PrimalEngineEditor.GameProject
         public NewProjectWindow()
         {
             InitializeComponent();
+
         }
     }
 }
