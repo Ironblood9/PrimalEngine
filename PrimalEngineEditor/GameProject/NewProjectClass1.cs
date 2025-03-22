@@ -1,73 +1,89 @@
-﻿using System;
+﻿using PrimalEngineEditor.Utilities;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace PrimalEngineEditor.GameProject
 {
+    [DataContract]
     public class ProjectTemplate
     {
+        [DataMember]
         public string ProjectType { get; set; }
+        [DataMember]
         public string ProjectFile { get; set; }
+        [DataMember]
         public List<string> Folders { get; set; }
+
+        public byte[] Icon { get; set; }
+        public byte[] Screenshot { get; set; }
+        public string IconPath { get; set; }
+        public string ScreenshotPath { get; set; }
+        public string ProjectFilePath { get; set; }
+
     }
-
-
-
-
     class NewProjectClass1 : ViewModelBase
     {
-        private readonly string _templatePath = @"..\..\PrimalEngineEditor\ProjectTemplates";
-        private string _name = "New Project";
-        public string Name
+        private const string V = "C:/Users/Msı/source/repos/PrimalEngine/PrimalEngineEditor/ProjectTemplates";
+        private readonly string _templatePath = V;
+        private string _projectName = "NewProject";
+        public string ProjectName
         {
-            get => _name;
+            get => _projectName;
             set
             {
-                if (_name != value)
+                if (_projectName != value)
                 {
-                    _name = value;
-                    OnPropertyChanged(nameof(Name));
+                    _projectName = value;
+                    OnPropertyChanged(nameof(ProjectName));
                 }
             }
         }
-        private string _path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\PrimalProject\";
-        public string Path
+        private string _projectPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\PrimalProject\";
+        public string ProjectPath
         {
-            get => _path;
+            get => _projectPath;
             set
             {
-                if (_path != value)
+                if (_projectPath != value)
                 {
-                    _path = value;
-                    OnPropertyChanged(nameof(Path));
+                    _projectPath = value;
+                    OnPropertyChanged(nameof(ProjectPath));
                 }
             }
         }
-    
+
+        private ObservableCollection<ProjectTemplate> _projectTemplates = new ObservableCollection<ProjectTemplate>();
+        public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
+
+
         public NewProjectClass1()
         {
             try
             {
-                var templatesFiles = Directory.GetFiles(_templatePath, "template.xml", SearchOption.AllDirectories);
+                ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplate>(_projectTemplates);
+                var templatesFiles = Directory.GetFiles(_templatePath, "template*", SearchOption.AllDirectories);
                 Debug.Assert(templatesFiles.Any());
                 foreach (var file in templatesFiles)
                 {
-                    var template = new ProjectTemplate()
-                    {
-                        ProjectType = "Empty Project",
-                        ProjectFile = "project.primal",
-                       Folders= new List<string> () { ".Primal","Content","Game Code"}
-                    };
-
-
+                   var template= Serializer.FromFile<ProjectTemplate>(file);
+                    _projectTemplates.Add(template);
+                    template.IconPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Icon.png"));
+                    template.Icon = File.ReadAllBytes(template.IconPath);
+                    template.IconPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Screenshot.png"));
+                    template.Screenshot = File.ReadAllBytes(template.ScreenshotPath);
+                    template.ProjectFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file),template.ProjectFile));
                 }
             }
             catch(Exception ex)
