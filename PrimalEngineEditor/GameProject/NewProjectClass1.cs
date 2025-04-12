@@ -70,10 +70,11 @@ namespace PrimalEngineEditor.GameProject
 
         public NewProjectClass1()
         {
+            ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplate>(_projectTemplates);
             try
             {
-                ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplate>(_projectTemplates);
-                var templatesFiles = Directory.GetFiles(_templatePath, "template*", SearchOption.AllDirectories);
+                
+                var templatesFiles = Directory.GetFiles(_templatePath, "template.txt", SearchOption.AllDirectories);
                 Debug.Assert(templatesFiles.Any());
                 foreach (var file in templatesFiles)
                 {
@@ -81,7 +82,7 @@ namespace PrimalEngineEditor.GameProject
                     _projectTemplates.Add(template);
                     template.IconPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Icon.png"));
                     template.Icon = File.ReadAllBytes(template.IconPath);
-                    template.IconPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Screenshot.png"));
+                    template.ScreenshotPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Screenshot.png"));
                     template.Screenshot = File.ReadAllBytes(template.ScreenshotPath);
                     template.ProjectFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file),template.ProjectFile));
                 }
