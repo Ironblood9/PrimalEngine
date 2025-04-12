@@ -35,7 +35,7 @@ namespace PrimalEngineEditor.GameProject
     }
     class NewProjectClass1 : ViewModelBase
     {
-        private const string V = "C:/Users/Msı/source/repos/PrimalEngine/PrimalEngineEditor/ProjectTemplates";
+        private const string V = "C:/Users/Msı/source/repos/PrimalEngine/PrimalEngineEditor/ProjectTemplates/";
         private readonly string _templatePath = V;
         private string _projectName = "NewProject";
         public string ProjectName
@@ -46,11 +46,14 @@ namespace PrimalEngineEditor.GameProject
                 if (_projectName != value)
                 {
                     _projectName = value;
+                    ValidateProjectPath();
                     OnPropertyChanged(nameof(ProjectName));
                 }
             }
         }
         private string _projectPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\PrimalProject\";
+
+
         public string ProjectPath
         {
             get => _projectPath;
@@ -59,13 +62,83 @@ namespace PrimalEngineEditor.GameProject
                 if (_projectPath != value)
                 {
                     _projectPath = value;
+                    ValidateProjectPath();
                     OnPropertyChanged(nameof(ProjectPath));
+                }
+            }
+        }
+
+        private bool _isValid;
+        public bool IsValid
+        {
+            get => _isValid;
+            set
+            {
+                if (_isValid!= value)
+                {
+                    _isValid = value;
+                    OnPropertyChanged(nameof(IsValid));
+                }
+            }
+        }
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                if (_errorMessage != value)
+                {
+                    _errorMessage = value;
+                    OnPropertyChanged(nameof(ErrorMessage));
                 }
             }
         }
 
         private ObservableCollection<ProjectTemplate> _projectTemplates = new ObservableCollection<ProjectTemplate>();
         public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
+
+
+        private bool ValidateProjectPath()
+        {
+            var path=ProjectPath;
+            if (!Path.EndsInDirectorySeparator(path)) path += @"/";
+            path += $@"{ProjectName}/";
+            IsValid = false;
+            if (string.IsNullOrWhiteSpace(ProjectName.Trim()))
+            {
+                ErrorMessage = "Please type in a project name.";
+
+            }
+            else if(ProjectName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+            {
+                ErrorMessage = "Invalid character(s) used in project name.";
+            }
+            else if (string.IsNullOrWhiteSpace(ProjectPath.Trim()))
+            {
+                ErrorMessage = "Please select a valid project folder.";
+            }
+            else if (ProjectPath.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+            {
+                ErrorMessage = "Invalid character(s) used in project path.";
+            }
+            else if(Directory.Exists(path) && Directory.EnumerateFileSystemEntries(path).Any())
+            {
+                ErrorMessage = "Selected project folder already exist and is not empty.";
+            }
+
+            else
+            {
+                ErrorMessage = string.Empty;
+                IsValid = true;
+            }
+
+
+            return IsValid;
+
+
+        }
+
 
 
         public NewProjectClass1()
@@ -86,6 +159,7 @@ namespace PrimalEngineEditor.GameProject
                     template.Screenshot = File.ReadAllBytes(template.ScreenshotPath);
                     template.ProjectFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file),template.ProjectFile));
                 }
+                ValidateProjectPath();
             }
             catch(Exception ex)
             {
