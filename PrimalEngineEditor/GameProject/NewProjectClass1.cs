@@ -12,6 +12,8 @@ using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 
 namespace PrimalEngineEditor.GameProject
@@ -138,6 +140,39 @@ namespace PrimalEngineEditor.GameProject
 
 
         }
+
+
+        public string CreateProject(ProjectTemplate template)
+        {
+            ValidateProjectPath();
+            if (!IsValid)
+            {
+                return string.Empty;
+            }
+            if (!Path.EndsInDirectorySeparator(ProjectPath)) ProjectPath += @"/";
+            var path = $@"{ProjectPath}{ProjectName}/";
+            try
+            {
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                foreach (var folder in template.Folders)
+                {
+                    Directory.CreateDirectory(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(path), folder)));
+                }
+                var dirInfo = new DirectoryInfo(path + @".Primal/");
+                dirInfo.Attributes |= FileAttributes.Hidden;
+                File.Copy(template.IconPath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Icon.png")));
+                File.Copy(template.IconPath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Screenshot.png")));
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+
+                Debug.WriteLine(ex.Message);
+                return string.Empty;
+            }
+        }
+
+
 
 
 
