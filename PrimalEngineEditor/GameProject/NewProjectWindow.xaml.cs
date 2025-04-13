@@ -25,5 +25,20 @@ namespace PrimalEngineEditor.GameProject
             InitializeComponent();
 
         }
+        private void OnCreate_Button_Click(object sender,RoutedEventArgs e)
+        {
+            var cp = DataContext as NewProjectClass1;
+            var projectPath = cp.CreateProject(templateListBox.SelectedItem as ProjectTemplate);
+
+            var window = Window.GetWindow(this);
+            bool dialogResult = false;
+            window.DialogResult = dialogResult;
+
+            if (!string.IsNullOrEmpty(projectPath))
+            {
+                dialogResult = true;
+            }
+            window.Close();
+        }
     }
 }

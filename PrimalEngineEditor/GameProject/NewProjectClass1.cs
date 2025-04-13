@@ -53,7 +53,7 @@ namespace PrimalEngineEditor.GameProject
                 }
             }
         }
-        private string _projectPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\PrimalProject\";
+        private string _projectPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\PrimalProjects\";
 
 
         public string ProjectPath
@@ -151,6 +151,7 @@ namespace PrimalEngineEditor.GameProject
             }
             if (!Path.EndsInDirectorySeparator(ProjectPath)) ProjectPath += @"/";
             var path = $@"{ProjectPath}{ProjectName}/";
+
             try
             {
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -162,7 +163,18 @@ namespace PrimalEngineEditor.GameProject
                 dirInfo.Attributes |= FileAttributes.Hidden;
                 File.Copy(template.IconPath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Icon.png")));
                 File.Copy(template.IconPath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Screenshot.png")));
-                return string.Empty;
+
+                var project = new NewProjectClass2(ProjectName, path);
+                Serializer.ToFile(project, path + $"{ProjectName}" + NewProjectClass2.Extension);
+
+                var projectXml = File.ReadAllText(template.ProjectFilePath);
+                projectXml = string.Format(projectXml, ProjectName, ProjectPath);
+                var projectPath = Path.GetFullPath(Path.Combine(path, $"{ProjectName}{NewProjectClass2.Extension}"));
+                File.WriteAllText(projectPath, projectXml);
+
+
+
+                return path;
             }
             catch (Exception ex)
             {

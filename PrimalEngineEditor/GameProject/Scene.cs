@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PrimalEngineEditor.GameProject
 {
-     public class Scene : ViewModelBase
+    [DataContract]
+    public class Scene : ViewModelBase
     {
         private string _name;
+        [DataMember]
         public string Name
         {
             get => _name;
@@ -17,17 +21,24 @@ namespace PrimalEngineEditor.GameProject
                 if (_name != value)
                 {
                     _name = value;
-                    
+
                     OnPropertyChanged(nameof(Name));
                 }
             }
         }
+
+        [DataMember]
+        public NewProjectClass2 Project
+
+        { get; private set; }
+
+        public Scene (NewProjectClass2 project,string name)
+        {
+            Debug.Assert(project != null);
+            Name = name;
+            Project = project;
+        }
     }
-
-    public NewProjectClass2 Project { get; private set; }
-
-
-
 
 
 }
