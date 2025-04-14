@@ -37,7 +37,8 @@ namespace PrimalEngineEditor.GameProject
     }
     class NewProjectClass1 : ViewModelBase
     {
-        private const string V = "C:/Users/Msı/source/repos/PrimalEngine/PrimalEngineEditor/ProjectTemplates/";
+        private const string V = "C:/Users/Msı/source/repos/PrimalEngine/PrimalEngineEditor/ProjectTemplates";
+            
         private readonly string _templatePath = V;
         private string _projectName = "NewProject";
         public string ProjectName
@@ -53,7 +54,9 @@ namespace PrimalEngineEditor.GameProject
                 }
             }
         }
-        private string _projectPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\PrimalProjects\";
+        
+        
+      private string _projectPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\PrimalProjects\";
 
 
         public string ProjectPath
@@ -104,8 +107,8 @@ namespace PrimalEngineEditor.GameProject
         private bool ValidateProjectPath()
         {
             var path=ProjectPath;
-            if (!Path.EndsInDirectorySeparator(path)) path += @"/";
-            path += $@"{ProjectName}/";
+            if (!Path.EndsInDirectorySeparator(path)) path += @"\";
+            path += $@"{ProjectName}\";
             IsValid = false;
             if (string.IsNullOrWhiteSpace(ProjectName.Trim()))
             {
@@ -149,8 +152,8 @@ namespace PrimalEngineEditor.GameProject
             {
                 return string.Empty;
             }
-            if (!Path.EndsInDirectorySeparator(ProjectPath)) ProjectPath += @"/";
-            var path = $@"{ProjectPath}{ProjectName}/";
+            if (!Path.EndsInDirectorySeparator(ProjectPath)) ProjectPath += @"\";
+            var path = $@"{ProjectPath}{ProjectName}\";
 
             try
             {
@@ -159,13 +162,12 @@ namespace PrimalEngineEditor.GameProject
                 {
                     Directory.CreateDirectory(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(path), folder)));
                 }
-                var dirInfo = new DirectoryInfo(path + @".Primal/");
+                var dirInfo = new DirectoryInfo(path + @".Primal\");
                 dirInfo.Attributes |= FileAttributes.Hidden;
                 File.Copy(template.IconPath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Icon.png")));
                 File.Copy(template.IconPath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Screenshot.png")));
 
-                var project = new NewProjectClass2(ProjectName, path);
-                Serializer.ToFile(project, path + $"{ProjectName}" + NewProjectClass2.Extension);
+                
 
                 var projectXml = File.ReadAllText(template.ProjectFilePath);
                 projectXml = string.Format(projectXml, ProjectName, ProjectPath);

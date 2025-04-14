@@ -28,15 +28,13 @@ namespace PrimalEngineEditor.GameProject
         }
 
         [DataMember]
-        public NewProjectClass2 Project
-
-        { get; private set; }
+        public NewProjectClass2 Project{ get; private set; }
 
         public Scene (NewProjectClass2 project,string name)
         {
             Debug.Assert(project != null);
-            Name = name;
             Project = project;
+            Name = name;
         }
     }
 

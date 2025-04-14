@@ -29,15 +29,16 @@ namespace PrimalEngineEditor.GameProject
         {
             var cp = DataContext as NewProjectClass1;
             var projectPath = cp.CreateProject(templateListBox.SelectedItem as ProjectTemplate);
-
-            var window = Window.GetWindow(this);
             bool dialogResult = false;
-            window.DialogResult = dialogResult;
+            var window = Window.GetWindow(this);
+            
+           
 
             if (!string.IsNullOrEmpty(projectPath))
             {
                 dialogResult = true;
             }
+            window.DialogResult = dialogResult;
             window.Close();
         }
     }
