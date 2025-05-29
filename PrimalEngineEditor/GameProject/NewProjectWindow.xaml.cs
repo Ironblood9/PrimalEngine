@@ -37,11 +37,7 @@ namespace PrimalEngineEditor.GameProject
             if (!string.IsNullOrEmpty(projectPath))
             {
                 dialogResult = true;
-
-                OpenProject op = new OpenProject();
-                var project = op.Open(new ProjectDataSave() { ProjectName = cp.ProjectName, ProjectPath = projectPath });
-
-                //var project = OpenProject.Open(new ProjectDataSave() { ProjectName = cp.ProjectName, ProjectPath = projectPath });
+                var project = OpenProject.Open(new ProjectDataSave() { ProjectName = cp.ProjectName, ProjectPath = projectPath });
 
             }
             window.DialogResult = dialogResult;

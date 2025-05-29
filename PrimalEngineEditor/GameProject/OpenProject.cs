@@ -36,16 +36,16 @@ namespace PrimalEngineEditor.GameProject
     class OpenProject
     {
         private static readonly string _applicationDataPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\PrimalEditor\";
-        private static readonly string _ProjectDataPath;
+        private static readonly string _projectDataPath;
         private static readonly ObservableCollection<ProjectDataSave> _projects = new ObservableCollection<ProjectDataSave>();
         public static ReadOnlyObservableCollection<ProjectDataSave> Projects { get; }
 
       
         private static void ReadProjectDataSave()
         {
-            if (File.Exists(_ProjectDataPath))
+            if (File.Exists(_projectDataPath))
             {
-                var projects = Serializer.FromFile<ProjectDataSaveList>(_ProjectDataPath).Projects.OrderByDescending(x => x.Date);
+                var projects = Serializer.FromFile<ProjectDataSaveList>(_projectDataPath).Projects.OrderByDescending(x => x.Date);
                 _projects.Clear();
                 foreach (var project in projects)
                 {
@@ -62,10 +62,10 @@ namespace PrimalEngineEditor.GameProject
         private static void WriteProjectDataSave()
         {
             var projects = _projects.OrderBy(x => x.Date).ToList();
-            Serializer.ToFile(new ProjectDataSaveList() {Projects=projects},_ProjectDataPath);
+            Serializer.ToFile(new ProjectDataSaveList() {Projects=projects},_projectDataPath);
         }
 
-        public NewProjectClass2  Open(ProjectDataSave data)
+        public static NewProjectClass2  Open(ProjectDataSave data)
         {
             ReadProjectDataSave();
             var project = _projects.FirstOrDefault(x => x.FullPath == data.FullPath);
@@ -94,8 +94,8 @@ namespace PrimalEngineEditor.GameProject
         {
             try
             {
-                if (Directory.Exists(_applicationDataPath)) Directory.CreateDirectory(_ProjectDataPath);
-                _ProjectDataPath = $@"{_applicationDataPath}ProjectDataSave.xml";
+                if (!Directory.Exists(_applicationDataPath)) Directory.CreateDirectory(_applicationDataPath);
+                _projectDataPath = $@"{_applicationDataPath}ProjectDataSave.xml";
                 Projects = new ReadOnlyObservableCollection<ProjectDataSave>(_projects);
                 ReadProjectDataSave();
             }

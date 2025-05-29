@@ -24,5 +24,10 @@ namespace PrimalEngineEditor.GameProject
         {
             InitializeComponent();
         }
+
+        private void projectsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

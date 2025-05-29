@@ -9,11 +9,12 @@
     <UserControl.DataContext>
         <local:OpenProject/>
     </UserControl.DataContext>
-    
+
     <StackPanel Background="White">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
             <ListBox Width="195" Height="250" ItemsSource="{Binding Projects}" x:Name="projectsListBox"
-                        SelectedIndex="0" d:ItemsSource="{d:SampleData ItemCount=5}" >
+                        SelectedIndex="0" SelectionChanged="projectsListBox_SelectionChanged">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" >
@@ -29,12 +30,12 @@
 
             <Border Width="400" Height="250" Margin="5,0,0,0">
                 <Border.Background>
-                    <ImageBrush ImageSource="{Binding SelectedItem.Screenshot, ElementName=templateListBox}"/>
+                    <ImageBrush ImageSource="{Binding SelectedItem.Screenshot, ElementName=projectsListBox}"/>
 
                 </Border.Background>
 
             </Border>
-            <Border Width="400" Height="250" Margin="5,0,0,0" />
+
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
             <Button Content="Open" Width="100" IsDefault="True"/>
