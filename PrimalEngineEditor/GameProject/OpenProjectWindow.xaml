@@ -12,7 +12,28 @@
     
     <StackPanel Background="White">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ListBox Width="195" Height="250" />
+            <ListBox Width="195" Height="250" ItemsSource="{Binding Projects}" x:Name="projectsListBox"
+                        SelectedIndex="0" d:ItemsSource="{d:SampleData ItemCount=5}" >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" >
+                            <Image Source="{Binding Icon}" Margin="0,0,7,0"/>
+                            <TextBlock Text="{Binding ProjectName}"/>
+
+                        </StackPanel>
+
+                    </DataTemplate>
+
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Border Width="400" Height="250" Margin="5,0,0,0">
+                <Border.Background>
+                    <ImageBrush ImageSource="{Binding SelectedItem.Screenshot, ElementName=templateListBox}"/>
+
+                </Border.Background>
+
+            </Border>
             <Border Width="400" Height="250" Margin="5,0,0,0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
