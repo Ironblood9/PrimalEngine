@@ -38,7 +38,7 @@ namespace PrimalEngineEditor.GameProject
             {
                 dialogResult = true;
                 var project = OpenProject.Open(new ProjectDataSave() { ProjectName = cp.ProjectName, ProjectPath = projectPath });
-
+                window.DataContext = project;
             }
             window.DialogResult = dialogResult;
             window.Close();

@@ -20,23 +20,32 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        Loaded += OnMainWindowLoaded;
+        Loaded += OnMainWindow_Loaded;
+        Closing += OnMainWindow_Closing;
     }
-    private void OnMainWindowLoaded(object sender,RoutedEventArgs e)
+
+    private void OnMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-        Loaded -= OnMainWindowLoaded;
+        Closing -= OnMainWindow_Closing;
+        NewProjectClass2.Current?.Unload();
+    }
+
+    private void OnMainWindow_Loaded(object sender,RoutedEventArgs e)
+    {
+        Loaded -= OnMainWindow_Loaded;
         OpenProjectBrowserDialog();
     }
     private void OpenProjectBrowserDialog()
     {
         var projectBrowser = new GameProjectBrowser();
-        if (projectBrowser.ShowDialog() == false)
+        if (projectBrowser.ShowDialog() == false || projectBrowser.DataContext==null)
         {
             Application.Current.Shutdown();
         }
         else
         {
-
+            NewProjectClass2.Current?.Unload();
+            DataContext = projectBrowser.DataContext;
         }
 
     }
