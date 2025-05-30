@@ -30,7 +30,20 @@ namespace PrimalEngineEditor.GameProject
         [DataMember]
         public NewProjectClass2 Project{ get; private set; }
 
-        public bool IsActive => Project.ActiveScene == this;
+        private bool _isActive;
+        [DataMember]
+            public bool IsActive
+        {
+            get => _isActive;
+            set
+            {
+                if(_isActive!= value)
+                {
+                    _isActive = value;
+                    OnPropertyChanged(nameof(IsActive));
+                }
+            }
+        }
 
 
         public Scene (NewProjectClass2 project,string name)

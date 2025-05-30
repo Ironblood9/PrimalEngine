@@ -84,7 +84,7 @@ namespace PrimalEngineEditor.GameProject
             WriteProjectDataSave();
 
 
-            return null;
+            return NewProjectClass2.Load(project.FullPath);
              
             
         }

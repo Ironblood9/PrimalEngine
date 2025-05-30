@@ -33,7 +33,7 @@ namespace PrimalEngineEditor.GameProject
         public static NewProjectClass2 Current => Application.Current.MainWindow.DataContext as NewProjectClass2;
 
         private Scene _activeScene;
-        [DataMember]
+      
         public Scene ActiveScene
         {
             get => _activeScene;
@@ -67,6 +67,7 @@ namespace PrimalEngineEditor.GameProject
                 Scenes = new ReadOnlyObservableCollection<Scene>(_scenes);
                 OnPropertyChanged(nameof(Scenes));
             }
+            ActiveScene = Scenes.FirstOrDefault(x => x.IsActive);
         }
         public NewProjectClass2(string name, string path)
         {
