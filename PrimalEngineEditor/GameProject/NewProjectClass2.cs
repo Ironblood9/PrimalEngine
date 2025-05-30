@@ -28,11 +28,12 @@ namespace PrimalEngineEditor.GameProject
         [DataMember(Name ="Scenes")]
         private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
 
-        public ReadOnlyObservableCollection<Scene> Scenes { get; }
+        public ReadOnlyObservableCollection<Scene> Scenes { get; private set; }
 
         public static NewProjectClass2 Current => Application.Current.MainWindow.DataContext as NewProjectClass2;
 
         private Scene _activeScene;
+        [DataMember]
         public Scene ActiveScene
         {
             get => _activeScene;
@@ -58,11 +59,20 @@ namespace PrimalEngineEditor.GameProject
         {
             Serializer.ToFile(project, project.FullPath);
         }
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            if (_scenes != null)
+            {
+                Scenes = new ReadOnlyObservableCollection<Scene>(_scenes);
+                OnPropertyChanged(nameof(Scenes));
+            }
+        }
         public NewProjectClass2(string name, string path)
         {
             Name = name;
             Path = path;
-            _scenes.Add(new Scene(this, "Default Scene"));
+            OnDeserialized(new StreamingContext());
         }
     }
 }
