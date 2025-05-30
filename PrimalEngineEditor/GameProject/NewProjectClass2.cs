@@ -70,8 +70,7 @@ namespace PrimalEngineEditor.GameProject
             ActiveScene = Scenes.FirstOrDefault(x => x.IsActive);
         }
         public NewProjectClass2(string name, string path)
-        {
-
+        { 
 
             Name = name;
             Path = path;
