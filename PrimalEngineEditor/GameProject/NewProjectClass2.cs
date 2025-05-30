@@ -71,7 +71,6 @@ namespace PrimalEngineEditor.GameProject
         }
         public NewProjectClass2(string name, string path)
         { 
-
             Name = name;
             Path = path;
             OnDeserialized(new StreamingContext());
