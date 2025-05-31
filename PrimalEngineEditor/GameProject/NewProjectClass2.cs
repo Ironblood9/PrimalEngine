@@ -32,6 +32,7 @@ namespace PrimalEngineEditor.GameProject
         public ReadOnlyObservableCollection<Scene> Scenes { get; private set; }
 
         public static NewProjectClass2 Current => Application.Current.MainWindow.DataContext as NewProjectClass2;
+        public static UndoRedo UndoRedo { get; } = new UndoRedo();
 
         private Scene _activeScene;
       
@@ -82,6 +83,34 @@ namespace PrimalEngineEditor.GameProject
                 OnPropertyChanged(nameof(Scenes));
             }
             ActiveScene = Scenes.FirstOrDefault(x => x.IsActive);
+
+            AddNewScene = new RelayCommand<object>(x =>
+            {
+                AddNewSceneInternal($"New Scene{_scenes.Count}");
+                var newScene = _scenes.Last();
+                var IndexScene = _scenes.Count - 1;
+
+                UndoRedo.Add(new UndoRedoActions(
+                    () => RemoveSceneInternal(newScene),
+                    () => _scenes.Insert(IndexScene, newScene),
+                    $"Add{newScene.Name}"
+                    ));
+            });
+
+
+            RemoveScene = new RelayCommand<Scene>(x =>
+            {
+                var IndexScene = _scenes.IndexOf(x);
+                RemoveSceneInternal(x);
+                UndoRedo.Add(new UndoRedoActions(
+                   () => _scenes.Insert(IndexScene, x),
+                   () => RemoveSceneInternal(x),
+                   $"Remove {x.Name}"));
+
+            }, x=> !x.IsActive
+            );
+
+
         }
         public NewProjectClass2(string name, string path)
         { 

@@ -26,10 +26,6 @@ namespace PrimalEngineEditor.AllEditors
             InitializeComponent();
         }
 
-        private void OnAddNewScene_Button_Click(object sender, RoutedEventArgs e)
-        {
-            var cp = DataContext as NewProjectClass2;
-            cp.AddNewScene("New Scene" + cp.Scenes.Count);
-        }
+      
     }
 }
