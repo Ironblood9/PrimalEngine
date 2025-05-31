@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 
 namespace PrimalEngineEditor.GameProject
@@ -51,6 +52,19 @@ namespace PrimalEngineEditor.GameProject
             Debug.Assert(File.Exists(file));
             return Serializer.FromFile<NewProjectClass2>(file);
         }
+        public ICommand AddNewScene { get; private set; }
+        public ICommand RemoveScene { get; private set; }
+        private void AddNewSceneInternal(string sceneName)
+        {
+            Debug.Assert(!string.IsNullOrEmpty(sceneName.Trim()));
+            _scenes.Add(new Scene(this, sceneName));
+        }
+        private void RemoveSceneInternal(Scene scene)
+        {
+            Debug.Assert(_scenes.Contains(scene));
+            _scenes.Remove(scene);
+        }
+
         public void Unload()
         {
 

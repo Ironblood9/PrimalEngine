@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PrimalEngineEditor.GameProject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,12 @@ namespace PrimalEngineEditor.AllEditors
         public ProjectLayoutWindow()
         {
             InitializeComponent();
+        }
+
+        private void OnAddNewScene_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var cp = DataContext as NewProjectClass2;
+            cp.AddNewScene("New Scene" + cp.Scenes.Count);
         }
     }
 }

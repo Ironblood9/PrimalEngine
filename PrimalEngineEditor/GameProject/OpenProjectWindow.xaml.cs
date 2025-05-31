@@ -23,6 +23,16 @@ namespace PrimalEngineEditor.GameProject
         public OpenProjectWindow()
         {
             InitializeComponent();
+            Loaded += (s, e) =>
+            {
+                var item = projectsListBox.ItemContainerGenerator.ContainerFromIndex(projectsListBox.SelectedIndex) as ListBoxItem;
+                item?.Focus();
+            };
+        }
+
+        private void OpenProjectWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void projectsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
