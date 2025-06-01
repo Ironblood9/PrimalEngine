@@ -40,6 +40,7 @@ namespace PrimalEngineEditor.Components
             Debug.Assert(scene != null);
             ParentScene = scene;
 
+
         }
     }
 }
