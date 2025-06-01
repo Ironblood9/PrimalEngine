@@ -53,6 +53,8 @@ namespace PrimalEngineEditor.GameProject
             Debug.Assert(File.Exists(file));
             return Serializer.FromFile<NewProjectClass2>(file);
         }
+        public ICommand Undo { get; private set; }
+        public ICommand Redo { get; private set; }
         public ICommand AddNewScene { get; private set; }
         public ICommand RemoveScene { get; private set; }
         private void AddNewSceneInternal(string sceneName)
@@ -64,7 +66,11 @@ namespace PrimalEngineEditor.GameProject
         {
             Debug.Assert(_scenes.Contains(scene));
             _scenes.Remove(scene);
+           
+           
         }
+        
+
 
         public void Unload()
         {
@@ -86,7 +92,7 @@ namespace PrimalEngineEditor.GameProject
 
             AddNewScene = new RelayCommand<object>(x =>
             {
-                AddNewSceneInternal($"New Scene{_scenes.Count}");
+                AddNewSceneInternal($" New Scene{_scenes.Count}");
                 var newScene = _scenes.Last();
                 var IndexScene = _scenes.Count - 1;
 
@@ -110,6 +116,8 @@ namespace PrimalEngineEditor.GameProject
             }, x=> !x.IsActive
             );
 
+            Undo = new RelayCommand<object>(x => UndoRedo.Undo());
+            Redo = new RelayCommand<object>(x => UndoRedo.Redo());
 
         }
         public NewProjectClass2(string name, string path)

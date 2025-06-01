@@ -63,7 +63,7 @@ namespace PrimalEngineEditor.Utilities
                 var cmd = _undoList.Last();
                 _undoList.RemoveAt(_undoList.Count - 1);
                 cmd.Undo();
-                _undoList.Insert(0, cmd);
+                _redoList.Insert(0, cmd);
             }
 
         }
