@@ -9,5 +9,6 @@ namespace PrimalEngineEditor;
 /// </summary>
 public partial class App : Application
 {
+    public static object UndoRedoManager { get; internal set; }
 }
 

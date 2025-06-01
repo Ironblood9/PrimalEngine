@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using static System.Formats.Asn1.AsnWriter;
 
 
 namespace PrimalEngineEditor.GameProject
@@ -25,7 +26,7 @@ namespace PrimalEngineEditor.GameProject
 
         public string  Path { get; private set; }
 
-        public string FullPath => $"{Path}{Name}{Extension}";
+        public string FullPath => $@"{Path}{Name}\{Name}{Extension}";
         [DataMember(Name ="Scenes")]
         private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
 
@@ -53,15 +54,19 @@ namespace PrimalEngineEditor.GameProject
             Debug.Assert(File.Exists(file));
             return Serializer.FromFile<NewProjectClass2>(file);
         }
-        public ICommand Undo { get; private set; }
-        public ICommand Redo { get; private set; }
-        public ICommand AddNewScene { get; private set; }
-        public ICommand RemoveScene { get; private set; }
+        public ICommand UndoCommand { get; private set; }
+        public ICommand RedoCommand { get; private set; }
+        public ICommand AddNewSceneCommand { get; private set; }
+        public ICommand RemoveSceneCommand { get; private set; }
+        public ICommand SaveCommand { get; private set; }
+
         private void AddNewSceneInternal(string sceneName)
         {
             Debug.Assert(!string.IsNullOrEmpty(sceneName.Trim()));
             _scenes.Add(new Scene(this, sceneName));
         }
+       
+
         private void RemoveSceneInternal(Scene scene)
         {
             Debug.Assert(_scenes.Contains(scene));
@@ -69,7 +74,14 @@ namespace PrimalEngineEditor.GameProject
            
            
         }
-        
+        private int _sceneCounter = 1;
+
+        public string GetNextSceneName()
+        {
+            return $"Scene {_sceneCounter++}";
+        }
+       
+
 
 
         public void Unload()
@@ -90,21 +102,22 @@ namespace PrimalEngineEditor.GameProject
             }
             ActiveScene = Scenes.FirstOrDefault(x => x.IsActive);
 
-            AddNewScene = new RelayCommand<object>(x =>
-            {
-                AddNewSceneInternal($" New Scene{_scenes.Count}");
-                var newScene = _scenes.Last();
-                var IndexScene = _scenes.Count - 1;
+            AddNewSceneCommand = new RelayCommand<object>(x =>
+             {
+             AddNewSceneInternal($" New Scene{_scenes.Count}");
+            var newScene = _scenes.Last();
+            var IndexScene = _scenes.Count - 1;
 
-                UndoRedo.Add(new UndoRedoActions(
-                    () => RemoveSceneInternal(newScene),
-                    () => _scenes.Insert(IndexScene, newScene),
-                    $"Add{newScene.Name}"
-                    ));
-            });
+            UndoRedo.Add(new UndoRedoActions(
+                () => RemoveSceneInternal(newScene),
+               () => _scenes.Insert(IndexScene, newScene),
+               $"Add{newScene.Name}"
+               ));
+             });
+         
 
 
-            RemoveScene = new RelayCommand<Scene>(x =>
+            RemoveSceneCommand = new RelayCommand<Scene>(x =>
             {
                 var IndexScene = _scenes.IndexOf(x);
                 RemoveSceneInternal(x);
@@ -116,8 +129,9 @@ namespace PrimalEngineEditor.GameProject
             }, x=> !x.IsActive
             );
 
-            Undo = new RelayCommand<object>(x => UndoRedo.Undo());
-            Redo = new RelayCommand<object>(x => UndoRedo.Redo());
+            UndoCommand = new RelayCommand<object>(x => UndoRedo.Undo());
+            RedoCommand = new RelayCommand<object>(x => UndoRedo.Redo());
+            SaveCommand = new RelayCommand<object>(x => Save(this));
 
         }
         public NewProjectClass2(string name, string path)

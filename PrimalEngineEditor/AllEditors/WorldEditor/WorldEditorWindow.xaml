@@ -5,8 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
             xmlns:local="clr-namespace:PrimalEngineEditor.AllEditors"
              xmlns:utl="clr-namespace:PrimalEngineEditor.Utilities"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" Focusable="True"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.InputBindings>
+        <KeyBinding Command="{Binding UndoCommand}" Key="Z" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding RedoCommand}" Key="Y" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding SaveCommand}" Key="S" Modifiers="Ctrl"/>
+    </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -14,8 +19,8 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
             
-            <Button Content="Undo" Command="{Binding Undo}"/>
-            <Button Content="Redo" Command="{Binding Redo}" Margin="35,0,0,0"/>
+            <Button Content="Undo" Command="{Binding UndoCommand}"/>
+            <Button Content="Redo" Command="{Binding RedoCommand}" Margin="35,0,0,0"/>
         </StackPanel>
         <Grid Grid.Row="1" >
         <Grid.ColumnDefinitions>

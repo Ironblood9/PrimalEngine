@@ -24,6 +24,9 @@ namespace PrimalEngineEditor.AllEditors
         public ProjectLayoutWindow()
         {
             InitializeComponent();
+            
         }
+
+        
     }
 }
