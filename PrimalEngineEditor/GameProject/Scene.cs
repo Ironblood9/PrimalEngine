@@ -1,5 +1,7 @@
-﻿using System;
+﻿using PrimalEngineEditor.Components;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -52,7 +54,8 @@ namespace PrimalEngineEditor.GameProject
             Project = project;
             Name = name;
         }
+        [DataMember(Name = nameof(GameEntities))]
+        private readonly ObservableCollection<GameEntity> _gameEntities = new ObservableCollection<GameEntity>();
+        public ReadOnlyObservableCollection<GameEntity> GameEntities { get; }
     }
-
-
 }
