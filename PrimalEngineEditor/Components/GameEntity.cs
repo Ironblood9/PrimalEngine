@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace PrimalEngineEditor.Components
 {
+    [DataContract]
    public class GameEntity:ViewModelBase
     {
         private string _name;

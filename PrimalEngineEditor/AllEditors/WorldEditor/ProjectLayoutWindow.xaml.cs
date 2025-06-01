@@ -1,4 +1,5 @@
-﻿using PrimalEngineEditor.GameProject;
+﻿using PrimalEngineEditor.Components;
+using PrimalEngineEditor.GameProject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,11 @@ namespace PrimalEngineEditor.AllEditors
             
         }
 
-        
+        private void OnAddGameEntity_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            var cp = btn.DataContext as Scene;
+            cp.AddGameEntityCommand.Execute(new GameEntity(cp) { Name = "Empty Game Entity" });
+        }
     }
 }
