@@ -34,5 +34,11 @@ namespace PrimalEngineEditor.AllEditors
             var cp = btn.DataContext as Scene;
             cp.AddGameEntityCommand.Execute(new GameEntity(cp) { Name = "Empty Game Entity" });
         }
+
+        private void OnGameEntities_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var entity = (sender as ListBox).SelectedItems[0];
+            GameEntityWindow.Instance.DataContext = entity;
+        }
     }
 }
