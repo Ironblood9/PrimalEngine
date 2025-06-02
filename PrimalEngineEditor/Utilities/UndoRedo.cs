@@ -40,6 +40,7 @@ namespace PrimalEngineEditor.Utilities
     }
     public class UndoRedo
     {
+        private bool _enableAdd = true;
         private readonly ObservableCollection<InterfaceUndoRedo> _redoList = new ObservableCollection<InterfaceUndoRedo>();
         private readonly ObservableCollection<InterfaceUndoRedo> _undoList = new ObservableCollection<InterfaceUndoRedo>();
         public ReadOnlyObservableCollection<InterfaceUndoRedo> RedoList { get; }
@@ -52,8 +53,11 @@ namespace PrimalEngineEditor.Utilities
         }
         public void Add(InterfaceUndoRedo cmd)
         {
-            _undoList.Add(cmd);
-            _redoList.Clear();
+            if (_enableAdd)
+            {
+                _undoList.Add(cmd);
+                _redoList.Clear();
+            }
         }
 
         public void Undo()
@@ -62,7 +66,9 @@ namespace PrimalEngineEditor.Utilities
             {
                 var cmd = _undoList.Last();
                 _undoList.RemoveAt(_undoList.Count - 1);
+                _enableAdd = false;
                 cmd.Undo();
+                _enableAdd = true;
                 _redoList.Insert(0, cmd);
             }
 
@@ -73,7 +79,9 @@ namespace PrimalEngineEditor.Utilities
             {
                 var cmd = _redoList.First();
                 _redoList.RemoveAt(0);
+                _enableAdd = false;
                 cmd.Redo();
+                _enableAdd = true;
                 _undoList.Add(cmd);
             }
         }

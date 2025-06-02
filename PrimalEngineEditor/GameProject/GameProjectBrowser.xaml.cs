@@ -22,7 +22,21 @@ namespace PrimalEngineEditor.GameProject
         public GameProjectBrowser()
         {
             InitializeComponent();
+            Loaded += OnGameProjectBrowserLoaded;
         }
+
+        private void OnGameProjectBrowserLoaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= OnGameProjectBrowserLoaded;
+            if (!OpenProject.Projects.Any())
+            {
+                openProjectButton.IsEnabled = false;
+                openProjectWindow.Visibility = Visibility.Hidden;
+                OnToggleButton_Click(newProjectButton, new RoutedEventArgs());
+            }
+            
+        }
+
 
 
         private void OnToggleButton_Click(object sender, RoutedEventArgs e)

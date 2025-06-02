@@ -14,6 +14,23 @@ namespace PrimalEngineEditor.Components
     [KnownType(typeof(Transform))]
    public class GameEntity:ViewModelBase
     {
+        private bool _isEnable = true;
+        [DataMember]
+        public bool IsEnable
+        {
+            get => _isEnable;
+            set
+            {
+                if (_isEnable != value)
+                {
+                    _isEnable = value;
+                    OnPropertyChanged(nameof(IsEnable));
+                }
+            }
+        }
+
+
+
         private string _name;
         [DataMember]
         public string Name
@@ -52,6 +69,7 @@ namespace PrimalEngineEditor.Components
             Debug.Assert(scene != null);
             ParentScene = scene;
             _components.Add(new Transform(this));
+            OnDeserialized(new StreamingContext());
 
         }
     }
