@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace PrimalEngineEditor.GameProject
 {
@@ -103,6 +104,8 @@ namespace PrimalEngineEditor.GameProject
             {
 
                 Debug.WriteLine(exception.Message);
+                Logger.Log(MessageType.Error, $"Failed to read project data");
+                throw;
             }
 
         }

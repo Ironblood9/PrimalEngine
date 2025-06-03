@@ -86,11 +86,12 @@ namespace PrimalEngineEditor.GameProject
 
         public void Unload()
         {
-
+            UndoRedo.Reset();
         }
         public static void Save(NewProjectClass2 project)
         {
             Serializer.ToFile(project, project.FullPath);
+            Logger.Log(MessageType.Info, $"Project saved to {project.FullPath}");
         }
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
