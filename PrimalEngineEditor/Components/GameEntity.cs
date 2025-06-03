@@ -16,16 +16,16 @@ namespace PrimalEngineEditor.Components
     [KnownType(typeof(Transform))]
    public class GameEntity:ViewModelBase
     {
-        private bool _isEnable = true;
+        private bool _isEnabled = true;
         [DataMember]
         public bool IsEnabled
         {
-            get => _isEnable;
+            get => _isEnabled;
             set
             {
-                if (_isEnable != value)
+                if (_isEnabled != value)
                 {
-                    _isEnable = value;
+                    _isEnabled = value;
                     OnPropertyChanged(nameof(IsEnabled));
                 }
             }
@@ -57,7 +57,7 @@ namespace PrimalEngineEditor.Components
         public ReadOnlyObservableCollection<Component> Components { get; private set; }
         public ICommand RenameCommand{ get; private set; }
 
-        public ICommand EnableCommand { get; private set; }
+        public ICommand IsEnabledCommand { get; private set; }
         
 
         [DataMember]
@@ -78,6 +78,14 @@ namespace PrimalEngineEditor.Components
                 NewProjectClass2.UndoRedo.Add(new UndoRedoActions(nameof(Name), this, oldname, x, $"Rename Entity '{oldname}' to '{x}'"
                     ));
             },x=>x!=_name);
+
+            IsEnabledCommand = new RelayCommand<bool>(x =>
+            {
+                var oldvalue = _isEnabled;
+                IsEnabled = x;
+                NewProjectClass2.UndoRedo.Add(new UndoRedoActions(nameof(IsEnabled), this, oldvalue, x, x? $"Enable {Name}" : $"Disable {Name}"
+                    ));
+            });
         }
 
         public GameEntity(Scene scene)
