@@ -18,7 +18,7 @@ namespace PrimalEngineEditor.Components
     {
         private bool _isEnable = true;
         [DataMember]
-        public bool IsEnable
+        public bool IsEnabled
         {
             get => _isEnable;
             set
@@ -26,7 +26,7 @@ namespace PrimalEngineEditor.Components
                 if (_isEnable != value)
                 {
                     _isEnable = value;
-                    OnPropertyChanged(nameof(IsEnable));
+                    OnPropertyChanged(nameof(IsEnabled));
                 }
             }
         }
@@ -44,7 +44,9 @@ namespace PrimalEngineEditor.Components
                 {
                     _name = value;
                     OnPropertyChanged(nameof(Name));
+                    
                 }
+                
             }
         }
 

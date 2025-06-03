@@ -33,7 +33,7 @@ namespace PrimalEngineEditor.GameProject
         public ReadOnlyObservableCollection<Scene> Scenes { get; private set; }
 
         public static NewProjectClass2 Current => Application.Current.MainWindow.DataContext as NewProjectClass2;
-        public static UndoRedo UndoRedo { get; } = new UndoRedo();
+        public  static UndoRedo UndoRedo { get; } = new UndoRedo();
 
         private Scene _activeScene;
       

@@ -33,7 +33,7 @@ namespace PrimalEngineEditor.Dictionaries
             }
             else if (e.Key == Key.Escape) {
 
-                exp.UpdateSource();
+                exp.UpdateTarget();
                 Keyboard.ClearFocus();
             }
         }

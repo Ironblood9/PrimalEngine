@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:PrimalEngineEditor.AllEditors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel>
         <Border Height="40">
             <ToggleButton x:Name="addComponent" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0">
                 <ToggleButton.Content>
@@ -33,7 +34,7 @@
                 <CheckBox IsChecked="{Binding IsEnabled}" Margin="5,0" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
-        
+
         <ItemsControl ItemsSource="{Binding Components}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -41,5 +42,6 @@
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
-    </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
