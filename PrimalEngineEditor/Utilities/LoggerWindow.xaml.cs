@@ -23,13 +23,7 @@ namespace PrimalEngineEditor.Utilities
         public LoggerWindow()
         {
             InitializeComponent();
-
-            Loaded += (s, e) =>
-            {
-                Logger.Log(MessageType.Info, "Information Message");
-                Logger.Log(MessageType.Warning, "Warning Message");
-                Logger.Log(MessageType.Error, "Error Message");
-            };
+            
         }
 
     

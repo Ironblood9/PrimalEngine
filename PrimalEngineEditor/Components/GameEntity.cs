@@ -56,9 +56,7 @@ namespace PrimalEngineEditor.Components
         private readonly ObservableCollection<Component> _components = new ObservableCollection<Component>();
 
         public ReadOnlyObservableCollection<Component> Components { get; private set; }
-        public ICommand RenameCommand{ get; private set; }
-
-        public ICommand IsEnabledCommand { get; private set; }
+        
         
 
         [DataMember]
@@ -72,21 +70,7 @@ namespace PrimalEngineEditor.Components
                 Components = new ReadOnlyObservableCollection<Component>(_components);
                 OnPropertyChanged(nameof(Components));
             }
-            RenameCommand = new RelayCommand<string>(x =>
-            {
-                var oldname = _name;
-                Name = x;
-                NewProjectClass2.UndoRedo.Add(new UndoRedoActions(nameof(Name), this, oldname, x, $"Rename Entity '{oldname}' to '{x}'"
-                    ));
-            },x=>x!=_name);
-
-            IsEnabledCommand = new RelayCommand<bool>(x =>
-            {
-                var oldvalue = _isEnabled;
-                IsEnabled = x;
-                NewProjectClass2.UndoRedo.Add(new UndoRedoActions(nameof(IsEnabled), this, oldvalue, x, x? $"Enable {Name}" : $"Disable {Name}"
-                    ));
-            });
+           
         }
 
         public GameEntity(Scene scene)
