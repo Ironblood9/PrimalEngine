@@ -78,6 +78,7 @@ namespace PrimalEngineEditor.AllEditors
             _undoAction = null;
         }
 
+
         private void OnIsEnabled_CheckBox_Click(object sender, RoutedEventArgs e)
         {
             var undoAction = GetIsEnabledAction();
