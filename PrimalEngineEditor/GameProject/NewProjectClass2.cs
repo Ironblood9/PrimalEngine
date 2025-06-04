@@ -16,7 +16,7 @@ using static System.Formats.Asn1.AsnWriter;
 namespace PrimalEngineEditor.GameProject
 {
     [DataContract(Name ="Game")]
-    public class NewProjectClass2: ViewModelBase
+     class NewProjectClass2: ViewModelBase
     {
         
         public static string Extension { get; } = ".primal";

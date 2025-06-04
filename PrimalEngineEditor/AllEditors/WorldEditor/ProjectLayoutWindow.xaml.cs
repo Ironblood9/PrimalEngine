@@ -38,28 +38,30 @@ namespace PrimalEngineEditor.AllEditors
 
         private void OnGameEntities_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GameEntityWindow.Instance.DataContext = null;
-            var listbox = sender as ListBox;
-            if (e.AddedItems.Count > 0)
-            {
-                GameEntityWindow.Instance.DataContext = listbox.SelectedItems[0];
-            }
+            
+            var listbox = sender as ListBox;           
             var NewSelection = listbox.SelectedItems.Cast<GameEntity>().ToList();
             var previousSelection = NewSelection.Except(e.AddedItems.Cast<GameEntity>()).Concat(e.RemovedItems.Cast<GameEntity>()).ToList();
 
             NewProjectClass2.UndoRedo.Add(new UndoRedoActions(
-                () =>
+                () =>//Undo
                 {
                     listbox.UnselectAll();
                     previousSelection.ForEach(x => (listbox.ItemContainerGenerator.ContainerFromItem(x) as ListBoxItem).IsSelected = true);
                 },
-                () =>
+                () =>//Redo
                 {
                     listbox.UnselectAll();
                     NewSelection.ForEach(x => (listbox.ItemContainerGenerator.ContainerFromItem(x) as ListBoxItem).IsSelected = true);
                 },
                 "Selection Changed"
                 ));
+            MSGameEntity msEntity = null;
+            if (NewSelection.Any())
+            {
+                msEntity = new MSGameEntity(NewSelection);
+            }
+            GameEntityWindow.Instance.DataContext = msEntity;
         }
     }
 }

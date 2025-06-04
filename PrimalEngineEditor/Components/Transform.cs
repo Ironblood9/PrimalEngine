@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace PrimalEngineEditor.Components
 {
     [DataContract]
-   public class Transform : Component
+    class Transform : Component
     {
         public Transform(GameEntity owner) : base(owner)
         {
