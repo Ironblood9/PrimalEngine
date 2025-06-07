@@ -8,7 +8,7 @@
 
 namespace primal::utl {
 	template<typename T>
-	using vector = vector<T>;
+	using vector = std::vector<T>;
 }
 #endif
 
@@ -17,7 +17,7 @@ namespace primal::utl {
 
 namespace primal::utl {
 	template<typename T>
-	using deque = deque<T>;
+	using deque = std::deque<T>;
 }
 #endif
 
