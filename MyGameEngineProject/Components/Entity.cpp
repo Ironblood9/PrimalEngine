@@ -1,9 +1,11 @@
 #include "Entity.h"
 
 
-namespace primal::game_entity {
+namespace primal::game_entity 
+{
 
-	namespace {
+	namespace 
+	{
 	
 		utl::vector<id::generation_type>              generations;
 		utl::deque<entity_id>                         free_ids;
@@ -35,9 +37,26 @@ namespace primal::game_entity {
 		const id::id_type index{ id::index(id) };
 		return new_entity;
 	}
-	void remove_game_entity(entity id){}
+	void remove_game_entity(entity e)
+	{
+		const entity_id id{ e.get_id() };
+		const id::id_type index{ id::index(id) };
+		assert(is_alive(e));
+		if (is_alive(e))
+		{
+			free_ids.push_back(id);
+		}
+	}
 
-	bool is_alive(entity id){ }
+	bool is_alive(entity e)
+	{ 
+		assert(e.is_valid());
+		const entity_id id{ e.get_id() };
+		const id::id_type index{ id::index(id) };
+		assert(index < generations.size());
+		assert(generations[index] == id::generation(id));
+		return (generations[index] == id::generation(id));
+	}
 }
 
 

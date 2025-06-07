@@ -1,5 +1,5 @@
 #pragma once
-
+#pragma warning(disable:4530)
 // C/C++
 #include <stdint.h>
 #include <assert.h>

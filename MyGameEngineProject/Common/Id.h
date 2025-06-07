@@ -20,24 +20,24 @@ namespace primal::id {
 	static_assert(sizeof(generation_type) * 8 >= internal::generation_bits);
 	static_assert((sizeof(id_type) - sizeof(generation_type)) > 0);
 
-	inline bool
+	constexpr  bool
 	is_valid(id_type id) {
 		return id != invalid_id;
 	}
 
-	inline id_type
+	constexpr  id_type
 	index(id_type id) {
 		id_type index{ id & internal::index_mask };
 		assert(index != internal::index_mask);
 	    return index;
 	}
 
-	inline id_type
+	constexpr  id_type
 	generation (id_type id) {
 		return (id >> internal::index_bits) & internal::generation_mask;
 	}
 
-	inline id_type
+	constexpr  id_type
 	new_generation(id_type id) {
 
 		const id_type generation{ id::generation(id) + 1 };
