@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyGameEngineProject", "MyGa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimalEngineEditor", "PrimalEngineEditor\PrimalEngineEditor.csproj", "{CB6FAD16-3005-4E3F-888F-8DD128044606}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AgilisPrimeEngineTest", "AgilisPrimeEngineTest\AgilisPrimeEngineTest.vcxproj", "{B09CD062-98F6-454F-AC77-9B53D246D2A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{CB6FAD16-3005-4E3F-888F-8DD128044606}.Debug|x64.Build.0 = Debug|Any CPU
 		{CB6FAD16-3005-4E3F-888F-8DD128044606}.Release|x64.ActiveCfg = Release|Any CPU
 		{CB6FAD16-3005-4E3F-888F-8DD128044606}.Release|x64.Build.0 = Release|Any CPU
+		{B09CD062-98F6-454F-AC77-9B53D246D2A3}.Debug|x64.ActiveCfg = Debug|x64
+		{B09CD062-98F6-454F-AC77-9B53D246D2A3}.Debug|x64.Build.0 = Debug|x64
+		{B09CD062-98F6-454F-AC77-9B53D246D2A3}.Release|x64.ActiveCfg = Release|x64
+		{B09CD062-98F6-454F-AC77-9B53D246D2A3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
