@@ -29,7 +29,7 @@ namespace PrimalEngineEditor.DllWrappers
 {
     static class AgilisAPI
     {
-        private const string _dllName = "AgilisDll.dll";
+        private const string _dllName = "AgilisDLL.dll";
 
         [DllImport(_dllName)]
         private static extern int CreateGameEntity(GameEntityDescriptor desc);
@@ -44,6 +44,12 @@ namespace PrimalEngineEditor.DllWrappers
                 desc.Transform.Scale = c.Scale;
             }
             return CreateGameEntity(desc);
+        }
+        [DllImport(_dllName)]
+        private static extern void RemoveGameEntity(int id);
+        public static void RemoveGameEntity(GameEntity  entity)
+        {
+            RemoveGameEntity(entity.EntityId);
         }
     }
 }

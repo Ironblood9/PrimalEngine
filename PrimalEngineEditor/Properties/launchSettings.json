@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PrimalEngineEditor": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

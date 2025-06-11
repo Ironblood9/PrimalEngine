@@ -1,4 +1,5 @@
-﻿using PrimalEngineEditor.GameProject;
+﻿using PrimalEngineEditor.DllWrappers;
+using PrimalEngineEditor.GameProject;
 using PrimalEngineEditor.Utilities;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,11 @@ namespace PrimalEngineEditor.Components
                     _isActive = value;
                     if (_isActive)
                     {
+                        if (!System.IO.File.Exists("AgilisDLL.dll"))
+                        {
+                            Console.WriteLine("AgilisDLL.dll not found!");
+                        }
+
                         EntityId = AgilisAPI.CreateGameEntity(this);
                         Debug.Assert(ID.IsValid(_entityId));
                     }

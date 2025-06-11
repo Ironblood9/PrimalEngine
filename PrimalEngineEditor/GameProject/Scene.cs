@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
@@ -66,14 +67,23 @@ namespace PrimalEngineEditor.GameProject
         public ICommand AddGameEntityCommand { get; private set; }
         public ICommand RemoveGameEntityCommand { get; private set; }
 
-        private void AddGameEntity(GameEntity entity)
+        private void AddGameEntity(GameEntity entity, int index = -1)
         {
             Debug.Assert(!_gameEntities.Contains(entity));
-            _gameEntities.Add(entity);
+            entity.IsActive = IsActive;
+            if (index==-1)
+            {
+                _gameEntities.Add(entity);
+            }
+            else
+            {
+                _gameEntities.Insert(index, entity);
+            }
         }
         private void RemoveGameEntity(GameEntity entity)
         {
             Debug.Assert(_gameEntities.Contains(entity));
+            entity.IsActive = false;
             _gameEntities.Remove(entity);
         }
 
@@ -89,7 +99,10 @@ namespace PrimalEngineEditor.GameProject
                 GameEntities = new ReadOnlyObservableCollection<GameEntity>(_gameEntities);
                 OnPropertyChanged(nameof(GameEntities));
             }
-            
+            foreach (var entity in _gameEntities)
+            {
+                entity.IsActive = IsActive;
+            }
 
             AddGameEntityCommand = new RelayCommand<GameEntity>(x =>
             {
@@ -99,7 +112,7 @@ namespace PrimalEngineEditor.GameProject
 
                 NewProjectClass2.UndoRedo.Add(new UndoRedoActions(
                     () => RemoveGameEntity(x),
-                    () => _gameEntities.Insert(IndexEntity, x),
+                    () => AddGameEntity(x, IndexEntity),
                    $"Add {x.Name} to {Name}"
                    ));
             });
@@ -111,7 +124,7 @@ namespace PrimalEngineEditor.GameProject
                 var IndexEntity = _gameEntities.IndexOf(x);
                 RemoveGameEntity(x);
                 NewProjectClass2.UndoRedo.Add(new UndoRedoActions(
-                   () => _gameEntities.Insert(IndexEntity, x),
+                   () => AddGameEntity(x, IndexEntity),
                    () => RemoveGameEntity(x),
                    $"Remove {x.Name}"));
 

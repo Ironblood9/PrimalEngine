@@ -12,6 +12,8 @@
 using namespace primal;
 
 namespace {
+	
+
 
 	struct transform_component
 	{
