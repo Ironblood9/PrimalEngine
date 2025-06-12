@@ -47,7 +47,7 @@ namespace {
 }//anonymous namespace
 
 EDITOR_INTERFACE id::id_type
-CreateGameEntity(game_entity_descriptor* e)
+ CreateGameEntity(game_entity_descriptor* e)
 {
 	assert(e);
 	game_entity_descriptor& desc{ *e };

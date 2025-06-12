@@ -27,9 +27,11 @@ namespace PrimalEngineEditor.AgilisAPIStructs
 
 namespace PrimalEngineEditor.DllWrappers
 {
+   
+
     static class AgilisAPI
     {
-        private const string _dllName = "AgilisDLL.dll";
+        private const string _dllName = "AgilisDll.dll";
 
         [DllImport(_dllName)]
         private static extern int CreateGameEntity(GameEntityDescriptor desc);
@@ -53,3 +55,7 @@ namespace PrimalEngineEditor.DllWrappers
         }
     }
 }
+
+
+
+

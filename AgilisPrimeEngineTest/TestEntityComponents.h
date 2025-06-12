@@ -31,7 +31,7 @@ public:
 			}
 			print_results();
 
-		} while (getchar()!='d');
+		} while (getchar()!='q');
 	}
 
 	void shutdown() override 

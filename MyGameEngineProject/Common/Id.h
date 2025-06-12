@@ -1,6 +1,6 @@
 #pragma once
 #include "CommonHeaders.h"
-using namespace std;
+
 
 namespace primal::id {
 	using id_type = u32;
@@ -15,7 +15,7 @@ namespace primal::id {
 	constexpr u32 min_deleted_elemenst{ 1024 };
 
 
-	using generation_type = conditional_t < internal::generation_bits <= 16, conditional_t<internal::generation_bits <= 8, u8, u16>, u32>;
+	using generation_type = std::conditional_t < internal::generation_bits <= 16, std::conditional_t<internal::generation_bits <= 8, u8, u16>, u32>;
 
 	static_assert(sizeof(generation_type) * 8 >= internal::generation_bits);
 	static_assert((sizeof(id_type) - sizeof(generation_type)) > 0);
