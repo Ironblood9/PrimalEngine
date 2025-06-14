@@ -42,6 +42,54 @@
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
+
+                        <Grid>
+                            <AdornerDecorator>
+                                <ContentPresenter Margin="5,24,5,5"/>
+                            </AdornerDecorator>
+                            <DockPanel VerticalAlignment="Top" LastChildFill="False">
+                                
+                                <DockPanel.Resources>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                        <Setter Property="StrokeThickness" Value="1"/>
+                                    </Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Width" Value="24"/>
+                                        <Setter Property="Height" Value="14"/>
+                                        <Setter Property="Margin" Value="0,2,1,0"/>
+                                        <Setter Property="VerticalAlignment" Value="Top"/>
+                                        <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                        <Setter Property="DockPanel.Dock" Value="Right"/>
+                                        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+                                    </Style>
+                                </DockPanel.Resources>
+                                
+                                <TextBlock Margin="5,2,0,0"  VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" 
+                                           Foreground="{DynamicResource Editor.FontBrush}" Text="{TemplateBinding Title}"/>
+
+                                <Button x:Name="btnClose" Click="OnClose_Button_Click">
+                                    <Button.Content>
+                                        <Grid>
+                                            <Path Data="M1,1.5L 8,8.5" Margin="0"/>
+                                            <Path Data="M1,8.5L 8,1.5" Margin="0"/>
+                                        </Grid>
+                                    </Button.Content>
+                                </Button>
+
+                                <Button x:Name="btnRestore" Click="OnMaximizeRestore_Button_Click">
+                                    <Button.Content>
+                                        <Rectangle Stroke="{DynamicResource Editor.FontBrush}" StrokeThickness="1" Width="10" Height="8"/>
+                                    </Button.Content>
+                                </Button>
+                                <Button x:Name="btnMinimize" Click="OnMinimize_Button_Click">
+                                    <Button.Content>
+                                        <Rectangle Stroke="{DynamicResource Editor.FontBrush}" StrokeThickness="1" Width="10" Height="1" Margin="0,4,0,0"/>
+                                    </Button.Content>
+                                </Button>
+                            </DockPanel>
+                        </Grid>
+                        
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
