@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:PrimalEngineEditor"
         xmlns:alleditors="clr-namespace:PrimalEngineEditor.AllEditors"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Primal Editor Window" Height="1000" Width="1700">
+        Title="Primal Editor Window" Height="1000" Width="1700"
+        Style="{DynamicResource AgilisWindowStyle}">
+       
     <Grid>
         
         <alleditors:WorldEditorWindow/>
