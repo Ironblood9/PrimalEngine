@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -19,6 +20,7 @@ namespace PrimalEngineEditor.GameProject
     /// </summary>
     public partial class GameProjectBrowser : Window
     {
+        private readonly CubicEase _easing = new CubicEase() { EasingMode = EasingMode.EaseInOut };
         public GameProjectBrowser()
         {
             InitializeComponent();
@@ -46,7 +48,9 @@ namespace PrimalEngineEditor.GameProject
                 if(newProjectButton.IsChecked==true)
                 {
                     newProjectButton.IsChecked = false;
-                    browser.Margin = new Thickness(0);
+                    AnimateToOpenProject();
+                    openProjectWindow.IsEnabled = true;
+                    newProjectWindow.IsEnabled = false;
                 }
                 openProjectButton.IsChecked =true;
             }
@@ -55,10 +59,37 @@ namespace PrimalEngineEditor.GameProject
                if (openProjectButton.IsChecked == true)
                  {
                   openProjectButton.IsChecked = false;
-                  browser.Margin = new Thickness(-800,0,0,0);
+                    AnimateToCreateProject();
+                    openProjectWindow.IsEnabled = false;
+                    newProjectWindow.IsEnabled = true;
                   }
                 newProjectButton.IsChecked = true;
             }
+        }
+
+        private void AnimateToCreateProject()
+        {
+            var highlightAnimation = new DoubleAnimation(213.7, 413.7, new Duration(TimeSpan.FromSeconds(0.2)));
+            highlightAnimation.EasingFunction = _easing;
+            highlightAnimation.Completed += (s, e) =>
+            {
+                var animation = new ThicknessAnimation(new Thickness(0), new Thickness(-1600, 0, 0, 0), new Duration(TimeSpan.FromSeconds(0.5)));
+                browser.BeginAnimation(MarginProperty, animation);
+            };
+            highlightRect.BeginAnimation(Canvas.LeftProperty, highlightAnimation);
+        }
+        
+
+        private void AnimateToOpenProject()
+        {
+            var highlightAnimation = new DoubleAnimation(413.7, 213.7, new Duration(TimeSpan.FromSeconds(0.2)));
+            highlightAnimation.EasingFunction = _easing;
+            highlightAnimation.Completed += (s, e) =>
+            {
+                var animation = new ThicknessAnimation(new Thickness(-1600, 0, 0, 0), new Thickness(0), new Duration(TimeSpan.FromSeconds(0.5)));
+                browser.BeginAnimation(MarginProperty, animation);
+            };
+            highlightRect.BeginAnimation(Canvas.LeftProperty, highlightAnimation);
         }
     }
 }

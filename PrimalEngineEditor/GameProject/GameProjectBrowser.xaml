@@ -50,15 +50,55 @@
             <RowDefinition/>
 
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20">
-            <ToggleButton Content="OPEN PROJECT" x:Name="openProjectButton"  FontSize="30"
+        <Canvas x:Name="canvas">
+            <Rectangle Width="{Binding Path=ActualWidth, ElementName=openProjectButton}" Height="{Binding Path=ActualHeight,ElementName=canvas}"
+                       x:Name="highlightRect" Canvas.Left="213.7" Opacity="0.3">
+                <Rectangle.Effect>
+                    <BlurEffect  Radius="10" KernelType="Gaussian"/>
+                </Rectangle.Effect>
+                <Rectangle.Fill>
+                    <RadialGradientBrush GradientOrigin="0.5,1" Center="0.5,1" RadiusY="2">
+                        <RadialGradientBrush.GradientStops>
+                            <GradientStop Color="White" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush.GradientStops>
+                    </RadialGradientBrush>
+                </Rectangle.Fill>
+                <Rectangle.OpacityMask>
+                    <RadialGradientBrush GradientOrigin="0.5,1" Center="0.5,1" RadiusY="0.5">
+                        <RadialGradientBrush.GradientStops>
+                            <GradientStop Color="White" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush.GradientStops>
+                    </RadialGradientBrush>
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </Canvas>
+        <Rectangle Height="2" VerticalAlignment="Bottom" Margin="40,0">
+            <Rectangle.Fill>
+                <LinearGradientBrush>
+                    <LinearGradientBrush.GradientStops>
+                        <GradientStop Color="Transparent"  Offset="0"/>
+                        <GradientStop Color="{DynamicResource Editor.Disabled.FontColor}"  Offset="0.33"/>
+                        <GradientStop Color="{DynamicResource Editor.Disabled.FontColor}"  Offset="0.66"/>
+                        <GradientStop Color="Transparent"  Offset="1"/>
+                      
+                    </LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <ToggleButton Content="OPEN PROJECT" x:Name="openProjectButton" Margin="10,20,0,20"
                           Click="OnToggleButton_Click" IsChecked="True"/>
-            <ToggleButton Content="CREATE PROJECT" x:Name="newProjectButton" FontSize="30" Margin="30,0,0,0"
+            <ToggleButton Content="CREATE PROJECT" x:Name="newProjectButton" Margin="40,20,0,20"
                           Click="OnToggleButton_Click" IsChecked="False"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1" x:Name="browser">
+            <StackPanel.Effect>
+                <DropShadowEffect Opacity="0.6" BlurRadius="15" ShadowDepth="2"/>
+            </StackPanel.Effect>
             <local:OpenProjectWindow x:Name="openProjectWindow"/>
-            <local:NewProjectWindow  x:Name="newProjectWindow"/>
+            <local:NewProjectWindow  x:Name="newProjectWindow" Margin="800,0,0,0"/>
         </StackPanel>
 
 
