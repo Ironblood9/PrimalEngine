@@ -31,7 +31,7 @@
                             <StackPanel Width="180">
                                 <StackPanel Orientation="Horizontal" >
                                     <Image Source="{Binding Icon}" Margin="0,0,7,0"/>
-                                    <TextBlock Text="{Binding ProjectName}" FontSize="24" FontFamily="Bahnschrift condensed" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding ProjectName}" FontSize="20" FontFamily="Bahnschrift condensed" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <TextBlock Text="{Binding ProjectPath}"  FontSize="8" TextTrimming="WordEllipsis"/>
                                 <TextBlock Text="{Binding Date}" FontSize="8"/>

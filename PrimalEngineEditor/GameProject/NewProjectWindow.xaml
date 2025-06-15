@@ -21,7 +21,7 @@
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" >
                             <Image Source="{Binding Icon}" Margin="0,0,7,0"/>
-                            <TextBlock Text="{Binding ProjectType}"/>
+                                <TextBlock Text="{Binding ProjectType}"  FontSize="18" FontFamily="Bahnschrift condensed" VerticalAlignment="Center"/>
                   
                         </StackPanel>
                         

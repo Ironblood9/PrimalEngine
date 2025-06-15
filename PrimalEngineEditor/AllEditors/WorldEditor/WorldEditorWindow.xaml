@@ -35,8 +35,8 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
                 <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch"
-                          VerticalAlignment="Top"/>
-                <TabControl Grid.Row="1">
+                          VerticalAlignment="Top" Background="Transparent"/>
+                <TabControl Grid.Row="1" Background="{DynamicResource Editor.Window.GrayBrush2}" Margin="0,5,0,0">
                     <TabItem Header="History">
                         <utl:UndoRedoWindow DataContext="{Binding UndoRedo}"  />
                         
@@ -49,7 +49,7 @@
                 
             </Grid>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left" 
-                      VerticalAlignment="Stretch"/>
+                      VerticalAlignment="Stretch" Background="Transparent"/>
         <Grid Grid.Column="1" Margin="5,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -57,9 +57,9 @@
 
             </Grid.RowDefinitions>
             <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch"
-                          VerticalAlignment="Top"/>
-            <local:ProjectLayoutWindow/>
-                <local:GameEntityWindow Grid.Row="1"/>
+                          VerticalAlignment="Top" Background="Transparent"/>
+            <local:ProjectLayoutWindow Background="{DynamicResource Editor.Window.GrayBrush3}"/>
+                <local:GameEntityWindow Grid.Row="1" Background="{DynamicResource Editor.Window.GrayBrush3}" Margin="0,5,0,0"/>
             </Grid>
        </Grid>
     </Grid>

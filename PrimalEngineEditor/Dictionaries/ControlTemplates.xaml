@@ -112,8 +112,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style TargetType="{x:Type ListBoxItem}" x:Key="ListBoxItemStyle">
-        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Padding" Value="4,2,0,2" />
         <Setter Property="HorizontalContentAlignment" 
                   Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
@@ -183,7 +183,7 @@
 
 
     <Style TargetType="{x:Type ListBox}">
-        <Setter Property="ItemContainerStyle"  Value="{DynamicResource ListBoxItemStyle}"/>
+        <Setter Property="ItemContainerStyle"  Value="{StaticResource ListBoxItemStyle}"/>
         <Setter Property="Background" Value="{DynamicResource Editor.Window.GrayBrush2}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Editor.Window.GrayBrush4}"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -197,8 +197,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBox}">
-                    <Border x:Name="Bd" Background="{TemplateBinding Background}" 
-                              BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="1" SnapsToDevicePixels="true">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}"
+                              BorderBrush="{TemplateBinding BorderBrush}"  Padding="1" SnapsToDevicePixels="true">
                         <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </ScrollViewer>
@@ -216,7 +216,7 @@
                                 <Condition Property="Selector.IsSelectionActive" Value="False"/>
                                 <Condition Property="IsMouseOver" Value="True"/>
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="Bd" Value="{DynamicResource Editor.Selected.BackGroundBrush}"/>
+                            <Setter Property="BorderBrush" TargetName="Bd" Value="{DynamicResource Editor.Selected.BackGroundBrush}"/>
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
