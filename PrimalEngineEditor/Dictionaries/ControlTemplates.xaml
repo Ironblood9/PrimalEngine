@@ -10,6 +10,7 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
     </Style>
 
+
     <Style   TargetType="{x:Type TextBox}" x:Key="TextBoxStyle">
         <Setter Property="Foreground" Value="{DynamicResource Editor.FontBrush}"/>
         <Setter Property="Background" Value="{DynamicResource Editor.Window.GrayBrush2}"/>
