@@ -157,7 +157,27 @@ namespace PrimalEngineEditor.Components
 
         public List<GameEntity> SelectedEntities { get; }
 
-        
+        public T GetMSComponent<T>() where T : IMSComponent
+        {
+            return (T)Components.FirstOrDefault(x => x.GetType() == typeof(T));
+        }
+
+
+        private void MakeComponentsList()
+        {
+            _components.Clear();
+            var FirstEntity = SelectedEntities.FirstOrDefault();
+            if (FirstEntity == null) return;
+            foreach (var component in FirstEntity.Components)
+            {
+                var type = component.GetType();
+                if(!SelectedEntities.Skip(1).Any(entity => entity.GetComponent(type)== null))
+                {
+                    Debug.Assert(Components.FirstOrDefault(x => x.GetType() == type) == null);
+                    _components.Add(component.GetMSComponent(this));
+                }
+            }
+        }
 
         public static float? GetMixedValue<T>(List<T>objects, Func<T, float> getProperty)
         {
@@ -202,8 +222,11 @@ namespace PrimalEngineEditor.Components
         {
             _enableUpdates = false;
             UpdateMSGameEntity();
+            MakeComponentsList();
             _enableUpdates = true;
         }
+
+      
 
         public MSEntity(List<GameEntity> entities)
         {

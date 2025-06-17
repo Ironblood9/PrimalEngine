@@ -13,9 +13,8 @@ namespace PrimalEngineEditor.Components
     class Transform : Component
     {
         public Transform(GameEntity owner) : base(owner)
-        {
-        }
-
+        {}
+        public override IMSComponent GetMSComponent(MSEntity msEntity) => new MSTransform(msEntity);
         private Vector3 _position;
         [DataMember]
         public Vector3 Position
@@ -210,12 +209,12 @@ namespace PrimalEngineEditor.Components
                 case nameof(RotationX):
                 case nameof(RotationY):
                 case nameof(RotationZ):
-                    SelectedComponents.ForEach(c => c.Rotation = new Vector3(_positionX ?? c.Rotation.X, _positionY ?? c.Rotation.Y, _positionZ ?? c.Rotation.Z));
+                    SelectedComponents.ForEach(c => c.Rotation = new Vector3(_rotationX ?? c.Rotation.X, _rotationY ?? c.Rotation.Y, _rotationZ ?? c.Rotation.Z));
                     return true;
                 case nameof(ScaleX):
                 case nameof(ScaleY):
                 case nameof(ScaleZ):
-                    SelectedComponents.ForEach(c => c.Scale = new Vector3(_positionX ?? c.Scale.X, _positionY ?? c.Scale.Y, _positionZ ?? c.Scale.Z));
+                    SelectedComponents.ForEach(c => c.Scale = new Vector3(_scaleX ?? c.Scale.X, _scaleY ?? c.Scale.Y, _scaleZ ?? c.Scale.Z));
                     return true;
             }
             return false;

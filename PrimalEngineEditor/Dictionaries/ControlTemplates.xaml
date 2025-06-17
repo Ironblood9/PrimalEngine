@@ -445,7 +445,7 @@
                             <Setter Property="Visibility" TargetName="PART_textBlock" Value="Collapsed"/>
                         </DataTrigger>
                         <DataTrigger  Binding="{Binding Value, RelativeSource={RelativeSource Self}}" Value="{x:Null}">
-                            <Setter Property="Background" TargetName="PART_textBlock" Value="{StaticResource Editor.Disabled.FontBrush}"/>
+                            <Setter Property="Background" TargetName="PART_textBlock" Value="{DynamicResource Editor.Disabled.FontBrush}"/>
                             <Setter Property="ToolTip" TargetName="PART_textBlock" Value="Mixed values"/>
                             <Setter Property="MinWidth" TargetName="PART_textBlock" Value="20"/>
                         </DataTrigger>
@@ -582,7 +582,7 @@
                             <Setter Property="Visibility" TargetName="PART_textBlock" Value="Collapsed"/>
                         </DataTrigger>
                         <DataTrigger  Binding="{Binding Value, RelativeSource={RelativeSource Self}}" Value="{x:Null}">
-                            <Setter Property="Background" TargetName="PART_textBlock" Value="{StaticResource Editor.Disabled.FontBrush}"/>
+                            <Setter Property="Background" TargetName="PART_textBlock" Value="{DynamicResource Editor.Disabled.FontBrush}"/>
                             <Setter Property="ToolTip" TargetName="PART_textBlock" Value="Mixed values"/>
                             <Setter Property="MinWidth" TargetName="PART_textBlock" Value="20"/>
                         </DataTrigger>

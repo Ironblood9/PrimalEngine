@@ -12,6 +12,7 @@ namespace PrimalEngineEditor.Components
     [DataContract]
     abstract class Component:ViewModelBase
     {
+        public abstract IMSComponent GetMSComponent(MSEntity msEntity);
         [DataMember]
         public GameEntity Owner { get; private set; }
         public Component(GameEntity owner)
