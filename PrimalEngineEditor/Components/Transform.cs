@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PrimalEngineEditor.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -56,6 +57,190 @@ namespace PrimalEngineEditor.Components
                     OnPropertyChanged(nameof(Scale));
                 }
             }
+        }
+    }
+
+    sealed class MSTransform : MSComponent<Transform>
+    {
+        private float? _positionX;
+        public float? PositionX
+        {
+            get => _positionX;
+            set
+            {
+                if (!_positionX.IsTheSameAs(value))
+                {
+                    _positionX = value;
+                    OnPropertyChanged(nameof(PositionX));
+                }
+            }
+        }
+
+
+        private float? _positionY;
+        public float? PositionY
+        {
+            get => _positionY;
+            set
+            {
+                if (!_positionY.IsTheSameAs(value))
+                {
+                    _positionY = value;
+                    OnPropertyChanged(nameof(PositionY));
+                }
+            }
+        }
+
+
+        private float? _positionZ;
+        public float? PositionZ
+        {
+            get => _positionZ;
+            set
+            {
+                if (!_positionZ.IsTheSameAs(value))
+                {
+                    _positionZ = value;
+                    OnPropertyChanged(nameof(PositionZ));
+                }
+            }
+        }
+
+
+        private float? _rotationX;
+        public float ?RotationX
+        {
+            get => _rotationX;
+            set
+            {
+                if (!_rotationX.IsTheSameAs(value))
+                {
+                    _rotationX = value;
+                    OnPropertyChanged(nameof(RotationX));
+                }
+            }
+        }
+                     
+                     
+        private float? _rotationY;
+        public float ?RotationY
+        {
+            get => _rotationY;
+            set
+            {
+                if (!_rotationY.IsTheSameAs(value))
+                {
+                    _rotationY = value;
+                    OnPropertyChanged(nameof(RotationY));
+                }
+            }
+        }
+                     
+                     
+        private float? _rotationZ;
+        public float ?RotationZ
+        {
+            get => _rotationZ;
+            set
+            {
+                if (!_rotationZ.IsTheSameAs(value))
+                {
+                    _rotationZ = value;
+                    OnPropertyChanged(nameof(RotationZ));
+                }
+            }
+        }
+                     
+                     
+        private float? _scaleX;
+        public float ?ScaleX
+        {
+            get => _scaleX;
+            set
+            {
+                if (!_scaleX.IsTheSameAs(value))
+                {
+                    _scaleX = value;
+                    OnPropertyChanged(nameof(ScaleX));
+                }
+            }
+        }
+                     
+                     
+        private float? _scaleY;
+        public float ?ScaleY
+        {
+            get => _scaleY;
+            set
+            {
+                if (!_scaleY.IsTheSameAs(value))
+                {
+                    _scaleY= value;
+                    OnPropertyChanged(nameof(ScaleY));
+                }
+            }
+        }
+                     
+                     
+        private float? _scaleZ;
+        public float ?ScaleZ
+        {
+            get => _scaleZ;
+            set
+            {
+                if (!_scaleZ.IsTheSameAs(value))
+                {
+                    _scaleZ= value;
+                    OnPropertyChanged(nameof(ScaleZ));
+                }
+            }
+        }
+
+
+        protected override bool UpdateComponents(string propertyName)
+        {
+            switch(propertyName)
+            {
+                case nameof(PositionX):
+                case nameof(PositionY):
+                case nameof(PositionZ):
+                    SelectedComponents.ForEach(c => c.Position = new Vector3(_positionX ?? c.Position.X, _positionY ?? c.Position.Y, _positionZ ?? c.Position.Z));
+                    return true;
+
+                case nameof(RotationX):
+                case nameof(RotationY):
+                case nameof(RotationZ):
+                    SelectedComponents.ForEach(c => c.Rotation = new Vector3(_positionX ?? c.Rotation.X, _positionY ?? c.Rotation.Y, _positionZ ?? c.Rotation.Z));
+                    return true;
+                case nameof(ScaleX):
+                case nameof(ScaleY):
+                case nameof(ScaleZ):
+                    SelectedComponents.ForEach(c => c.Scale = new Vector3(_positionX ?? c.Scale.X, _positionY ?? c.Scale.Y, _positionZ ?? c.Scale.Z));
+                    return true;
+            }
+            return false;
+        }
+
+        protected override bool UpdateMSComponents()
+        {
+            PositionX = MSEntity.GetMixedValue(SelectedComponents, new Func<Transform, float>(x => x.Position.X));
+            PositionY = MSEntity.GetMixedValue(SelectedComponents, new Func<Transform, float>(x => x.Position.Y));
+            PositionZ = MSEntity.GetMixedValue(SelectedComponents, new Func<Transform, float>(x => x.Position.Z));
+
+            RotationX = MSEntity.GetMixedValue(SelectedComponents, new Func<Transform, float>(x => x.Rotation.X));
+            RotationY = MSEntity.GetMixedValue(SelectedComponents, new Func<Transform, float>(x => x.Rotation.Y));
+            RotationZ = MSEntity.GetMixedValue(SelectedComponents, new Func<Transform, float>(x => x.Rotation.Z));
+
+            ScaleX = MSEntity.GetMixedValue(SelectedComponents, new Func<Transform, float>(x => x.Scale.X));
+            ScaleY = MSEntity.GetMixedValue(SelectedComponents, new Func<Transform, float>(x => x.Scale.Y));
+            ScaleZ = MSEntity.GetMixedValue(SelectedComponents, new Func<Transform, float>(x => x.Scale.Z));
+
+            return true;
+        }
+
+        public MSTransform(MSEntity msEntity) : base(msEntity)
+        {
+            Refresh();
         }
     }
 }

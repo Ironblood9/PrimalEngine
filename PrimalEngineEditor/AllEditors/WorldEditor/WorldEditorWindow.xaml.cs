@@ -32,7 +32,6 @@ namespace PrimalEngineEditor.AllEditors
         {
             Loaded -= OnWorldEditorWindowLoaded;
             Focus();
-            ((INotifyCollectionChanged)NewProjectClass2.UndoRedo.UndoList).CollectionChanged += (s, e) => Focus();
         }
 
         private void UndoRedoWindow_Loaded(object sender, RoutedEventArgs e)

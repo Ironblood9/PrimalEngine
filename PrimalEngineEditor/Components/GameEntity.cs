@@ -159,43 +159,22 @@ namespace PrimalEngineEditor.Components
 
         
 
-        public static float? GetMixedValue(List<GameEntity> entities, Func<GameEntity, float> getProperty)
+        public static float? GetMixedValue<T>(List<T>objects, Func<T, float> getProperty)
         {
-            var value = getProperty(entities.First());
-            foreach (var entity in entities.Skip(1))
-            {
-                if (!value.IsTheSameAs(getProperty(entity)))
-                {
-                    return null;
-                }
-            }
-            return value;
+            var value = getProperty(objects.First());
+            return objects.Skip(1).Any(x => !getProperty(x).IsTheSameAs(value)) ? (float?)null : value;
         }
 
-        public static bool? GetMixedValue(List<GameEntity> entities, Func<GameEntity, bool> getProperty)
+        public static bool? GetMixedValue<T>(List<T> objects, Func<T, bool> getProperty)
         {
-            var value = getProperty(entities.First());
-            foreach (var entity in entities.Skip(1))
-            {
-                if (value!=getProperty(entity))
-                {
-                    return null;
-                }
-            }
-            return value;
+            var value = getProperty(objects.First());
+            return objects.Skip(1).Any(x => value!=getProperty(x)) ? (bool?)null : value;
         }
 
-        public static string GetMixedValue(List<GameEntity> entities, Func<GameEntity, string> getProperty)
+        public static string GetMixedValue<T>(List<T> objects, Func<T, string> getProperty)
         {
-            var value = getProperty(entities.First());
-            foreach (var entity in entities.Skip(1))
-            {
-                if (value != getProperty(entity))
-                {
-                    return null;
-                }
-            }
-            return value;
+            var value = getProperty(objects.First());
+            return objects.Skip(1).Any(x => value != getProperty(x)) ? null : value;
         }
 
         protected virtual bool UpdateGameEntities(string propertyName)
