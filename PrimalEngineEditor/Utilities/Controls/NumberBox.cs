@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +63,9 @@ namespace PrimalEngineEditor.Utilities.Controls
                     else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)) _multiplier = 0.1;
                     else _multiplier = 0.1;
                         var newValue = _originalValue + (d * _multiplier *  Multiplier);
-                    Value = newValue.ToString("0.#####");
+
+                    Value = newValue.ToString("0.#####", CultureInfo.InvariantCulture);
+
                     _valueChanged = true;
                 }
             }
@@ -91,8 +94,9 @@ namespace PrimalEngineEditor.Utilities.Controls
             _captured = true;
             _valueChanged = false;
             e.Handled = true;
-
+            
             _mouseXStart = e.GetPosition(this).X;
+            Focus();
         }
     }
 }
