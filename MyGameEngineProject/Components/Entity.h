@@ -17,7 +17,7 @@ namespace game_entity {
 	   transform::init_info* transform{ nullptr };
 	   script::init_info* script{ nullptr };
 	};
-	entity create(const entity_info& info);
+	entity create(entity_info info);
 	void remove(entity_id id);
 	bool is_alive(entity_id id);
 }

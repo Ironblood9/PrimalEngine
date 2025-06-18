@@ -15,7 +15,7 @@ namespace primal::game_entity
 
 	}// anonymous namespace
 	entity
-	create(const entity_info& info)
+	create(entity_info info)
 	{
 	
 		assert(info.transform);// all game entities must have a transform componant

@@ -9,6 +9,6 @@ namespace primal::script{
 	{
 		detail::script_creator  script_creator;
 	};
-	component create(const init_info& info, game_entity::entity entity);
+	component create( init_info info, game_entity::entity entity);
 	void remove(component c);
 }
