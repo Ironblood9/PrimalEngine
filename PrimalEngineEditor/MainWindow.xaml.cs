@@ -1,4 +1,5 @@
 ﻿using PrimalEngineEditor.GameProject;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PrimalEngineEditor;
 
@@ -35,8 +35,33 @@ public partial class MainWindow : Window
     private void OnMainWindow_Loaded(object sender,RoutedEventArgs e)
     {
         Loaded -= OnMainWindow_Loaded;
+        GetAgilisPath();
         OpenProjectBrowserDialog();
     }
+
+    private void GetAgilisPath()
+    {
+        var agilisPath = Environment.GetEnvironmentVariable("AGILIS_PATH", EnvironmentVariableTarget.User);
+        if(agilisPath==null || !Directory.Exists(Path.Combine(agilisPath, @"MyGameEngineProject\AgilisAPI")))
+        {
+            var dlg = new AgilisPathDialog();
+            if(dlg.ShowDialog()==true)
+            {
+                AgilisPath = dlg.AgilisPath;
+                Environment.SetEnvironmentVariable("AGILIS_PATH", AgilisPath.ToUpper(), EnvironmentVariableTarget.User);
+            }
+            else
+            {
+                Application.Current.Shutdown();
+            }
+        }
+        else
+        {
+            AgilisPath = agilisPath;
+        }
+
+    }
+
     private void OpenProjectBrowserDialog()
     {
         var projectBrowser = new GameProjectBrowser();

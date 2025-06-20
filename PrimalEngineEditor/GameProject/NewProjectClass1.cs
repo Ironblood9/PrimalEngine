@@ -189,8 +189,8 @@ namespace PrimalEngineEditor.GameProject
 
         private void CreateMSVCSolution(ProjectTemplate template, string projectPath)
         {
-            Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCSolution.txt")));
-            Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCProject.txt")));
+            Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCSolution")));
+            Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCProject")));
 
             var agilisAPIPath = Path.Combine(MainWindow.AgilisPath, @"MyGameEngineProject\AgilisAPI\");
             Debug.Assert(Directory.Exists(agilisAPIPath));
@@ -200,11 +200,11 @@ namespace PrimalEngineEditor.GameProject
             var _2 = agilisAPIPath;
             var _3 = MainWindow.AgilisPath;
 
-            var solution = File.ReadAllText(Path.Combine(template.TemplatePath, "MSVCSolution.txt"));
+            var solution = File.ReadAllText(Path.Combine(template.TemplatePath, "MSVCSolution"));
             solution = string.Format(solution, _0, _1, "{" + Guid.NewGuid().ToString().ToUpper() + "}");
             File.WriteAllText(Path.GetFullPath(Path.Combine(projectPath, $"{_0}.sln")), solution);
 
-            var project = File.ReadAllText(Path.Combine(template.TemplatePath, "MSVCProject.txt"));
+            var project = File.ReadAllText(Path.Combine(template.TemplatePath, "MSVCProject"));
             project = string.Format(project, _0, _1, _2, _3);
             File.WriteAllText(Path.GetFullPath(Path.Combine(projectPath, $@"GameCode\{_0}.vcxproj")), project);
         }
