@@ -33,7 +33,7 @@ namespace PrimalEngineEditor.GameProject
         public string IconPath { get; set; }
         public string ScreenshotPath { get; set; }
         public string ProjectFilePath { get; set; }
-
+        public string TemplatePath { get;  set; }
     }
     class NewProjectClass1 : ViewModelBase
     {
@@ -174,7 +174,7 @@ namespace PrimalEngineEditor.GameProject
                 var projectPath = Path.GetFullPath(Path.Combine(path, $"{ProjectName}{NewProjectClass2.Extension}"));
                 File.WriteAllText(projectPath, projectXml);
 
-
+                CreateMSVCSolution(template, path);
 
                 return path;
             }
@@ -187,9 +187,27 @@ namespace PrimalEngineEditor.GameProject
             }
         }
 
+        private void CreateMSVCSolution(ProjectTemplate template, string projectPath)
+        {
+            Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCSolution.txt")));
+            Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCProject.txt")));
 
+            var agilisAPIPath = Path.Combine(MainWindow.AgilisPath, @"MyGameEngineProject\AgilisAPI\");
+            Debug.Assert(Directory.Exists(agilisAPIPath));
 
+            var _0 = ProjectName;
+            var _1 = "{" + Guid.NewGuid().ToString().ToUpper() + "}";
+            var _2 = agilisAPIPath;
+            var _3 = MainWindow.AgilisPath;
 
+            var solution = File.ReadAllText(Path.Combine(template.TemplatePath, "MSVCSolution.txt"));
+            solution = string.Format(solution, _0, _1, "{" + Guid.NewGuid().ToString().ToUpper() + "}");
+            File.WriteAllText(Path.GetFullPath(Path.Combine(projectPath, $"{_0}.sln")), solution);
+
+            var project = File.ReadAllText(Path.Combine(template.TemplatePath, "MSVCProject.txt"));
+            project = string.Format(project, _0, _1, _2, _3);
+            File.WriteAllText(Path.GetFullPath(Path.Combine(projectPath, $@"GameCode\{_0}.vcxproj")), project);
+        }
 
         public NewProjectClass1()
         {
@@ -202,12 +220,16 @@ namespace PrimalEngineEditor.GameProject
                 foreach (var file in templatesFiles)
                 {
                    var template= Serializer.FromFile<ProjectTemplate>(file);
-                    _projectTemplates.Add(template);
                     template.IconPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Icon.png"));
                     template.Icon = File.ReadAllBytes(template.IconPath);
                     template.ScreenshotPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Screenshot.png"));
                     template.Screenshot = File.ReadAllBytes(template.ScreenshotPath);
                     template.ProjectFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file),template.ProjectFile));
+                    template.TemplatePath = Path.GetDirectoryName(file);
+
+
+                    _projectTemplates.Add(template);
+
                 }
                 ValidateProjectPath();
             }

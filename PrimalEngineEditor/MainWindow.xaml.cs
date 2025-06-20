@@ -24,6 +24,8 @@ public partial class MainWindow : Window
         Closing += OnMainWindow_Closing;
     }
 
+    public static string AgilisPath { get; private set; } = @"C:\Users\Msı\source\repos\PrimalEngine";
+
     private void OnMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
         Closing -= OnMainWindow_Closing;
