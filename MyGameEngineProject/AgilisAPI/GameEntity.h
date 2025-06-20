@@ -45,12 +45,23 @@ namespace primal
 	  namespace detail {
 		  using script_ptr = std::unique_ptr<entity_script>;
 		  using script_creator = script_ptr(*)(game_entity::entity entity);
+		  using string_hash = std::hash<std::string>;
 		  template<class script_class>
 		  script_ptr create_script(game_entity::entity entity)
 		  {
 			  assert(entity.is_valid());
 			  return std::make_unique<script_class>(entity);
 		  }
+		  u8 register_script(size_t, script_creator);
+
+               #define REGISTER_SCRIPT(TYPE)                                                \
+	           class TYPE;                                                                  \
+	           namespace {                                                                  \
+	               const u8 _reg##TYPE{                                                     \
+                      primal::script::detail::register_script(                              \
+			          primal::script::detail::string_hash()(#TYPE),                         \
+	                  &primal::script::detail::create_script<TYPE>)};						\
+	           }//anonymous
 	  }// namespace detail
   } //namespace script
 }
