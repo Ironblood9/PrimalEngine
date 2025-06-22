@@ -13,6 +13,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
 
@@ -26,35 +27,35 @@ namespace PrimalEngineEditor.GameDev
     {
         private static readonly string _cppCode= @"#include ""{0}.h""
 
-        namespace {1} {{
-	    REGISTER_SCRIPT({0});
-	    void {0}::begin_play()
-	    {{
+namespace {1} {{
+REGISTER_SCRIPT({0});
+void {0}::begin_play()
+{{
 
-	    }}
-        void {0}::update(float dt)
-	    {{
+}}
+void {0}::update(float dt)
+{{
 
-	    }}
+}}
 
-        }} // namespace {1}";
+}} // namespace {1}";
 
         private static readonly string _headerFileCode = @"#pragma once
 
-        namespace {1}
-        {{
-	    class {0} : public primal::script::entity_script
-	    {{
-	    public:
-		constexpr explicit {0}(primal::game_entity::entity entity)
-			:primal::script::entity_script{{entity}} {{}}
+namespace {1}
+{{
+class {0} : public primal::script::entity_script
+{{
+public:
+	constexpr explicit {0}(primal::game_entity::entity entity)
+		:primal::script::entity_script{{entity}} {{}}
+    void begin_play () override;
+	void update(float dt) override;
+private:
 
-        void begin_play () override;
-		void update(float dt) override;
-        private:
-	    }};
+}};
 	
-        }} // namespace {1}";
+}} // namespace {1}";
 
         public NewScriptDialog()
         {
@@ -88,7 +89,7 @@ namespace PrimalEngineEditor.GameDev
                 errorMessage = "Invalid character(s) used in script name.";
             }
 
-            if (string.IsNullOrEmpty(path))
+            else if (string.IsNullOrEmpty(path))
             {
                 errorMessage = "Please, select a valid script folder.";
 
@@ -138,6 +139,10 @@ namespace PrimalEngineEditor.GameDev
         {
             if (!Validate()) return;
             IsEnabled = false;
+            busyAnimation.Opacity = 0;
+            busyAnimation.Visibility = Visibility.Visible;
+            DoubleAnimation fadeIn = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500)));
+            busyAnimation.BeginAnimation(OpacityProperty, fadeIn);
 
             try
             {
@@ -152,6 +157,17 @@ namespace PrimalEngineEditor.GameDev
                 Debug.WriteLine(ex.Message);
                 Logger.Log(MessageType.Error, $"Failed to create script {scriptName.Text}");
                 
+            }
+            finally
+            {
+                DoubleAnimation fadeOut = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(200)));
+                fadeOut.Completed += (s, e) =>
+                {
+                    busyAnimation.Opacity = 0;
+                    busyAnimation.Visibility = Visibility.Hidden;
+                    Close();
+                };
+                busyAnimation.BeginAnimation(OpacityProperty, fadeOut);
             }
         }
 

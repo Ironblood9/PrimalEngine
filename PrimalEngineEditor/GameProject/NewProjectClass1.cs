@@ -170,7 +170,7 @@ namespace PrimalEngineEditor.GameProject
                 
 
                 var projectXml = File.ReadAllText(template.ProjectFilePath);
-                projectXml = string.Format(projectXml, ProjectName, ProjectPath);
+                projectXml = string.Format(projectXml, ProjectName, path);
                 var projectPath = Path.GetFullPath(Path.Combine(path, $"{ProjectName}{NewProjectClass2.Extension}"));
                 File.WriteAllText(projectPath, projectXml);
 
@@ -220,12 +220,12 @@ namespace PrimalEngineEditor.GameProject
                 foreach (var file in templatesFiles)
                 {
                    var template= Serializer.FromFile<ProjectTemplate>(file);
-                    template.IconPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Icon.png"));
-                    template.Icon = File.ReadAllBytes(template.IconPath);
-                    template.ScreenshotPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Screenshot.png"));
-                    template.Screenshot = File.ReadAllBytes(template.ScreenshotPath);
-                    template.ProjectFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file),template.ProjectFile));
                     template.TemplatePath = Path.GetDirectoryName(file);
+                    template.IconPath = Path.GetFullPath(Path.Combine(template.TemplatePath, "Icon.png"));
+                    template.Icon = File.ReadAllBytes(template.IconPath);
+                    template.ScreenshotPath = Path.GetFullPath(Path.Combine(template.TemplatePath, "Screenshot.png"));
+                    template.Screenshot = File.ReadAllBytes(template.ScreenshotPath);
+                    template.ProjectFilePath = Path.GetFullPath(Path.Combine(template.TemplatePath, template.ProjectFile));
 
 
                     _projectTemplates.Add(template);

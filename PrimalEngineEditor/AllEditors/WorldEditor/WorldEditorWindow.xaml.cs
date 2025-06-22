@@ -1,4 +1,5 @@
-﻿using PrimalEngineEditor.GameProject;
+﻿using PrimalEngineEditor.GameDev;
+using PrimalEngineEditor.GameProject;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -37,6 +38,11 @@ namespace PrimalEngineEditor.AllEditors
         private void UndoRedoWindow_Loaded(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void OnNewScript_Button_Click(object sender, RoutedEventArgs e)
+        {
+             new NewScriptDialog().ShowDialog();
         }
     }
 }
