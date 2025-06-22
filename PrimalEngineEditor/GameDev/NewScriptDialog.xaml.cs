@@ -1,5 +1,4 @@
-﻿
-using PrimalEngineEditor.GameProject;
+﻿using PrimalEngineEditor.GameProject;
 using PrimalEngineEditor.Utilities;
 using System;
 using System.Collections.Generic;
@@ -17,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 
+
 namespace PrimalEngineEditor.GameDev
 {
     /// <summary>
@@ -24,9 +24,52 @@ namespace PrimalEngineEditor.GameDev
     /// </summary>
     public partial class NewScriptDialog : Window
     {
+        private static readonly string _cppCode= @"#include ""{0}.h""
+
+        namespace {1} {{
+	    REGISTER_SCRIPT({0});
+	    void {0}::begin_play()
+	    {{
+
+	    }}
+        void {0}::update(float dt)
+	    {{
+
+	    }}
+
+        }} // namespace {1}";
+
+        private static readonly string _headerFileCode = @"#pragma once
+
+        namespace {1}
+        {{
+	    class {0} : public primal::script::entity_script
+	    {{
+	    public:
+		constexpr explicit {0}(primal::game_entity::entity entity)
+			:primal::script::entity_script{{entity}} {{}}
+
+        void begin_play () override;
+		void update(float dt) override;
+        private:
+	    }};
+	
+        }} // namespace {1}";
+
         public NewScriptDialog()
         {
             InitializeComponent();
+            Owner = Application.Current.MainWindow;
+            scriptPath.Text = @"GameCode\";
+
+        }
+        private static readonly string _namespace = GetNamespaceFromProjectName();
+
+        private static string GetNamespaceFromProjectName()
+        {
+            var projectName = NewProjectClass2.Current.Name;
+            projectName = projectName.Replace(' ', '_');
+            return projectName;
         }
 
         bool Validate()
@@ -98,6 +141,10 @@ namespace PrimalEngineEditor.GameDev
 
             try
             {
+                var name = scriptName.Text.Trim();
+                var path = Path.GetFullPath(Path.Combine(NewProjectClass2.Current.Path, scriptPath.Text.Trim()));
+                var solution = NewProjectClass2.Current.Solution;
+                var projectName = NewProjectClass2.Current.Name;
                 await Task.Run(() => CreateScript(name, path, solution, projectName));
             }
             catch (Exception ex)
@@ -115,9 +162,21 @@ namespace PrimalEngineEditor.GameDev
             var headerFile = Path.GetFullPath(Path.Combine(path, $"{name}.h"));
 
             using(var sw = File.CreateText(cpp))
-            { }
+            {
+                sw.Write(string.Format(_cppCode, name, _namespace));
+            }
             using (var sw = File.CreateText(headerFile))
-            { }
+            {
+                sw.Write(string.Format(_headerFileCode, name, _namespace));
+            }
+            string[] files = new string[] { cpp, headerFile };
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (!VisualStudio.AddFilesToSolution(solution, projectName, files)) System.Threading.Thread.Sleep(1000);
+                else break;
+            }
+           
         }
     }
 }
