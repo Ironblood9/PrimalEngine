@@ -14,6 +14,11 @@
     <Color x:Key="Editor.GreenColor">#ff90ee90</Color>
     <Color x:Key="Editor.BlueColor">#ff80deff</Color>
     <Color x:Key="Editor.OrangeColor">#ffffd067</Color>
+    <Color x:Key="Editor.DarkOrangeColor">#FF8A00</Color>
+    <Color x:Key="Editor.PinkColor">#FF2EAA</Color>
+    <Color x:Key="Editor.GojoColor">#8A2EFF</Color>
+    <Color x:Key="Editor.CyanColor">#00FFFF</Color>
+    <Color x:Key="Editor.FullyTransparentBlackColor">#00000000</Color>
     <Color x:Key="Editor.Selected.BackGroundColor">#ff3c67b6</Color>
     
     <SolidColorBrush Color="{DynamicResource Editor.Window.GrayColor1}" x:Key="Editor.Window.GrayBrush1"/>
