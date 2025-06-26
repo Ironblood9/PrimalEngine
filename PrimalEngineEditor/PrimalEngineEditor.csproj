@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <BaseOutputPath>C:\Users\Msı\source\repos\PrimalEngine\x64</BaseOutputPath>
+    <BaseOutputPath>C:\Users\Msı\source\repos\PrimalEngine\MyGameEngineProject</BaseOutputPath>
     <PackageOutputPath></PackageOutputPath>
     <Configurations>Debug;Release;DebugEditor;ReleaseEditor</Configurations>
     <Platforms>x64</Platforms>

@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\net8.0-windows\</OutDir>
+    <OutDir>..\MyGameEngineProject\x64\Debug\net8.0-windows</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugEditor|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\net8.0-windows\</OutDir>
+    <OutDir>..\MyGameEngineProject\x64\DebugEditor\net8.0-windows</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\net8.0-windows\</OutDir>
+    <OutDir>..\MyGameEngineProject\x64\Release\net8.0-windows</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseEditor|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\net8.0-windows\</OutDir>
+    <OutDir>..\MyGameEngineProject\x64\ReleaseEditor\net8.0-windows</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

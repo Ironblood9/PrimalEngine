@@ -90,16 +90,16 @@
   </ImportGroup>
   <!-- Output paths -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\net8.0-windows\</OutDir>
+    <OutDir>.\x64\Debug\net8.0-windows</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\Release\net8.0-windows\</OutDir>
+    <OutDir>.\x64\Release\net8.0-windows</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugEditor|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\DebugEditor\net8.0-windows\</OutDir>
+    <OutDir>.\x64\DebugEditor\net8.0-windows</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseEditor|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\ReleaseEditor\net8.0-windows\</OutDir>
+    <OutDir>.\x64\ReleaseEditor\net8.0-windows</OutDir>
   </PropertyGroup>
   <!-- Build settings per config -->
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

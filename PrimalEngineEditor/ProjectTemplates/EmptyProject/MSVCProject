@@ -76,7 +76,7 @@
   <!-- User Macros -->
   <PropertyGroup Label="UserMacros">
     <Primal_IncludePath>{2}</Primal_IncludePath>
-    <Primal_LibraryPath>C:\Users\Msı\source\repos\PrimalEngine\x64\$(Configuration)\net8.0-windows\</Primal_LibraryPath>
+   <Primal_LibraryPath>C:\Users\Msı\source\repos\PrimalEngine\MyGameEngineProject\x64\$(Configuration)\net8.0-windows\</Primal_LibraryPath>
   </PropertyGroup>
 
   <ItemGroup>

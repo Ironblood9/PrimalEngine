@@ -27,7 +27,7 @@ namespace PrimalEngineEditor.AgilisAPIStructs
 
 namespace PrimalEngineEditor.DllWrappers
 {
-   
+
 
     static class AgilisAPI
     {
@@ -49,7 +49,7 @@ namespace PrimalEngineEditor.DllWrappers
         }
         [DllImport(_dllName)]
         private static extern void RemoveGameEntity(int id);
-        public static void RemoveGameEntity(GameEntity  entity)
+        public static void RemoveGameEntity(GameEntity entity)
         {
             RemoveGameEntity(entity.EntityId);
         }
