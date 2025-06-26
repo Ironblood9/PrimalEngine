@@ -10,13 +10,23 @@
     <ErrorReport>prompt</ErrorReport>
     <BaseOutputPath>C:\Users\Msı\source\repos\PrimalEngine\x64</BaseOutputPath>
     <PackageOutputPath></PackageOutputPath>
+    <Configurations>Debug;Release;DebugEditor;ReleaseEditor</Configurations>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>True</Optimize>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <Optimize>True</Optimize>
+</PropertyGroup>
+
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugEditor|x64'">
+  <Optimize>True</Optimize>
+</PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Optimize>False</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseEditor|x64'">
     <Optimize>False</Optimize>
   </PropertyGroup>
 
