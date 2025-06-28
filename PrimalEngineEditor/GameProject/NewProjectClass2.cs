@@ -88,6 +88,48 @@ namespace PrimalEngineEditor.GameProject
         public ICommand SaveCommand { get; private set; }
         public ICommand BuildCommand { get; private set; }
 
+        private void SetCommands()
+        {
+            AddNewSceneCommand = new RelayCommand<object>(x =>
+            {
+                AddNewSceneInternal($" New Scene{_scenes.Count}");
+                var newScene = _scenes.Last();
+                var IndexScene = _scenes.Count - 1;
+
+                UndoRedo.Add(new UndoRedoActions(
+                    () => RemoveSceneInternal(newScene),
+                   () => _scenes.Insert(IndexScene, newScene),
+                   $"Add{newScene.Name}"
+                   ));
+            });
+
+
+
+            RemoveSceneCommand = new RelayCommand<Scene>(x =>
+            {
+                var IndexScene = _scenes.IndexOf(x);
+                RemoveSceneInternal(x);
+                UndoRedo.Add(new UndoRedoActions(
+                   () => _scenes.Insert(IndexScene, x),
+                   () => RemoveSceneInternal(x),
+                   $"Remove {x.Name}"));
+
+            }, x => !x.IsActive
+            );
+
+            UndoCommand = new RelayCommand<object>(x => UndoRedo.Undo(), x => UndoRedo.UndoList.Any());
+            RedoCommand = new RelayCommand<object>(x => UndoRedo.Redo(), x => UndoRedo.RedoList.Any());
+            SaveCommand = new RelayCommand<object>(x => Save(this));
+            BuildCommand = new RelayCommand<bool>(async x => await BuildGameCodeDll(x), x => !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
+
+            OnPropertyChanged(nameof(AddNewSceneCommand));
+            OnPropertyChanged(nameof(RemoveSceneCommand));
+            OnPropertyChanged(nameof(UndoCommand));
+            OnPropertyChanged(nameof(RedoCommand));
+            OnPropertyChanged(nameof(SaveCommand));
+            OnPropertyChanged(nameof(BuildCommand));
+        }
+
         private static string GetConfigurationName(BuildConfiguraiton config) => _buildConfigurationNames[(int)config];
 
         private void AddNewSceneInternal(string sceneName)
@@ -179,38 +221,9 @@ namespace PrimalEngineEditor.GameProject
             ActiveScene = Scenes.FirstOrDefault(x => x.IsActive);
 
             await BuildGameCodeDll(false);
-
-            AddNewSceneCommand = new RelayCommand<object>(x =>
-            {
-                AddNewSceneInternal($" New Scene{_scenes.Count}");
-                var newScene = _scenes.Last();
-                var IndexScene = _scenes.Count - 1;
-
-                UndoRedo.Add(new UndoRedoActions(
-                    () => RemoveSceneInternal(newScene),
-                   () => _scenes.Insert(IndexScene, newScene),
-                   $"Add{newScene.Name}"
-                   ));
-            });
+            SetCommands();
 
 
-
-            RemoveSceneCommand = new RelayCommand<Scene>(x =>
-            {
-                var IndexScene = _scenes.IndexOf(x);
-                RemoveSceneInternal(x);
-                UndoRedo.Add(new UndoRedoActions(
-                   () => _scenes.Insert(IndexScene, x),
-                   () => RemoveSceneInternal(x),
-                   $"Remove {x.Name}"));
-
-            }, x => !x.IsActive
-            );
-
-            UndoCommand = new RelayCommand<object>(x => UndoRedo.Undo(), x => UndoRedo.UndoList.Any());
-            RedoCommand = new RelayCommand<object>(x => UndoRedo.Redo(), x => UndoRedo.RedoList.Any());
-            SaveCommand = new RelayCommand<object>(x => Save(this));
-            BuildCommand = new RelayCommand<bool>( async x =>  await BuildGameCodeDll(x), x => !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
         }
         public NewProjectClass2(string name, string path)
         {
