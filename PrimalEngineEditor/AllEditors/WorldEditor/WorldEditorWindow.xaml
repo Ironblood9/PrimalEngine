@@ -62,17 +62,17 @@
                 </Border>
                 <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch"
                           VerticalAlignment="Top" Background="Transparent"/>
-                <TabControl Grid.Row="1" Background="{DynamicResource Editor.Window.GrayBrush2}" Margin="0,5,0,0">
-                    <TabItem Header="History">
-                        <utl:UndoRedoWindow DataContext="{Binding UndoRedo}"  />
+                <Grid Grid.Row="1" Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <utl:UndoRedoWindow DataContext="{Binding UndoRedo}" Grid.Column="0" Background="{DynamicResource Editor.Window.GrayBrush2 }"/>
 
-                    </TabItem>
-                    <TabItem Header="Log">
-                        <utl:LoggerWindow/>
-                    </TabItem>
-
-                </TabControl>
-
+                    <GridSplitter  Grid.Column="1" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Left"
+                                      Background="Transparent"/>
+                        <utl:LoggerWindow Grid.Column="1" Margin="5,0,0,0" />
+                </Grid>
             </Grid>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left" 
                       VerticalAlignment="Stretch" Background="Transparent"/>

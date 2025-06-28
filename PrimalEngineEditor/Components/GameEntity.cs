@@ -44,12 +44,12 @@ namespace PrimalEngineEditor.Components
                     if (_isActive)
                     {
 
-                        EntityId = AgilisAPI.CreateGameEntity(this);
+                        EntityId = AgilisAPI.EntityAPI.CreateGameEntity(this);
                         Debug.Assert(ID.IsValid(_entityId));
                     }
                     else if(ID.IsValid(EntityId))
                     {
-                        AgilisAPI.RemoveGameEntity(this);
+                        AgilisAPI.EntityAPI.RemoveGameEntity(this);
                         EntityId = ID.INVALID_ID;
                     }
                     OnPropertyChanged(nameof(IsActive));

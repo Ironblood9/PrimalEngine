@@ -1,4 +1,5 @@
-﻿using PrimalEngineEditor.GameDev;
+﻿using PrimalEngineEditor.DllWrappers;
+using PrimalEngineEditor.GameDev;
 using PrimalEngineEditor.Utilities;
 using System;
 using System.Collections.Generic;
@@ -127,12 +128,12 @@ namespace PrimalEngineEditor.GameProject
             return Serializer.FromFile<NewProjectClass2>(file);
         }
 
-        private void BuildGameCodeDll(bool showWindow = true)
+        private async Task BuildGameCodeDll(bool showWindow = true)
         {
             try
             {
                 UnloadGameCodeDll();
-                VisualStudio.BuildSolution(this, GetConfigurationName(DllBuildConfig), showWindow);
+                await Task.Run( () => VisualStudio.BuildSolution(this, GetConfigurationName(DllBuildConfig), showWindow));
                 if (VisualStudio.BuildSucceeded)
                 {
                     LoadGameCodeDll();
@@ -147,16 +148,28 @@ namespace PrimalEngineEditor.GameProject
 
         private void LoadGameCodeDll()
         {
-
+            var configName = GetConfigurationName(DllBuildConfig);
+            var dll = $@"{Path}x64\{configName}\{Name}.dll";
+            if(File.Exists(dll) && AgilisAPI.LoadGameCodeDll(dll) !=0)
+            {
+                Logger.Log(MessageType.Info, "Game code Dll loaded successfully.");
+            }
+            else
+            {
+                Logger.Log(MessageType.Warning, "Failed to load game code Dll file. Try to build the project first.");
+            }
         }
 
         private void UnloadGameCodeDll()
         {
-
+            if(AgilisAPI.UnloadGameCodeDll() !=0)
+            {
+                Logger.Log(MessageType.Info, "Game code Dll unloaded");
+            }
         }
 
         [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        private async void OnDeserialized(StreamingContext context)
         {
             if (_scenes != null)
             {
@@ -164,6 +177,8 @@ namespace PrimalEngineEditor.GameProject
                 OnPropertyChanged(nameof(Scenes));
             }
             ActiveScene = Scenes.FirstOrDefault(x => x.IsActive);
+
+            await BuildGameCodeDll(false);
 
             AddNewSceneCommand = new RelayCommand<object>(x =>
             {
@@ -195,7 +210,7 @@ namespace PrimalEngineEditor.GameProject
             UndoCommand = new RelayCommand<object>(x => UndoRedo.Undo(), x => UndoRedo.UndoList.Any());
             RedoCommand = new RelayCommand<object>(x => UndoRedo.Redo(), x => UndoRedo.RedoList.Any());
             SaveCommand = new RelayCommand<object>(x => Save(this));
-            BuildCommand = new RelayCommand<bool>(x => BuildGameCodeDll(x), x => !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
+            BuildCommand = new RelayCommand<bool>( async x =>  await BuildGameCodeDll(x), x => !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
         }
         public NewProjectClass2(string name, string path)
         {

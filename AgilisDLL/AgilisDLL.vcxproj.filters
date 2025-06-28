@@ -3,5 +3,9 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="AgilisAPI.cpp" />
+    <ClCompile Include="EntityAPI.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommonDll.h" />
   </ItemGroup>
 </Project>
