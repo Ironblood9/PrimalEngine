@@ -44,6 +44,11 @@ namespace PrimalEngineEditor.AllEditors
         {
              new NewScriptDialog().ShowDialog();
         }
+
+        private void LoggerWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
 
