@@ -58,6 +58,20 @@ namespace PrimalEngineEditor.GameProject
         public BuildConfiguraiton StandAloneBuildConfig => BuildConfig == 0 ? BuildConfiguraiton.Debug : BuildConfiguraiton.Release;
         public BuildConfiguraiton DllBuildConfig => BuildConfig == 0 ? BuildConfiguraiton.DebugEditor : BuildConfiguraiton.ReleaseEditor;
 
+        private string[] _availableStrings;
+        public string[] AvailableStrings
+        {
+            get => _availableStrings;
+            set
+            {
+                if (_availableStrings != value)
+                {
+                    _availableStrings = value;
+                    OnPropertyChanged(nameof(AvailableStrings));
+                }
+            }
+        }
+
         [DataMember(Name = "Scenes")]
         private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
 
@@ -192,8 +206,10 @@ namespace PrimalEngineEditor.GameProject
         {
             var configName = GetConfigurationName(DllBuildConfig);
             var dll = $@"{Path}x64\{configName}\{Name}.dll";
+            AvailableStrings = null;
             if(File.Exists(dll) && AgilisAPI.LoadGameCodeDll(dll) !=0)
             {
+                AvailableStrings = AgilisAPI.GetScriptNames();
                 Logger.Log(MessageType.Info, "Game code Dll loaded successfully.");
             }
             else
@@ -207,6 +223,7 @@ namespace PrimalEngineEditor.GameProject
             if(AgilisAPI.UnloadGameCodeDll() !=0)
             {
                 Logger.Log(MessageType.Info, "Game code Dll unloaded");
+                AvailableStrings = null;
             }
         }
 
