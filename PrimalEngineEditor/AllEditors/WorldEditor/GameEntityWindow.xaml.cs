@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -87,6 +88,54 @@ namespace PrimalEngineEditor.AllEditors
             cp.IsEnabled = (sender as CheckBox).IsChecked == true;
             var redoAction = GetIsEnabledAction();
             NewProjectClass2.UndoRedo.Add(new UndoRedoActions(undoAction, redoAction, cp.IsEnabled == true ? "Enable game entity" : "Disable game entity"));
+        }
+
+        private void OnAddComponent_Button_PreviewMouse_LBD(object sender, MouseButtonEventArgs e)
+        {
+            var menu = FindResource("addComponentMenu") as ContextMenu;
+            var btn = sender as ToggleButton;
+            btn.IsChecked = true;
+            menu.Placement = PlacementMode.Bottom;
+            menu.PlacementTarget = btn;
+            menu.MinWidth = btn.ActualWidth;
+            menu.IsOpen = true;
+        }
+
+        private void AddComponent(ComponentType componentType, object data)
+        {
+            var creationFunction = ComponentFactory.GetCreationFunction(componentType);
+            var chandedEntities = new List<(GameEntity entity, Component component)>();
+            var vm = DataContext as MSEntity;
+            foreach (var entity in vm.SelectedEntities)
+            {
+                var component = creationFunction(entity, data);
+                if(entity.AddComponent(component))
+                {
+                    chandedEntities.Add((entity, component));
+                }
+            }
+
+            if(chandedEntities.Any())
+            {
+                vm.Refresh();
+                NewProjectClass2.UndoRedo.Add(new UndoRedoActions(
+                    () =>
+                    {
+                        chandedEntities.ForEach(x => x.entity.RemoveComponent(x.component));
+                        (DataContext as MSEntity).Refresh();
+                    },
+                    () =>
+                    {
+                        chandedEntities.ForEach(x => x.entity.AddComponent(x.component));
+                        (DataContext as MSEntity).Refresh();
+                    },
+                    $"Add {componentType} component"
+                    ));
+            }
+        }
+        private void OnAddScriptComponent(object sender, RoutedEventArgs e)
+        {
+            AddComponent(ComponentType.Script, (sender as MenuItem).Header.ToString());
         }
     }
 }
