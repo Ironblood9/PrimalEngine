@@ -23,7 +23,7 @@ namespace primal::game_entity
 
 		entity_id id;
 
-		if (free_ids.size() > id::min_deleted_elemenst) 
+		if (free_ids.size() > id::min_deleted_elements) 
 		{
 			id = free_ids.front();
 			assert(!is_alive(id));

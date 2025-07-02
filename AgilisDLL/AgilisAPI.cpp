@@ -20,10 +20,7 @@ namespace {
 EDITOR_INTERFACE u32
 LoadGameCodeDll(const char* dll_path)
 {
-	if (game_code_dll) {
-		UnloadGameCodeDll(); 
-	}
-
+	if (game_code_dll) return FALSE;
 	game_code_dll = LoadLibraryA(dll_path);
 	assert(game_code_dll);
 

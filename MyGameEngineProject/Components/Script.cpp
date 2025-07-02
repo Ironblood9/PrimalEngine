@@ -75,7 +75,7 @@ namespace primal::script{
 		assert(entity.is_valid());
 		assert(info.script_creator);
 		script_id id{};
-		if (free_ids.size() > id::min_deleted_elemenst)
+		if (free_ids.size() > id::min_deleted_elements)
 		{
 			id = free_ids.front();
 			assert(!exists(id));

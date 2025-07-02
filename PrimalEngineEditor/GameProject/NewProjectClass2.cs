@@ -1,4 +1,5 @@
-﻿using PrimalEngineEditor.DllWrappers;
+﻿using PrimalEngineEditor.Components;
+using PrimalEngineEditor.DllWrappers;
 using PrimalEngineEditor.GameDev;
 using PrimalEngineEditor.Utilities;
 using System;
@@ -169,6 +170,7 @@ namespace PrimalEngineEditor.GameProject
 
         public void Unload()
         {
+            UnloadGameCodeDll();
             VisualStudio.CloseVS();
             UndoRedo.Reset();
         }
@@ -205,33 +207,17 @@ namespace PrimalEngineEditor.GameProject
         private void LoadGameCodeDll()
         {
             var configName = GetConfigurationName(DllBuildConfig);
-            var projectPath = this.Path; // Senin önceden tanımladığın 'Path' değişkeni buysa kullan
-            var name = this.Name;
-
-            var sourceDll = $@"{projectPath}x64\{configName}\{name}.dll";
-            var tempDll = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Temp", $"{name}_temp.dll");
-
+            var dll = $@"{Path}x64\{configName}\{Name}.dll";
             AvailableScripts = null;
-
-            if (File.Exists(sourceDll))
-            {
-                var tempDir = System.IO.Path.GetDirectoryName(tempDll);
-                if (!Directory.Exists(tempDir))
-                {
-                    Directory.CreateDirectory(tempDir);
-                }
-
-                File.Copy(sourceDll, tempDll, overwrite: true);
-            }
-
-            if (File.Exists(tempDll) && AgilisAPI.LoadGameCodeDll(tempDll) != 0)
+            if (File.Exists(dll) && AgilisAPI.LoadGameCodeDll(dll) != 0)
             {
                 AvailableScripts = AgilisAPI.GetScriptNames();
-                Logger.Log(MessageType.Info, "Game code DLL loaded successfully.");
+                ActiveScene.GameEntities.Where(x => x.GetComponent<Script>() != null).ToList().ForEach(x => x.IsActive = true);
+                Logger.Log(MessageType.Info, "Game code Dll loaded successfully.");
             }
             else
             {
-                Logger.Log(MessageType.Warning, "Failed to load game code DLL file. Try to build the project first.");
+                Logger.Log(MessageType.Warning, "Failed to load game code Dll file. Try to build the project first.");
             }
         }
 
@@ -239,6 +225,7 @@ namespace PrimalEngineEditor.GameProject
 
         private void UnloadGameCodeDll()
         {
+            ActiveScene.GameEntities.Where(x => x.GetComponent<Script>() != null).ToList().ForEach(x => x.IsActive = false);
             if(AgilisAPI.UnloadGameCodeDll() !=0)
             {
                 Logger.Log(MessageType.Info, "Game code Dll unloaded");
@@ -255,6 +242,7 @@ namespace PrimalEngineEditor.GameProject
                 OnPropertyChanged(nameof(Scenes));
             }
             ActiveScene = Scenes.FirstOrDefault(x => x.IsActive);
+            Debug.Assert(ActiveScene != null);
 
             await BuildGameCodeDll(false);
             SetCommands();

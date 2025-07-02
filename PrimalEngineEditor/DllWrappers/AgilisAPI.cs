@@ -1,5 +1,7 @@
 ﻿using PrimalEngineEditor.AgilisAPIStructs;
 using PrimalEngineEditor.Components;
+using PrimalEngineEditor.GameProject;
+using PrimalEngineEditor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +69,17 @@ namespace PrimalEngineEditor.DllWrappers
                 //script component
                 {
                     var c = entity.GetComponent<Script>();
+                    if(c!=null && NewProjectClass2.Current !=null)
+                    {
+                        if(NewProjectClass2.Current.AvailableScripts.Contains(c.Name))
+                        {
+                            desc.Script.ScriptCreator = GetScriptCreator(c.Name);
+                        }
+                        else
+                        {
+                            Logger.Log(MessageType.Error, $"Unable to find script with {c.Name}.Game entity will be created without script component!!!");
+                        }
+                    }
                 }
                 return CreateGameEntity(desc);
             }

@@ -12,7 +12,7 @@ namespace primal::id {
 	}//detail namespace
 
 	constexpr id_type invalid_id{ id_type(-1) };
-	constexpr u32 min_deleted_elemenst{ 1024 };
+	constexpr u32 min_deleted_elements{ 1024 };
 
 
 	using generation_type = std::conditional_t < detail::generation_bits <= 16, std::conditional_t<detail::generation_bits <= 8, u8, u16>, u32>;

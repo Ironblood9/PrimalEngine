@@ -3,6 +3,7 @@
 #include "CommonDll.h"
 #include "..\MyGameEngineProject\Components\Entity.h"
 #include "..\MyGameEngineProject\Components\Transform.h"
+#include"..\MyGameEngineProject\Components\Script.h"
 
 using namespace primal;
 
@@ -31,9 +32,23 @@ namespace {
 		}
 	};
 
+	struct script_component
+	{
+		script::detail::script_creator  script_creator;
+		script::init_info to_init_info()
+		{
+			script::init_info info{};
+			info.script_creator = script_creator;
+			return info;
+
+		}
+
+	};
+
 	struct game_entity_descriptor
 	{
 		transform_component transform;
+		script_component script;
 	};
 	game_entity::entity entity_from_id(id::id_type id)
 	{
@@ -47,9 +62,11 @@ CreateGameEntity(game_entity_descriptor* e)
 	assert(e);
 	game_entity_descriptor& desc{ *e };
 	transform::init_info transform_info{ desc.transform.to_init_info() };
+	script::init_info script_info{ desc.script.to_init_info()};
 	game_entity::entity_info entity_info
 	{
 		&transform_info,
+		&script_info,
 	};
 	return game_entity::create(entity_info).get_id();
 }
