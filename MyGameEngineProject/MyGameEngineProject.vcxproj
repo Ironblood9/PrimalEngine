@@ -29,6 +29,7 @@
     <ClInclude Include="Components\Transform.h" />
     <ClInclude Include="AgilisAPI\GameEntity.h" />
     <ClInclude Include="AgilisAPI\TransformComponent.h" />
+    <ClInclude Include="Content\LoadContent.h" />
     <ClInclude Include="Utilities\MathTypes.h" />
     <ClInclude Include="Utilities\Utilities.h" />
   </ItemGroup>
@@ -36,6 +37,7 @@
     <ClCompile Include="Components\Entity.cpp" />
     <ClCompile Include="Components\Script.cpp" />
     <ClCompile Include="Components\Transform.cpp" />
+    <ClCompile Include="Content\LoadContent.cpp" />
     <ClCompile Include="Core\Agilis.cpp" />
     <ClCompile Include="Core\Main.cpp" />
   </ItemGroup>
