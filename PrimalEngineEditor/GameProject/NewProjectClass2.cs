@@ -101,23 +101,23 @@ namespace PrimalEngineEditor.GameProject
         public ICommand AddNewSceneCommand { get; private set; }
         public ICommand RemoveSceneCommand { get; private set; }
         public ICommand SaveCommand { get; private set; }
-        public ICommand BuildCommand { get; private set; }
         public ICommand DebugStartCommand { get; private set; }
         public ICommand DebugStartWithoutDebuggingCommand { get; private set; }
         public ICommand DebugStopCommand { get; private set; }
+        public ICommand BuildCommand { get; private set; }
 
         private void SetCommands()
         {
             AddNewSceneCommand = new RelayCommand<object>(x =>
             {
-                AddNewSceneInternal($" New Scene{_scenes.Count}");
+                AddNewSceneInternal($"New Scene{_scenes.Count}");
                 var newScene = _scenes.Last();
                 var IndexScene = _scenes.Count - 1;
 
                 UndoRedo.Add(new UndoRedoActions(
                     () => RemoveSceneInternal(newScene),
                    () => _scenes.Insert(IndexScene, newScene),
-                   $"Add{newScene.Name}"
+                   $"Add {newScene.Name}"
                    ));
             });
 
@@ -177,6 +177,11 @@ namespace PrimalEngineEditor.GameProject
             return $"Scene {_sceneCounter++}";
         }
 
+        public static NewProjectClass2 Load(string file)
+        {
+            Debug.Assert(File.Exists(file));
+            return Serializer.FromFile<NewProjectClass2>(file);
+        }
         public void Unload()
         {
             UnloadGameCodeDll();
@@ -189,10 +194,25 @@ namespace PrimalEngineEditor.GameProject
             Logger.Log(MessageType.Info, $"Project saved to {project.FullPath}");
         }
 
-        public static NewProjectClass2 Load(string file)
+        private void SaveToBinary()
         {
-            Debug.Assert(File.Exists(file));
-            return Serializer.FromFile<NewProjectClass2>(file);
+            var configName = GetConfigurationName(StandAloneBuildConfig);
+            var bin = $@"{Path}x64\{configName}\game.bin";
+
+            using(var bw = new BinaryWriter(File.Open(bin, FileMode.Create, FileAccess.Write)))
+            {
+                bw.Write(ActiveScene.GameEntities.Count);
+                foreach (var entity in ActiveScene.GameEntities)
+                {
+                    bw.Write(0);//entity type
+                    bw.Write(entity.Components.Count);
+                    foreach (var component in entity.Components)
+                    {
+                        bw.Write((int)component.ToEnumType());
+                        component.WriteToBinary(bw);
+                    }
+                }
+            }
         }
 
         private async Task RunGame(bool debug)
@@ -201,6 +221,7 @@ namespace PrimalEngineEditor.GameProject
             await Task.Run(() => VisualStudio.BuildSolution(this, configName, debug));
             if(VisualStudio.BuildSucceeded)
             {
+                SaveToBinary();
                 await Task.Run(() => VisualStudio.Run(this, configName, debug));
             }
         }

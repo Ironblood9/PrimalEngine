@@ -1,6 +1,7 @@
 ﻿using PrimalEngineEditor.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.Serialization;
@@ -12,9 +13,7 @@ namespace PrimalEngineEditor.Components
     [DataContract]
     class Transform : Component
     {
-        public Transform(GameEntity owner) : base(owner)
-        {}
-        public override IMSComponent GetMSComponent(MSEntity msEntity) => new MSTransform(msEntity);
+
         private Vector3 _position;
         [DataMember]
         public Vector3 Position
@@ -57,6 +56,15 @@ namespace PrimalEngineEditor.Components
                 }
             }
         }
+        public override IMSComponent GetMSComponent(MSEntity msEntity) => new MSTransform(msEntity);
+        public override void WriteToBinary(BinaryWriter bw)
+        {
+            bw.Write(_position.X); bw.Write(_position.Y); bw.Write(_position.Z);
+            bw.Write(_rotation.X); bw.Write(_rotation.Y); bw.Write(_rotation.Z);
+            bw.Write(_scale.X); bw.Write(_scale.Y); bw.Write(_scale.Z);
+        }
+        public Transform(GameEntity owner) : base(owner)
+        { }
     }
 
     sealed class MSTransform : MSComponent<Transform>

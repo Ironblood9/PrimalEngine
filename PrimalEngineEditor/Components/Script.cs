@@ -1,6 +1,7 @@
 ﻿using PrimalEngineEditor.GameProject;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -25,13 +26,17 @@ namespace PrimalEngineEditor.Components
                 }
             }
         }
-        public Script(GameEntity owner) : base(owner)
-        {
-
-        }
-
+   
         public override IMSComponent GetMSComponent(MSEntity msEntity) => new MSScript(msEntity);
-  
+
+        public override void WriteToBinary(BinaryWriter bw)
+        {
+            var nameBytes = Encoding.UTF8.GetBytes(Name);
+            bw.Write(nameBytes.Length);
+            bw.Write(nameBytes);
+        }
+        public Script(GameEntity owner) : base(owner)
+        { }
     }
     sealed class MSScript : MSComponent<Script>
     {

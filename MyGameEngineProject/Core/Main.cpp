@@ -36,7 +36,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 				is_running &= (msg.message != WM_QUIT);
-
 			}
 		}
 	}
