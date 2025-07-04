@@ -37,6 +37,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 				DispatchMessage(&msg);
 				is_running &= (msg.message != WM_QUIT);
 			}
+			agilis_update();
 		}
 	}
 	agilis_shutdown();
