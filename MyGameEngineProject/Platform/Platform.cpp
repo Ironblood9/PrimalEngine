@@ -7,9 +7,49 @@ namespace primal::platform {
 
 	namespace 
 	{
+		struct window_info
+		{
+			HWND  hwnd{ nullptr };
+			RECT  client_area{ 0, 0, 1920, 1080 };
+			RECT fullscreen_area{};
+			POINT top_left{ 0,0 };
+			DWORD style{ WS_VISIBLE };
+			bool is_fullscreen{ false };
+			bool is_closed{ false };
+		};
+		utl::vector<window_info> windows;
+		utl::vector<u32> avaible_slots;
+
+		u32 add_to_windows(window_info info)
+		{
+			u32 id{ u32_invalid_id };
+			if (avaible_slots.empty())
+			{
+				id = (u32)windows.size();
+				windows.emplace_back(info);
+			}
+			else
+			{
+				id = avaible_slots.back();
+				avaible_slots.pop_back();
+				assert(id!= u32_invalid_id);
+				windows[id] = info;
+			}
+			return id;
+		}
+
+		void remove_from_windows(u32 id)
+		{
+			assert(id < windows.size());
+			avaible_slots.emplace_back(id);
+		}
+
 		LRESULT CALLBACK internal_window_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		{
-
+			LONG_PTR long_ptr{ GetWindowLongPtr(hwnd, 0) };
+			return long_ptr
+				? ((window_proc)long_ptr)(hwnd, msg, wparam, lparam)
+				: DefWindowProc(hwnd, msg, wparam, lparam);
 		}
 
 
@@ -22,23 +62,62 @@ namespace primal::platform {
 		// setup a window class
 		WNDCLASSEX wc;
 		ZeroMemory(&wc, sizeof(wc));
-		wc.cbSize= sizeof(WNDCLASSEX);
-		wc.style= CS_HREDRAW | CS_VREDRAW;
-		wc.lpfnWndProc= internal_window_proc;
-		wc.cbClsExtra=0;
-		wc.cbWndExtra= callback ? sizeof(callback) : 0;
-		wc.hInstance;
-		wc.hIcon;
-		wc.hCursor;
-		wc.hbrBackground;
-		wc.lpszMenuName;
-		wc.lpszClassName;
-		wc.hIconSm;
+		wc.cbSize = sizeof(WNDCLASSEX);
+		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.lpfnWndProc = internal_window_proc;
+		wc.cbClsExtra = 0;
+		wc.cbWndExtra = callback ? sizeof(callback) : 0;
+		wc.hInstance = 0;
+		wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = CreateSolidBrush(RGB(26, 48, 76));
+		wc.lpszMenuName = NULL;
+		wc.lpszClassName = L"AgilisWindow";
+		wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
 		//register the window class
+		RegisterClassEx(&wc);
+
+		window_info info{};
+		RECT rc{ info.client_area };
+		// adjuct the window size for correct device size
+		AdjustWindowRect(&rc, info.style, FALSE);
+
+		const wchar_t* caption{ (init_info && init_info->caption) ? init_info->caption : L"Agilis Game" };
+		const i32 left{ (init_info && init_info->left) ? init_info->left : info.client_area.left };
+		const i32 top{ (init_info && init_info->top) ? init_info->top : info.client_area.top };
+		const i32 width{ (init_info && init_info->width) ? init_info->width : rc.right - rc.left };
+		const i32 height{ (init_info && init_info->height) ? init_info->height: rc.bottom - rc.top };
+
+		info.style |= parent ? WS_CHILD : WS_OVERLAPPEDWINDOW;
 
 		// Create a instance of the window class
 
+		info.hwnd = CreateWindowEx(
+		/*	DWORD dwExStyle,       */ 0,               //extended style
+		/*	LPCTSTR lpClassName,   */ wc.lpszClassName,//window classname
+		/*	LPCTSTR lpWindowName,  */ caption,         // instance title
+		/*	DWORD dwStyle,		   */ info.style,      // window style
+		/*	int x, int y		   */ left, top,       // initial position
+		/*	int nWidth,int nHeight */ width, height,   // initial dimesions
+		/*	HWND hWndParent,	   */ parent,          //  handle to parent window 
+		/*	HMENU hMenu,		   */ NULL,            // handle to menu
+		/*	HINSTANCE hInstance,   */ NULL,            // instance of application
+		/*	LPVOID lpParam		   */ NULL             // extra creation parameters
+		);
+
+		if (info.hwnd)
+		{
+			window_id id{ add_to_windows(info) };
+			// Set in the "extra" bytes the pointer to the window callback function which handles messaged  for the window
+		    if(callback) SetWindowLongPtr(info.hwnd, 0, (LONG_PTR)callback);
+			assert(GetLastError() == 0);
+
+			ShowWindow(info.hwnd, SW_SHOWNORMAL);
+			UpdateWindow(info.hwnd);
+			return window{ id };
+		}
+		return{};
 	}
 #elif
 #error "must implement at least one platform"

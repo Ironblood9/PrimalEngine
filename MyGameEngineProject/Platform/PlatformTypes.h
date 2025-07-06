@@ -15,7 +15,7 @@ namespace primal::platform {
 	{
 		window_proc       callback{ nullptr };
 		window_handle     parent{ nullptr };
-		const char*       caption{ nullptr };
+		const wchar_t*       caption{ nullptr };
 		i32               left{ 0 };
 		i32               top{ 0 };
 		i32               width{ 1920 };
