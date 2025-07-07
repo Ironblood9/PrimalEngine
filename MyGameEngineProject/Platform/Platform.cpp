@@ -51,9 +51,22 @@ namespace primal::platform {
 			return windows[id];
 		}
 		
+		window_info& get_from_handle(window_handle handle)
+		{
+			const window_id id{ (id::id_type)GetWindowLongPtr(handle, GWLP_USERDATA) };
+			return get_from_id(id);
+		}
 
 		LRESULT CALLBACK internal_window_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		{
+			window_info* info{ nullptr };
+			switch (msg)
+			{
+			case WM_DESTROY:
+				get_from_handle(hwnd).is_closed = true;
+				break;
+			}
+
 			LONG_PTR long_ptr{ GetWindowLongPtr(hwnd, 0) };
 			return long_ptr
 				? ((window_proc)long_ptr)(hwnd, msg, wparam, lparam)
@@ -194,7 +207,8 @@ namespace primal::platform {
 
 		if (info.hwnd)
 		{
-			window_id id{ add_to_windows(info) };
+			const window_id id{ add_to_windows(info) };
+			SetWindowLongPtr(info.hwnd, GWLP_USERDATA, (LONG_PTR)id);
 			// Set in the "extra" bytes the pointer to the window callback function which handles messaged  for the window
 		    if(callback) SetWindowLongPtr(info.hwnd, 0, (LONG_PTR)callback);
 			assert(GetLastError() == 0);
