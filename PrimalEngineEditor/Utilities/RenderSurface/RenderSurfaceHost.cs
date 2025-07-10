@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Interop;
 
-namespace PrimalEngineEditor.Utilities.RenderSurface
+namespace PrimalEngineEditor.Utilities
 {
     class RenderSurfaceHost : HwndHost
     {
