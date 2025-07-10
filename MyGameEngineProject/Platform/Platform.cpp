@@ -131,13 +131,11 @@ namespace primal::platform {
 					GetWindowRect(info.hwnd, &rect);
 					info.top_left.x = rect.left;
 					info.top_left.y = rect.top;
-					info.style = 0;// while fullwindow no need any border so style is null
-					SetWindowLongPtr(info.hwnd, GWL_STYLE, info.style);
+					SetWindowLongPtr(info.hwnd, GWL_STYLE, 0);
 					ShowWindow(info.hwnd, SW_MAXIMIZE);
 				}
 				else
 				{
-					info.style = WS_VISIBLE | WS_OVERLAPPEDWINDOW;
 					SetWindowLongPtr(info.hwnd, GWL_STYLE, info.style);
 					resize_window(info, info.client_area);
 					ShowWindow(info.hwnd, SW_SHOWNORMAL);
@@ -161,10 +159,11 @@ namespace primal::platform {
 			SetWindowText(info.hwnd, caption);
 		}
 
-		math::u32v4 get_window_size(window_id id)
+		math::u32v4
+		get_window_size(window_id id)
 		{
 			window_info& info{ get_from_id(id) };
-			RECT area{ info.is_fullscreen ? info.fullscreen_area : info.client_area };
+			RECT& area{ info.is_fullscreen ? info.fullscreen_area : info.client_area };
 			return { (u32)area.left, (u32)area.top, (u32)area.right, (u32)area.bottom };
 
 		}
@@ -202,6 +201,7 @@ namespace primal::platform {
 		window_info info{};
 		info.client_area.right = (init_info && init_info->width) ? info.client_area.left + init_info->width : info.client_area.right;
 		info.client_area.bottom = (init_info && init_info->height) ? info.client_area.top + init_info->height : info.client_area.bottom;
+		info.style |= parent ? WS_CHILD : WS_OVERLAPPEDWINDOW;
 
 		RECT rect{ info.client_area };// Copy client_area this rect
 		// adjuct the window size for correct device size
@@ -213,7 +213,6 @@ namespace primal::platform {
 		const i32 width{ rect.right -  rect.left};
 		const i32 height{ rect.bottom - rect.top };
 
-		info.style |= parent ? WS_CHILD : WS_OVERLAPPEDWINDOW;
 
 		// Create a instance of the window class
 
