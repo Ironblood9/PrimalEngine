@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -20,6 +21,13 @@ namespace PrimalEngineEditor.Utilities
     /// </summary>
     public partial class RenderSurfaceWindow : UserControl, IDisposable
     {
+        private enum Win32Msg
+        {
+           WM_SIZING =0x0214,
+           WM_ENTERSIZEMOVE = 0x0231,
+           WM_EXITSIZEMOVE   = 0x0232,
+           WM_SIZE = 0x0005,
+        }
         private RenderSurfaceHost _host = null;
 
         public RenderSurfaceWindow()
@@ -32,7 +40,25 @@ namespace PrimalEngineEditor.Utilities
         {
             Loaded -= OnRenderSurfaceWindowLoaded;
             _host = new RenderSurfaceHost(ActualWidth, ActualHeight);
+            _host.MessageHook += new HwndSourceHook(HostMsgFilter);
             Content = _host;
+        }
+
+        private IntPtr HostMsgFilter(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            switch ((Win32Msg)msg)
+            {
+                case Win32Msg.WM_SIZING: throw new Exception();
+                case Win32Msg.WM_ENTERSIZEMOVE: throw new Exception();
+                case Win32Msg.WM_EXITSIZEMOVE : throw new Exception();
+
+                case Win32Msg.WM_SIZE:
+                    _host.Resize();
+                    break;
+                default:
+                    break; 
+            }
+            return IntPtr.Zero;
         }
         #region IDisposable support
         private bool _disposedValue;

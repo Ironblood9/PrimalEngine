@@ -17,6 +17,10 @@ namespace PrimalEngineEditor.Utilities
         private IntPtr _renderWindowHandle = IntPtr.Zero;
 
         public int SurfaceId { get; private set; } = ID.INVALID_ID;
+        public void Resize()
+        {
+            Logger.Log(MessageType.Info, "Resized");
+        }
 
         public RenderSurfaceHost(double width, double height)
         {
