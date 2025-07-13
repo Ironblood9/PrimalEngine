@@ -10,21 +10,13 @@
     <ErrorReport>prompt</ErrorReport>
     <BaseOutputPath>C:\Users\Msı\source\repos\PrimalEngine\MyGameEngineProject</BaseOutputPath>
     <PackageOutputPath></PackageOutputPath>
-    <Configurations>Debug;Release;DebugEditor;ReleaseEditor</Configurations>
+    <Configurations>DebugEditor;ReleaseEditor</Configurations>
     <Platforms>x64</Platforms>
   </PropertyGroup>
-
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-  <Optimize>True</Optimize>
-</PropertyGroup>
 
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugEditor|x64'">
   <Optimize>True</Optimize>
 </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Optimize>False</Optimize>
-  </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseEditor|x64'">
     <Optimize>False</Optimize>
