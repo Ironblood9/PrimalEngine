@@ -47,7 +47,7 @@ namespace {
 		const f32 u_step{ (u_range.y - u_range.x) / horizontal_count };
 		const f32 v_step{ (v_range.y - v_range.x) / vertical_count };
 
-		mesh m{};
+		mesh mesh{};
 		utl::vector<math::v2> uvs;
 
 		for (u32 j{ 0 }; j <= vertical_count; j++)
@@ -57,14 +57,14 @@ namespace {
 			f32* const as_array{ &position.x };
 			as_array[horizontal_index] += i * horizontal_step;
 			as_array[vertical_index] += j * vertical_step;
-			m.positions.emplace_back(position.x * info.size.x, position.y * info.size.y, position.z * info.size.z);
+			mesh.positions.emplace_back(position.x * info.size.x, position.y * info.size.y, position.z * info.size.z);
 
 			math::v2 uv{ u_range.x, 1.f - v_range.x };
 			uv.x += i * u_step;
 			uv.y -= j * v_step;
 			uvs.emplace_back(uv);
 		  }
-		assert(m.positions.size() == (((u64)horizontal_count + 1) * ((u64)vertical_count + 1)));
+		assert(mesh.positions.size() == (((u64)horizontal_count + 1) * ((u64)vertical_count + 1)));
 		const u32 row_lenght{ horizontal_count + 1 }; // number of vertices in a row
 
 		for (u32 j{ 0 }; j < vertical_count; j++)
@@ -79,24 +79,24 @@ namespace {
 				  (i + 1) + j * row_lenght,
 				  (i + 1) + (j + 1) * row_lenght,
 				};
-				m.raw_indices.emplace_back(index[0]);
-				m.raw_indices.emplace_back(index[flip_winding ? 2 : 1]);
-				m.raw_indices.emplace_back(index[flip_winding ? 1 : 2]);
+				mesh.raw_indices.emplace_back(index[0]);
+				mesh.raw_indices.emplace_back(index[flip_winding ? 2 : 1]);
+				mesh.raw_indices.emplace_back(index[flip_winding ? 1 : 2]);
 
-				m.raw_indices.emplace_back(index[2]);
-				m.raw_indices.emplace_back(index[flip_winding ? 3 : 1]);
-				m.raw_indices.emplace_back(index[flip_winding ? 1 : 3]);
+				mesh.raw_indices.emplace_back(index[2]);
+				mesh.raw_indices.emplace_back(index[flip_winding ? 3 : 1]);
+				mesh.raw_indices.emplace_back(index[flip_winding ? 1 : 3]);
 			}
 			k++;
 		}
 		const u32 num_indices{ 3 * 2 * horizontal_count * vertical_count };
-		assert(m.raw_indices.size() == num_indices);
+		assert(mesh.raw_indices.size() == num_indices);
 
 		for (u32 i{ 0 }; i < num_indices; i++)
 		{
-			m.uv_sets[0].emplace_back(uvs[m.raw_indices[i]]);
+			mesh.uv_sets[0].emplace_back(uvs[mesh.raw_indices[i]]);
 		}
-		return m;
+		return mesh;
 	}
 
 	void create_plane(scene& scene, const primitive_init_info& info)
@@ -130,7 +130,7 @@ CreatePrimitiveMesh(scene_data* data, primitive_init_info* info)
 
 	creators[info->type](scene, *info);
 	data->settings.calculate_normals = 1;
-	proces_scene(scene, data->settings);
+	process_scene(scene, data->settings);
 	pack_data(scene, *data);
 }
 }
