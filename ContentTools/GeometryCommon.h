@@ -3,6 +3,13 @@
 
 namespace primal::tools
 {
+	struct vertex
+	{
+		math::v4     tangent{};
+		math::v3     position{};
+		math::v3     normal{};
+		math::v2     uv{};
+	};
 	struct mesh
 	{
         // inital data
@@ -13,7 +20,8 @@ namespace primal::tools
 		utl::vector<u32>                             raw_indices;
 
 		// intermediate(orta) data
-
+		utl::vector<vertex>                          vertices;
+		utl::vector<u32>                             indices;
 		// output data
 	};
 
