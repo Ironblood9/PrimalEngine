@@ -135,8 +135,15 @@ namespace primal::tools {
 			{
 				vertex& vertex{ mesh.vertices[i] };
 				const u8 signs{ (u8)((vertex.normal.z > 0.f) << 1) };
-				const u8 normal_x{ (u16)pack_float<16>(vertex.normal.x, -1.f, 1.f) };
-				const u8 normal_y{ (u16)pack_float<16>(vertex.normal.y, -1.f, 1.f) };
+				const u16 normal_x{ (u16)pack_float<16>(vertex.normal.x, -1.f, 1.f) };
+				const u16 normal_y{ (u16)pack_float<16>(vertex.normal.y, -1.f, 1.f) };
+
+				mesh.packed_vertices_static.emplace_back(packed_vertex::vertex_static
+					{
+						vertex.position, {0, 0, 0}, signs,
+						{normal_x, normal_y}, {},
+						vertex.uv
+					});
 			}
 		}
 
