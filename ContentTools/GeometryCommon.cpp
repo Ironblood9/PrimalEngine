@@ -304,6 +304,7 @@ namespace primal::tools {
 				pack_mesh_data(mesh, buffer, at);
 			}
 		}
+		assert(scene_size == at);
 	}
 }
 

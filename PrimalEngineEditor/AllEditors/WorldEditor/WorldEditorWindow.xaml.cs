@@ -1,4 +1,5 @@
-﻿using PrimalEngineEditor.GameDev;
+﻿using PrimalEngineEditor.Content;
+using PrimalEngineEditor.GameDev;
 using PrimalEngineEditor.GameProject;
 using System;
 using System.Collections.Generic;
@@ -28,26 +29,23 @@ namespace PrimalEngineEditor.AllEditors
             InitializeComponent();
             Loaded += OnWorldEditorWindowLoaded;
         }
-
+        private void LoggerWindow_Loaded(object sender, RoutedEventArgs e)
+        { }
+        private void UndoRedoWindow_Loaded(object sender, RoutedEventArgs e)
+        {}
         private void OnWorldEditorWindowLoaded(object sender, RoutedEventArgs e)
         {
             Loaded -= OnWorldEditorWindowLoaded;
             Focus();
         }
-
-        private void UndoRedoWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void OnNewScript_Button_Click(object sender, RoutedEventArgs e)
         {
              new NewScriptDialog().ShowDialog();
         }
-
-        private void LoggerWindow_Loaded(object sender, RoutedEventArgs e)
+        private void OnCreatePrimitiveMesh_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            var dlg = new PrimitiveMeshDialog();
+            dlg.ShowDialog();
         }
     }
 }
