@@ -32,7 +32,7 @@ namespace PrimalEngineEditor.AllEditors
         private void LoggerWindow_Loaded(object sender, RoutedEventArgs e)
         { }
         private void UndoRedoWindow_Loaded(object sender, RoutedEventArgs e)
-        {}
+        { }
         private void OnWorldEditorWindowLoaded(object sender, RoutedEventArgs e)
         {
             Loaded -= OnWorldEditorWindowLoaded;

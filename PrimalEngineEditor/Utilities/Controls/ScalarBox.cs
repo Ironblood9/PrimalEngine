@@ -12,7 +12,6 @@ namespace PrimalEngineEditor.Utilities.Controls
         static ScalarBox()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ScalarBox), new FrameworkPropertyMetadata(typeof(ScalarBox)));
-
         }
     }
 }
