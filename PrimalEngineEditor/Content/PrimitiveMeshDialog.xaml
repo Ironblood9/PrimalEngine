@@ -42,7 +42,7 @@
             <StackPanel Background="#0B0F1A">
                 <StackPanel.Resources>
 
-                    <!-- Neon Kart Stili -->
+                    <!-- Neon Card Style -->
                     <Style TargetType="Border" x:Key="NeonCard">
                         <Setter Property="CornerRadius" Value="10"/>
                         <Setter Property="BorderThickness" Value="2"/>
@@ -52,7 +52,7 @@
                         <Setter Property="Background" Value="#121827"/>
                         <Setter Property="Effect">
                             <Setter.Value>
-                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="#00FFFF" Opacity="0"/>
+                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0"/>
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
@@ -60,24 +60,24 @@
                                 <Setter Property="BorderBrush" Value="#00FFFF"/>
                                 <Setter Property="Effect">
                                     <Setter.Value>
-                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="#00FFFF" Opacity="0.6"/>
+                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0.6"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
 
-                    <!-- ANİMASYONLU Mavi Kare Thumb -->
+                    <!-- Blue Square Thumb -->
                     <Style x:Key="BlueSquareThumb" TargetType="Thumb">
                         <Setter Property="Width" Value="14"/>
                         <Setter Property="Height" Value="14"/>
-                        <Setter Property="Background" Value="#00CFFF"/>
+                        <Setter Property="Background" Value="{DynamicResource Editor.BlueBrush}"/>
                         <Setter Property="BorderBrush" Value="#A6F6FF"/>
                         <Setter Property="BorderThickness" Value="1"/>
                         <Setter Property="SnapsToDevicePixels" Value="True"/>
                         <Setter Property="Effect">
                             <Setter.Value>
-                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="#00FFFF" Opacity="0"/>
+                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0"/>
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
@@ -106,7 +106,7 @@
                         </Style.Triggers>
                     </Style>
 
-                    <!-- Slider Stili -->
+                    <!-- Slider Style -->
                     <Style TargetType="Slider" x:Key="BlueSlider">
                         <Setter Property="Template">
                             <Setter.Value>
@@ -114,10 +114,10 @@
                                     <Grid Margin="5,0">
                                         <Track x:Name="PART_Track">
                                             <Track.DecreaseRepeatButton>
-                                                <RepeatButton Background="#1B1F2A" Height="4" Command="Slider.DecreaseLarge"/>
+                                                <RepeatButton Background="{DynamicResource Editor.Window.GrayBrush1}" Height="4" Command="Slider.DecreaseLarge"/>
                                             </Track.DecreaseRepeatButton>
                                             <Track.IncreaseRepeatButton>
-                                                <RepeatButton Background="#1B1F2A" Height="4" Command="Slider.IncreaseLarge"/>
+                                                <RepeatButton Background="{DynamicResource Editor.Window.GrayBrush1}" Height="4" Command="Slider.IncreaseLarge"/>
                                             </Track.IncreaseRepeatButton>
                                             <Track.Thumb>
                                                 <Thumb Style="{StaticResource BlueSquareThumb}" />
@@ -139,7 +139,7 @@
                         <Setter Property="BorderBrush" Value="#2A2D36"/>
                         <Setter Property="Effect">
                             <Setter.Value>
-                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="#00FFFF" Opacity="0"/>
+                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0"/>
                             </Setter.Value>
                         </Setter>
                         <Setter Property="Cursor" Value="Hand"/>
@@ -162,7 +162,7 @@
                                 <Setter Property="BorderBrush" Value="#00FFFF"/>
                                 <Setter Property="Effect">
                                     <Setter.Value>
-                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="#00FFFF" Opacity="0.6"/>
+                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0.6"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -178,22 +178,16 @@
                         <DockPanel Margin="5">
                             <TextBlock Text="Width" Width="60" Foreground="#66FFFF"/>
                             <TextBox Text="{Binding Path=Value, ElementName=xSliderPlane}" Width="40" Margin="10,0"/>
-                            <Slider x:Name="xSliderPlane"
-                    Minimum="1" Maximum="10"
-                    TickFrequency="0.1"
-                    IsSnapToTickEnabled="False"
-                    ValueChanged="OnSlider_ValueChanged"
-                    Style="{StaticResource BlueSlider}"/>
+                            <Slider x:Name="xSliderPlane" Minimum="1" Maximum="10" TickFrequency="0.1"
+                                    IsSnapToTickEnabled="False" ValueChanged="OnSlider_ValueChanged"
+                                    Style="{StaticResource BlueSlider}"/>
                         </DockPanel>
                         <DockPanel Margin="5">
                             <TextBlock Text="Length" Width="60" Foreground="#66FFFF"/>
                             <TextBox Text="{Binding Path=Value, ElementName=zSliderPlane}" Width="40" Margin="10,0"/>
-                            <Slider x:Name="zSliderPlane"
-                    Minimum="1" Maximum="10"
-                    TickFrequency="0.1"
-                    IsSnapToTickEnabled="False"
-                    ValueChanged="OnSlider_ValueChanged"
-                    Style="{StaticResource BlueSlider}"/>
+                            <Slider x:Name="zSliderPlane" Minimum="1" Maximum="10" TickFrequency="0.1"
+                                    IsSnapToTickEnabled="False" ValueChanged="OnSlider_ValueChanged"
+                                    Style="{StaticResource BlueSlider}"/>
                         </DockPanel>
                     </StackPanel>
                 </Border>
@@ -216,11 +210,6 @@
                 <!-- Save Button -->
                 <Button Content="Save" Width="96" Margin="5,0" Style="{StaticResource NeonButton}"/>
             </StackPanel>
-
-
-
-
-
             <!--  CUBE SETTINGS -->
             <!--  UVSPHERE SETTINGS -->
             <!--  ICOSPHERE SETTINGS -->
