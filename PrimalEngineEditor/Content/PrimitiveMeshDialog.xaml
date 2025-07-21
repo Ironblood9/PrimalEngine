@@ -39,59 +39,188 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <!--  PLANE SETTINGS -->
-            <StackPanel Background="{DynamicResource Editor.Window.GrayBrush3}">
-                <StackPanel.Style>
-                    <Style TargetType="{x:Type StackPanel}">
-                        <Setter Property="Visibility" Value="Collapsed"/>
+            <StackPanel Background="#0B0F1A">
+                <StackPanel.Resources>
+
+                    <!-- Neon Kart Stili -->
+                    <Style TargetType="Border" x:Key="NeonCard">
+                        <Setter Property="CornerRadius" Value="10"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="BorderBrush" Value="#2A2D36"/>
+                        <Setter Property="Margin" Value="0,10"/>
+                        <Setter Property="Padding" Value="10"/>
+                        <Setter Property="Background" Value="#121827"/>
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="#00FFFF" Opacity="0"/>
+                            </Setter.Value>
+                        </Setter>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding SelectedItem, ElementName=primTypeComboBox}" 
-                                         Value="{x:Static local:PrimitiveMeshType.Plane}">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#00FFFF"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="#00FFFF" Opacity="0.6"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
                         </Style.Triggers>
                     </Style>
-                </StackPanel.Style>
-                <Grid Margin="0,5">
-                    <Border CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource Editor.Window.GrayBrush6}"
-                            Margin="5">
-                        <StackPanel Margin="5,15,5,5">
-                            <DockPanel Margin="5">
-                                <TextBlock Text="Width" Width="40" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-                                <TextBox Text="{Binding Path=Value, ElementName=xSliderPlane}" Width="30" DockPanel.Dock="Right"/>
-                                <Slider Minimum="1" Maximum="10" HorizontalAlignment="Stretch" Interval="1" IsSnapToTickEnabled="True"
-                                        TickPlacement="BottomRight" x:Name="xSliderPlane" ValueChanged="OnSlider_ValueChanged"/>
-                            </DockPanel>
-                            <DockPanel Margin="5">
-                                <TextBlock Text="Length" Width="40" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-                                <TextBox Text="{Binding Path=Value, ElementName=zSliderPlane}" Width="30" DockPanel.Dock="Right"/>
-                                <Slider Minimum="1" Maximum="10" HorizontalAlignment="Stretch" Interval="1" IsSnapToTickEnabled="True"
-                                        TickPlacement="BottomRight" x:Name="zSliderPlane" ValueChanged="OnSlider_ValueChanged"/>
-                            </DockPanel>
-                        </StackPanel>
-                    </Border>
-                    <Label Content="Segments" Background="{DynamicResource Editor.Window.GrayBrush3}" VerticalAlignment="Top" HorizontalAlignment="Left"
-                           Margin="20,-3,0,0" Padding="5,0" Foreground="{DynamicResource Editor.FontBrush}"/>
-                </Grid>
 
-                <Grid Margin="0,5">
-                    <Border CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource Editor.Window.GrayBrush6}"
-            Margin="5">
-                        <StackPanel Margin="5,15,5,5">
-                            <DockPanel Margin="5,5,5,0">
-                                <TextBlock Text="Width" Width="40" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-                                <utl:ScalarBox x:Name="widthScalarBoxPlane" Value="1" ValueChanged="OnScalarBox_ValueChanged"/>
-                            </DockPanel>
-                            <DockPanel Margin="5,5,5,0">
-                                <TextBlock Text="Length" Width="40" DockPanel.Dock="Left" VerticalAlignment="Center"/>
-                                <utl:ScalarBox x:Name="lengthScalarBoxPlane" Value="1" ValueChanged="OnScalarBox_ValueChanged"/>
-                            </DockPanel>
-                        </StackPanel>
-                    </Border>
-                    <Label Content="Size" Background="{DynamicResource Editor.Window.GrayBrush3}" VerticalAlignment="Top" HorizontalAlignment="Left"
-           Margin="20,-3,0,0" Padding="5,0" Foreground="{DynamicResource Editor.FontBrush}"/>
-                </Grid>
-                <Button Content="Save" Width="96" Margin="5,0"/>
+                    <!-- ANİMASYONLU Mavi Kare Thumb -->
+                    <Style x:Key="BlueSquareThumb" TargetType="Thumb">
+                        <Setter Property="Width" Value="14"/>
+                        <Setter Property="Height" Value="14"/>
+                        <Setter Property="Background" Value="#00CFFF"/>
+                        <Setter Property="BorderBrush" Value="#A6F6FF"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="SnapsToDevicePixels" Value="True"/>
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="#00FFFF" Opacity="0"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Width" To="18" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="Height" To="18" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="Effect.BlurRadius" To="12" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="Effect.Opacity" To="0.6" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Width" To="14" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="Height" To="14" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="Effect.BlurRadius" To="0" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="Effect.Opacity" To="0" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <!-- Slider Stili -->
+                    <Style TargetType="Slider" x:Key="BlueSlider">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Slider">
+                                    <Grid Margin="5,0">
+                                        <Track x:Name="PART_Track">
+                                            <Track.DecreaseRepeatButton>
+                                                <RepeatButton Background="#1B1F2A" Height="4" Command="Slider.DecreaseLarge"/>
+                                            </Track.DecreaseRepeatButton>
+                                            <Track.IncreaseRepeatButton>
+                                                <RepeatButton Background="#1B1F2A" Height="4" Command="Slider.IncreaseLarge"/>
+                                            </Track.IncreaseRepeatButton>
+                                            <Track.Thumb>
+                                                <Thumb Style="{StaticResource BlueSquareThumb}" />
+                                            </Track.Thumb>
+                                        </Track>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- Save Button Neon Style -->
+                    <Style TargetType="Button" x:Key="NeonButton">
+                        <Setter Property="Background" Value="#121827"/>
+                        <Setter Property="Foreground" Value="#A6F6FF"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="8,4"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="BorderBrush" Value="#2A2D36"/>
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="#00FFFF" Opacity="0"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="10" 
+                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#00FFFF"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="#00FFFF" Opacity="0.6"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                </StackPanel.Resources>
+
+                <!-- Segments -->
+                <Border Style="{StaticResource NeonCard}">
+                    <StackPanel>
+                        <TextBlock Text="Segments" Foreground="#A6F6FF" FontWeight="Bold" FontSize="14"/>
+                        <DockPanel Margin="5">
+                            <TextBlock Text="Width" Width="60" Foreground="#66FFFF"/>
+                            <TextBox Text="{Binding Path=Value, ElementName=xSliderPlane}" Width="40" Margin="10,0"/>
+                            <Slider x:Name="xSliderPlane"
+                    Minimum="1" Maximum="10"
+                    TickFrequency="0.1"
+                    IsSnapToTickEnabled="False"
+                    ValueChanged="OnSlider_ValueChanged"
+                    Style="{StaticResource BlueSlider}"/>
+                        </DockPanel>
+                        <DockPanel Margin="5">
+                            <TextBlock Text="Length" Width="60" Foreground="#66FFFF"/>
+                            <TextBox Text="{Binding Path=Value, ElementName=zSliderPlane}" Width="40" Margin="10,0"/>
+                            <Slider x:Name="zSliderPlane"
+                    Minimum="1" Maximum="10"
+                    TickFrequency="0.1"
+                    IsSnapToTickEnabled="False"
+                    ValueChanged="OnSlider_ValueChanged"
+                    Style="{StaticResource BlueSlider}"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Size -->
+                <Border Style="{StaticResource NeonCard}">
+                    <StackPanel>
+                        <TextBlock Text="Size" Foreground="#A6F6FF" FontWeight="Bold" FontSize="14"/>
+                        <DockPanel Margin="5">
+                            <TextBlock Text="Width" Width="60" Foreground="#66FFFF"/>
+                            <utl:ScalarBox x:Name="widthScalarBoxPlane" Value="1" ValueChanged="OnScalarBox_ValueChanged"/>
+                        </DockPanel>
+                        <DockPanel Margin="5">
+                            <TextBlock Text="Length" Width="60" Foreground="#66FFFF"/>
+                            <utl:ScalarBox x:Name="lengthScalarBoxPlane" Value="1" ValueChanged="OnScalarBox_ValueChanged"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Save Button -->
+                <Button Content="Save" Width="96" Margin="5,0" Style="{StaticResource NeonButton}"/>
             </StackPanel>
+
+
+
+
+
             <!--  CUBE SETTINGS -->
             <!--  UVSPHERE SETTINGS -->
             <!--  ICOSPHERE SETTINGS -->
