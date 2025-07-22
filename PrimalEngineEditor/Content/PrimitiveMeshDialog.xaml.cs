@@ -1,4 +1,5 @@
-﻿using PrimalEngineEditor.ContentToolsAPIStructs;
+﻿using PrimalEngineEditor.AllEditors;
+using PrimalEngineEditor.ContentToolsAPIStructs;
 using PrimalEngineEditor.DllWrappers;
 using PrimalEngineEditor.Utilities.Controls;
 using System;
@@ -66,6 +67,7 @@ namespace PrimalEngineEditor.Content
             }
             var geometry = new Geometry();
             ContentToolsAPI.CreatePrimitiveMesh(geometry, info);
+            (DataContext as GeometryEditor).SetAsset(geometry);
         }
         public PrimitiveMeshDialog()
         {
