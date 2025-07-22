@@ -79,6 +79,7 @@ namespace PrimalEngineEditor.AllEditors
                 if (_cameraPosition != value)
                 {
                     _cameraPosition = value;
+                    CameraDirection = new Vector3D(-value.X, -value.Y, -value.Z);
                     OnPropertyChanged(nameof(OffsetCameraPosition));
                     OnPropertyChanged(nameof(CameraPosition));
                 }
@@ -131,7 +132,7 @@ namespace PrimalEngineEditor.AllEditors
             }
         }
 
-        private Color _groundLight = (Color)ColorConverter.ConvertFromString("#ff3f2f1fe");
+        private Color _groundLight = (Color)ColorConverter.ConvertFromString("#ff3f2f1e");
         public Color GroundLight
         {
             get => _groundLight;

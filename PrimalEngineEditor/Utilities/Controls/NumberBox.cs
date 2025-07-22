@@ -78,10 +78,8 @@ namespace PrimalEngineEditor.Utilities.Controls
                     if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control)) _multiplier = 0.001;
                     else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)) _multiplier = 0.1;
                     else _multiplier = 0.01;
-                        var newValue = _originalValue + (d * _multiplier *  Multiplier);
-
-                    Value = newValue.ToString("0.#####", CultureInfo.InvariantCulture);
-
+                    var newValue = _originalValue + (d * _multiplier *  Multiplier);
+                    Value = newValue.ToString("G5");
                     _valueChanged = true;
                 }
             }
