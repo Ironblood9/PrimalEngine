@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -202,6 +202,41 @@ namespace PrimalEngineEditor.AllEditors
                         var v = reader.ReadSingle();
                         vertexData.UVs.Add(new Point(u, v));
                     }
+                using (var reader = new BinaryReader(new MemoryStream(mesh.Indices)))
+                    if (mesh.IndexSize == sizeof(short))
+                        for (int i = 0; i < mesh.IndexCount; i++) vertexData.Indices.Add(reader.ReadUInt16());
+                    else
+                        for (int i = 0; i < mesh.IndexCount; i++) vertexData.Indices.Add(reader.ReadInt32());
+
+                vertexData.Positions.Freeze();
+                vertexData.Normals.Freeze();
+                vertexData.UVs.Freeze();
+                vertexData.Indices.Freeze();
+                Meshes.Add(vertexData);
+            }
+            // set camera target and position
+            if(old !=null)
+            {
+                CameraTarget = old.CameraTarget;
+                CameraPosition = old.CameraPosition;
+            }
+            else
+            {
+                var width = maxX - minX;
+                var height = maxY - minY;
+                var depth = maxZ - minZ;
+                var radius = new Vector3D(height, width, depth).Length * 1.2;
+                if(avgNormal.Length > 0.8)
+                {
+                    avgNormal.Normalize();
+                    avgNormal *= radius;
+                    CameraPosition = new Point3D(avgNormal.X, avgNormal.Y, avgNormal.Z);
+                }
+                else
+                {
+                    CameraPosition = new Point3D(width, height * 0.5, radius);
+                }
+                CameraTarget = new Point3D(minX + width * 0.5, minY + height * 0.5, minZ + depth * 0.5);
             }
         }
     }
@@ -222,13 +257,28 @@ namespace PrimalEngineEditor.AllEditors
                 }
             }
         }
-        
-        public void SetAsset(Content.Asset asset)
+
+        private MeshRenderer _meshRenderer;
+        public MeshRenderer MeshRenderer
+        {
+            get => _meshRenderer;
+            set
+            {
+                if (_meshRenderer != value)
+                {
+                    _meshRenderer = value;
+                    OnPropertyChanged(nameof(MeshRenderer));
+                }
+            }
+        }
+
+        public void SetAsset(Asset asset)
         {
             Debug.Assert(asset is Content.Geometry);
             if(asset is Content.Geometry geometry)
             {
                 Geometry = geometry;
+                MeshRenderer = new MeshRenderer(Geometry.GetLODGroup().LODs[0], MeshRenderer);
             }
         }
     }
