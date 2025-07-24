@@ -36,6 +36,9 @@
                 <ComboBox SelectedIndex="0" Width="100" VerticalAlignment="Center" 
                           ItemsSource="{Binding Source={StaticResource dataFromEnum}}" x:Name="primTypeComboBox"
                           SelectionChanged="OnPrimitiveType_ComboBox_SelectionChanged"/>
+                <CheckBox x:Name="textureCheckBox" Content="Show textured" VerticalAlignment="Center" Margin="5,0" IsChecked="True"
+                          Foreground="{DynamicResource Editor.FontBrush}"
+                          Click="OnTexture_CheckBox_Click"/>
             </StackPanel> 
         </Border>
         <Grid>
@@ -183,15 +186,15 @@
                         <DockPanel Margin="5">
                             <TextBlock Text="Width" Width="60" Foreground="#66FFFF"/>
                             <TextBox Text="{Binding Path=Value, ElementName=xSliderPlane}" Width="40" Margin="10,0"/>
-                            <Slider x:Name="xSliderPlane" Minimum="1" Maximum="10" TickFrequency="0.1"
-                                    IsSnapToTickEnabled="False" ValueChanged="OnSlider_ValueChanged"
+                            <Slider x:Name="xSliderPlane" Minimum="1" Maximum="10" 
+                                    IsSnapToTickEnabled="True" ValueChanged="OnSlider_ValueChanged"
                                     Style="{StaticResource BlueSlider}"/>
                         </DockPanel>
                         <DockPanel Margin="5">
                             <TextBlock Text="Length" Width="60" Foreground="#66FFFF"/>
                             <TextBox Text="{Binding Path=Value, ElementName=zSliderPlane}" Width="40" Margin="10,0"/>
-                            <Slider x:Name="zSliderPlane" Minimum="1" Maximum="10" TickFrequency="0.1"
-                                    IsSnapToTickEnabled="False" ValueChanged="OnSlider_ValueChanged"
+                            <Slider x:Name="zSliderPlane" Minimum="1" Maximum="10" Interval="1"
+                                    IsSnapToTickEnabled="True" ValueChanged="OnSlider_ValueChanged"
                                     Style="{StaticResource BlueSlider}"/>
                         </DockPanel>
                     </StackPanel>
