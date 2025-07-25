@@ -59,12 +59,9 @@ namespace {
 			as_array[vertical_index] += j * vertical_step;
 			mesh.positions.emplace_back(position.x * info.size.x, position.y * info.size.y, position.z * info.size.z);
 
-			//math::v2 uv{ u_range.x, 1.f - v_range.x };
-			//uv.x += i * u_step;
-			//uv.y -= j * v_step;
-			math::v2 uv{ 0, 1.f };
-			uv.x += (i % 2);
-			uv.y -= (j % 2);
+			math::v2 uv{ u_range.x, 1.f - v_range.x };
+			uv.x += i * u_step;
+			uv.y -= j * v_step;
 			uvs.emplace_back(uv);
 		  }
 		assert(mesh.positions.size() == (((u64)horizontal_count + 1) * ((u64)vertical_count + 1)));
@@ -138,4 +135,5 @@ CreatePrimitiveMesh(scene_data* data, primitive_init_info* info)
 	process_scene(scene, data->settings);
 	pack_data(scene, *data);
 }
+
 }

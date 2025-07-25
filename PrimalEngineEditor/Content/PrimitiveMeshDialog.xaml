@@ -185,7 +185,7 @@
                         <TextBlock Text="Segments" Foreground="#A6F6FF" FontWeight="Bold" FontSize="14"/>
                         <DockPanel Margin="5">
                             <TextBlock Text="Width" Width="60" Foreground="#66FFFF"/>
-                            <TextBox Text="{Binding Path=Value, ElementName=xSliderPlane}" Width="40" Margin="10,0"/>
+                            <TextBox Text="{Binding Path=Value, ElementName=xSliderPlane}" Width="40" Margin="10,0" />
                             <Slider x:Name="xSliderPlane" Minimum="1" Maximum="10" 
                                     IsSnapToTickEnabled="True" ValueChanged="OnSlider_ValueChanged"
                                     Style="{StaticResource BlueSlider}"/>
