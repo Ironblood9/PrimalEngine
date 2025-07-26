@@ -88,10 +88,19 @@ namespace {
 				mesh.raw_indices.emplace_back(index[2]);
 				mesh.raw_indices.emplace_back(index[flip_winding ? 3 : 1]);
 				mesh.raw_indices.emplace_back(index[flip_winding ? 1 : 3]);
+
+				// Plane BackSide
+				mesh.raw_indices.emplace_back(index[2]);
+				mesh.raw_indices.emplace_back(index[1]);
+				mesh.raw_indices.emplace_back(index[0]);
+
+				mesh.raw_indices.emplace_back(index[3]);
+				mesh.raw_indices.emplace_back(index[1]);
+				mesh.raw_indices.emplace_back(index[2]);
 			}
 			k++;
 		}
-		const u32 num_indices{ 3 * 2 * horizontal_count * vertical_count };
+		const u32 num_indices{ 3 * 2 * 2 * horizontal_count * vertical_count };
 		assert(mesh.raw_indices.size() == num_indices);
 
 		mesh.uv_sets.resize(1);

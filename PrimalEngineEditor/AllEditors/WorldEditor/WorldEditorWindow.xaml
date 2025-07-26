@@ -6,7 +6,7 @@
             xmlns:local="clr-namespace:PrimalEngineEditor.AllEditors"
              xmlns:utl="clr-namespace:PrimalEngineEditor.Utilities"
              xmlns:ctrl="clr-namespace:PrimalEngineEditor.Utilities.Controls"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:gameproject="clr-namespace:PrimalEngineEditor.GameProject" 
              d:DataContext="{d:DesignInstance Type=gameproject:NewProjectClass2}"
              mc:Ignorable="d" Focusable="True"
