@@ -3,6 +3,8 @@
 
 namespace primal::tools {
 namespace {
+	using namespace DirectX;
+
 	using primitive_mash_creator = void(*)(scene&, const primitive_init_info& info);
 
 	void create_plane(scene& scene, const primitive_init_info& info);
@@ -101,6 +103,41 @@ namespace {
 		return mesh;
 	}
 
+	mesh
+		create_uv_sphere(const primitive_init_info& info)
+	{
+		const u32 phi_count{ math::clamp(info.segments[axis::x], 3u, 64u) };
+		const u32 theta_count{ math::clamp(info.segments[axis::y], 2u, 64u) };
+		const f32 theta_step{ math::pi / theta_count };
+		const f32 phi_step{ math::two_pi / phi_count };
+		const u32 num_vertices{ 2 + phi_count * (theta_count - 1) };
+
+		mesh mesh{};
+		mesh.name = "uv_sphere";
+		mesh.positions.resize(num_vertices);
+
+		// add top vertex
+		u32 counter{ 0 };
+		mesh.positions[counter++] = { 0.f, info.size.y, 0.f };
+
+		for (u32 j{ 1 }; j <= (theta_count - 1); j++)
+		{
+			const f32 theta{ j * theta_step };
+			for (u32 i{ 0 }; i < phi_count; i++)
+			{
+				const u32 phi{ i * phi_step };
+				mesh.positions[counter++] = {
+					info.size.x * XMScalarSin(theta) * XMScalarCos(phi),
+					info.size.y * XMScalarCos(theta),
+					-info.size.z * XMScalarSin(theta) * XMScalarSin(phi)
+				};
+			}
+		}
+		// add bottom vertex
+		mesh.positions[counter++] = { 0.f, -info.size.y, 0.f };
+		assert(counter == num_vertices);
+	}
+
 	void create_plane(scene& scene, const primitive_init_info& info)
 	{
 		lod_group lod{};
@@ -109,11 +146,16 @@ namespace {
 		scene.lod_groups.emplace_back(lod);
 	}
 	void create_cube(scene& scene, const primitive_init_info& info) 
-	{
+	{}
 
-	}
 	void create_uv_sphere(scene& scene, const primitive_init_info& info)
-	{ }
+	{ 
+		lod_group lod{};
+		lod.name = "uv_sphere";
+		lod.meshes.emplace_back(create_uv_sphere(info));
+		scene.lod_groups.emplace_back(lod);
+	}
+
 	void create_ico_sphere(scene& scene, const primitive_init_info& info)
 	{}
 	void create_cylinder(scene& scene, const primitive_init_info& info)
