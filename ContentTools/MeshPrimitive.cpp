@@ -110,6 +110,7 @@ namespace {
 		const u32 theta_count{ math::clamp(info.segments[axis::y], 2u, 64u) };
 		const f32 theta_step{ math::pi / theta_count };
 		const f32 phi_step{ math::two_pi / phi_count };
+		const u32 num_indices{ 2 * 3 * phi_count + 2 * 3 * phi_count * (theta_count - 2) };
 		const u32 num_vertices{ 2 + phi_count * (theta_count - 1) };
 
 		mesh mesh{};
@@ -125,7 +126,7 @@ namespace {
 			const f32 theta{ j * theta_step };
 			for (u32 i{ 0 }; i < phi_count; i++)
 			{
-				const u32 phi{ i * phi_step };
+				const f32 phi{ i * phi_step };
 				mesh.positions[counter++] = {
 					info.size.x * XMScalarSin(theta) * XMScalarCos(phi),
 					info.size.y * XMScalarCos(theta),
@@ -136,6 +137,74 @@ namespace {
 		// add bottom vertex
 		mesh.positions[counter++] = { 0.f, -info.size.y, 0.f };
 		assert(counter == num_vertices);
+
+		counter = 0;
+		mesh.raw_indices.resize(num_indices);
+		// Indices for the top cap, connecting to north pole to the first ring
+		for (u32 i{ 0 }; i < phi_count - 1; i++)
+		{
+			mesh.raw_indices[counter++] = 0;
+			mesh.raw_indices[counter++] = i+1;
+			mesh.raw_indices[counter++] = i+2;
+		}
+
+		mesh.raw_indices[counter++] = 0;
+		mesh.raw_indices[counter++] = phi_count;
+		mesh.raw_indices[counter++] = 1;
+
+		// Indices for the section between the top and bottom rings
+		for (u32 j{ 0 }; j < (theta_count - 2); j++)
+		{
+			for (u32 i{ 0 }; i < (phi_count -1); i++)
+			{
+				const u32 index[4]
+				{
+					1 + i + j * phi_count,
+					1 + i + (j + 1) * phi_count,
+					1 + (i + 1) + (j + 1) * phi_count,
+					1 + (i + 1) + j * phi_count
+				};
+
+				mesh.raw_indices[counter++] = index[0];
+				mesh.raw_indices[counter++] = index[1];
+				mesh.raw_indices[counter++] = index[2];
+
+				mesh.raw_indices[counter++] = index[0];
+				mesh.raw_indices[counter++] = index[2];
+				mesh.raw_indices[counter++] = index[3];
+			}
+
+			const u32 index[4]
+			{
+				phi_count + j * phi_count,
+				phi_count + (j + 1) * phi_count,
+				1 + (j + 1) * phi_count,
+				1 + j * phi_count,
+			};
+			mesh.raw_indices[counter++] = index[0];
+			mesh.raw_indices[counter++] = index[1];
+			mesh.raw_indices[counter++] = index[2];
+
+			mesh.raw_indices[counter++] = index[0];
+			mesh.raw_indices[counter++] = index[2];
+			mesh.raw_indices[counter++] = index[3];
+		}
+		// Indices for the bottom cap, connetting the south posle to the last ring
+		const u32 south_pole_index{ (u32)mesh.positions.size() - 1 };
+		for (u32 i{ 0 }; i < (phi_count - 1); i++)
+		{
+			mesh.raw_indices[counter++] = south_pole_index;
+			mesh.raw_indices[counter++] = south_pole_index - phi_count + i + 1;
+			mesh.raw_indices[counter++] = south_pole_index - phi_count + i;
+		}
+
+		mesh.raw_indices[counter++] = south_pole_index;
+		mesh.raw_indices[counter++] = south_pole_index - phi_count;
+		mesh.raw_indices[counter++] = south_pole_index - 1;
+
+		mesh.uv_sets.resize(1);
+		mesh.uv_sets[0].resize(mesh.raw_indices.size());
+		return mesh;
 	}
 
 	void create_plane(scene& scene, const primitive_init_info& info)
@@ -171,11 +240,9 @@ CreatePrimitiveMesh(scene_data* data, primitive_init_info* info)
 	assert(data && info);
 	assert(info->type < primitive_mash_type::count);
 	scene scene{};
-
 	creators[info->type](scene, *info);
 	data->settings.calculate_normals = 1;
 	process_scene(scene, data->settings);
 	pack_data(scene, *data);
 }
-
 }
