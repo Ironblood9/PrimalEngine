@@ -24,6 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\PrimitiveMeshWindow\CheckerMap.png" />
     <None Remove="Resources\PrimitiveMeshWindow\PlaneTexture.png" />
   </ItemGroup>
 
@@ -80,6 +81,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\PrimitiveMeshWindow\CheckerMap.png" />
     <Resource Include="Resources\PrimitiveMeshWindow\PlaneTexture.png" />
   </ItemGroup>
 

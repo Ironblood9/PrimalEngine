@@ -88,7 +88,7 @@ namespace PrimalEngineEditor.Content
             {
                 new Uri("pack://application:,,,/Resources/PrimitiveMeshWindow/PlaneTexture.png"),
                 new Uri("pack://application:,,,/Resources/PrimitiveMeshWindow/PlaneTexture.png"),
-                new Uri("pack://application:,,,/Resources/PrimitiveMeshWindow/PlaneTexture.png"),
+                new Uri("pack://application:,,,/Resources/PrimitiveMeshWindow/CheckerMap.png"),
             };
 
             _textures.Clear();
