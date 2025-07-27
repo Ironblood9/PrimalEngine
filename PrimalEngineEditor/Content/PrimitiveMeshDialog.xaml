@@ -46,140 +46,10 @@
                 <ColumnDefinition MinWidth="100" MaxWidth="200"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
+
+          
             <!--  PLANE SETTINGS -->
             <StackPanel Background="#0B0F1A">
-
-            
-                <StackPanel.Resources>
-
-                    <!-- Neon Card Style -->
-                    <Style TargetType="Border" x:Key="NeonCard">
-                        <Setter Property="CornerRadius" Value="10"/>
-                        <Setter Property="BorderThickness" Value="2"/>
-                        <Setter Property="BorderBrush" Value="#2A2D36"/>
-                        <Setter Property="Margin" Value="0,10"/>
-                        <Setter Property="Padding" Value="10"/>
-                        <Setter Property="Background" Value="#121827"/>
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="#00FFFF"/>
-                                <Setter Property="Effect">
-                                    <Setter.Value>
-                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0.6"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-
-                    <!-- Blue Square Thumb -->
-                    <Style x:Key="BlueSquareThumb" TargetType="Thumb">
-                        <Setter Property="Width" Value="14"/>
-                        <Setter Property="Height" Value="14"/>
-                        <Setter Property="Background" Value="{DynamicResource Editor.BlueBrush}"/>
-                        <Setter Property="BorderBrush" Value="#A6F6FF"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                        <Setter Property="SnapsToDevicePixels" Value="True"/>
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Width" To="18" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Height" To="18" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.BlurRadius" To="12" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.Opacity" To="0.6" Duration="0:0:0.2"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Width" To="14" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Height" To="14" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.BlurRadius" To="0" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.Opacity" To="0" Duration="0:0:0.2"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-
-                    <!-- Slider Style -->
-                    <Style TargetType="Slider" x:Key="BlueSlider">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Slider">
-                                    <Grid Margin="5,0">
-                                        <Track x:Name="PART_Track">
-                                            <Track.DecreaseRepeatButton>
-                                                <RepeatButton Background="{DynamicResource Editor.Window.GrayBrush1}" Height="4" Command="Slider.DecreaseLarge"/>
-                                            </Track.DecreaseRepeatButton>
-                                            <Track.IncreaseRepeatButton>
-                                                <RepeatButton Background="{DynamicResource Editor.Window.GrayBrush1}" Height="4" Command="Slider.IncreaseLarge"/>
-                                            </Track.IncreaseRepeatButton>
-                                            <Track.Thumb>
-                                                <Thumb Style="{StaticResource BlueSquareThumb}" />
-                                            </Track.Thumb>
-                                        </Track>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-
-                    <!-- Save Button Neon Style -->
-                    <Style TargetType="Button" x:Key="NeonButton">
-                        <Setter Property="Background" Value="#121827"/>
-                        <Setter Property="Foreground" Value="#A6F6FF"/>
-                        <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="Padding" Value="8,4"/>
-                        <Setter Property="BorderThickness" Value="2"/>
-                        <Setter Property="BorderBrush" Value="#2A2D36"/>
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Cursor" Value="Hand"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Border 
-                            Background="{TemplateBinding Background}" 
-                            BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}" 
-                            CornerRadius="10" 
-                            Padding="{TemplateBinding Padding}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="#00FFFF"/>
-                                <Setter Property="Effect">
-                                    <Setter.Value>
-                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0.6"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-
-                </StackPanel.Resources>
 
                 <!-- Segments -->
                 <Border Style="{StaticResource NeonCard}">
@@ -218,7 +88,8 @@
                 </Border>
 
                 <!-- Save Button -->
-                <Button Content="Save" Width="96" Margin="5,0" Style="{StaticResource NeonButton}"/>
+                <Button Content="Save" Width="96" Margin="5,0" Click="OnSave_Button_Click"
+                        Style="{StaticResource NeonButton}"/>
             </StackPanel>
             <!--  CUBE SETTINGS -->
             <!--  UVSPHERE SETTINGS -->
@@ -234,137 +105,6 @@
                         </Style.Triggers>
                     </Style>
                 </StackPanel.Style>
-
-                <StackPanel.Resources>
-
-                    <!-- Neon Card Style -->
-                    <Style TargetType="Border" x:Key="NeonCard"> 
-                        <Setter Property="CornerRadius" Value="10"/>
-                        <Setter Property="BorderThickness" Value="2"/>
-                        <Setter Property="BorderBrush" Value="#2A2D36"/>
-                        <Setter Property="Margin" Value="0,10"/>
-                        <Setter Property="Padding" Value="10"/>
-                        <Setter Property="Background" Value="#121827"/>
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="#00FFFF"/>
-                                <Setter Property="Effect">
-                                    <Setter.Value>
-                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0.6"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-
-                    <!-- Blue Square Thumb -->
-                    <Style x:Key="BlueSquareThumb" TargetType="Thumb">
-                        <Setter Property="Width" Value="14"/>
-                        <Setter Property="Height" Value="14"/>
-                        <Setter Property="Background" Value="{DynamicResource Editor.BlueBrush}"/>
-                        <Setter Property="BorderBrush" Value="#A6F6FF"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                        <Setter Property="SnapsToDevicePixels" Value="True"/>
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Width" To="18" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Height" To="18" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.BlurRadius" To="12" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.Opacity" To="0.6" Duration="0:0:0.2"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Width" To="14" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Height" To="14" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.BlurRadius" To="0" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="Effect.Opacity" To="0" Duration="0:0:0.2"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-
-                    <!-- Slider Style -->
-                    <Style TargetType="Slider" x:Key="BlueSlider">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Slider">
-                                    <Grid Margin="5,0">
-                                        <Track x:Name="PART_Track">
-                                            <Track.DecreaseRepeatButton>
-                                                <RepeatButton Background="{DynamicResource Editor.Window.GrayBrush1}" Height="4" Command="Slider.DecreaseLarge"/>
-                                            </Track.DecreaseRepeatButton>
-                                            <Track.IncreaseRepeatButton>
-                                                <RepeatButton Background="{DynamicResource Editor.Window.GrayBrush1}" Height="4" Command="Slider.IncreaseLarge"/>
-                                            </Track.IncreaseRepeatButton>
-                                            <Track.Thumb>
-                                                <Thumb Style="{StaticResource BlueSquareThumb}" />
-                                            </Track.Thumb>
-                                        </Track>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-
-                    <!-- Save Button Neon Style -->
-                    <Style TargetType="Button" x:Key="NeonButton">
-                        <Setter Property="Background" Value="#121827"/>
-                        <Setter Property="Foreground" Value="#A6F6FF"/>
-                        <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="Padding" Value="8,4"/>
-                        <Setter Property="BorderThickness" Value="2"/>
-                        <Setter Property="BorderBrush" Value="#2A2D36"/>
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Cursor" Value="Hand"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Border 
-                Background="{TemplateBinding Background}" 
-                BorderBrush="{TemplateBinding BorderBrush}" 
-                BorderThickness="{TemplateBinding BorderThickness}" 
-                CornerRadius="10" 
-                Padding="{TemplateBinding Padding}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="#00FFFF"/>
-                                <Setter Property="Effect">
-                                    <Setter.Value>
-                                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="{DynamicResource Editor.CyanColor}" Opacity="0.6"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-
-                </StackPanel.Resources>
 
                 <!-- Segments -->
                 <Border Style="{StaticResource NeonCard}">
@@ -408,8 +148,8 @@
                 <!--Smoothing Angles-->
                 <Border Style="{StaticResource NeonCard}">
                     <StackPanel>
-                        <TextBlock Text="Segments" Foreground="#A6F6FF" FontWeight="Bold" FontSize="14"/>
-                        <DockPanel Margin="5">
+                        <TextBlock Text="Smoothing Angels" Foreground="#A6F6FF" FontWeight="Bold" FontSize="14"/>
+                        <DockPanel Margin="5,15,5,5">
                             <TextBlock Text="Angle" Width="60" Foreground="#66FFFF"/>
                             <TextBox Text="{Binding Path=Value, ElementName=angleSliderUvSphere}" Width="40" Margin="10,0" />
                             <Slider x:Name="angleSliderUvSphere" Minimum="0" Maximum="180" 
@@ -420,7 +160,8 @@
                 </Border>
 
                 <!-- Save Button -->
-                <Button Content="Save" Width="96" Margin="5,0" Style="{StaticResource NeonButton}"/>
+                <Button Content="Save" Width="96" Margin="5,0"  Click="OnSave_Button_Click"
+                        Style="{StaticResource NeonButton}"/>
             </StackPanel>
             <!--  ICOSPHERE SETTINGS -->
             <!--  CYLINDER SETTINGS -->

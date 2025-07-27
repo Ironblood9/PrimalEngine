@@ -98,7 +98,7 @@
                 <DropShadowEffect Opacity="0.6" BlurRadius="15" ShadowDepth="2"/>
             </StackPanel.Effect>
             <local:OpenProjectWindow x:Name="openProjectWindow"/>
-            <local:NewProjectWindow  x:Name="newProjectWindow" Margin="800,0,0,0"/>
+            <local:NewProjectWindow  x:Name="newProjectWindow" IsEnabled="False" Margin="800,0,0,0"/>
         </StackPanel>
 
 
