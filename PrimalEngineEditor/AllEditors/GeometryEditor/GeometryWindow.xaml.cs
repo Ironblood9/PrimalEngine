@@ -21,6 +21,8 @@ namespace PrimalEngineEditor.AllEditors
     /// </summary>
     public partial class GeometryWindow : UserControl
     {
+        private static readonly GeometryWindow _geometryWindow = new GeometryWindow()
+        { Background = (Brush)Application.Current.FindResource("Editor.Window.GrayBrush4") };
         private Point _clickedPosition;
         private bool _capturedLeft;
         private bool _capturedRight;
@@ -66,11 +68,6 @@ namespace PrimalEngineEditor.AllEditors
             }
             var visual = new ModelVisual3D() { Content = modelGroup };
             viewport.Children.Add(visual);
-        }
-        public GeometryWindow()
-        {
-            InitializeComponent();
-            DataContextChanged += (s, e) => SetGeometry();
         }
 
         private void OnGrid_Mouse_LBD(object sender, MouseButtonEventArgs e)
@@ -143,6 +140,27 @@ namespace PrimalEngineEditor.AllEditors
             v.Y = r * Math.Cos(theta);
 
             vm.CameraPosition = new Point3D(v.X, v.Y, v.Z);
+        }
+
+        internal static BitmapSource RenderToBitmap(MeshRenderer mesh, int width, int height)
+        {
+            var bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Default);
+
+            _geometryWindow.DataContext = mesh;
+            _geometryWindow.Width = width;
+            _geometryWindow.Height = height;
+            _geometryWindow.Measure(new Size(width, height));
+            _geometryWindow.Arrange(new Rect(0, 0, width, height));
+            _geometryWindow.UpdateLayout();
+
+            bmp.Render(_geometryWindow);
+            return bmp;
+        }
+
+        public GeometryWindow()
+        {
+            InitializeComponent();
+            DataContextChanged += (s, e) => SetGeometry();
         }
     }
 }

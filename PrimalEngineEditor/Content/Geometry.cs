@@ -8,6 +8,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace PrimalEngineEditor.Content
 {
@@ -158,16 +161,16 @@ namespace PrimalEngineEditor.Content
         }
 
 
-        private bool _calculateTangent;
-        public bool CalculateTangent
+        private bool _calculateTangents;
+        public bool CalculateTangents
         {
-            get => _calculateTangent;
+            get => _calculateTangents;
             set
             {
-                if (_calculateTangent != value)
+                if (_calculateTangents != value)
                 {
-                    _calculateTangent = value;
-                    OnPropertyChanged(nameof(CalculateTangent));
+                    _calculateTangents = value;
+                    OnPropertyChanged(nameof(CalculateTangents));
                 }
             }
         }
@@ -236,11 +239,21 @@ namespace PrimalEngineEditor.Content
         public GeometryImportSetting()
         {
             CalculateNormals = false;
-            CalculateTangent = false;
+            CalculateTangents = false;
             SmoothingAngle = 178f;
             ReverseHandedness = false;
             ImportEmbeddedTextures = true;
             ImportAnimations = true;
+        }
+
+        public void ToBinary(BinaryWriter writer)
+        {
+            writer.Write(CalculateNormals);
+            writer.Write(CalculateTangents);
+            writer.Write(SmoothingAngle);
+            writer.Write(ReverseHandedness);
+            writer.Write(ImportEmbeddedTextures);
+            writer.Write(ImportAnimations);
         }
     }
 
@@ -384,6 +397,16 @@ namespace PrimalEngineEditor.Content
                         data = (writer.BaseStream as MemoryStream).ToArray();
                         Icon = GenerateIcon(lodGroup.LODs[0]);
                     }
+                    Debug.Assert(data?.Length > 0);
+
+                    using (var writer = new BinaryWriter(File.Open(meshFileName, FileMode.Create, FileAccess.Write)))
+                    {
+                        WriteAssetFileHeader(writer);
+                        ImportSettings.ToBinary(writer);
+                        writer.Write(data.Length);
+                        writer.Write(data);
+                    }
+                    savedFiles.Add(meshFileName);
                 }
             }
             catch (Exception ex)
@@ -415,6 +438,25 @@ namespace PrimalEngineEditor.Content
             var buffer = (writer.BaseStream as MemoryStream).ToArray();
             hash = ContentHelper.ComputeHash(buffer, (int)meshDataBegin, (int)meshDataSize);
 
+        }
+
+        private byte[] GenerateIcon(MeshLOD lod)
+        {
+            var width = 90 * 4;
+            BitmapSource bmp = null;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                bmp = AllEditors.GeometryWindow.RenderToBitmap(new AllEditors.MeshRenderer(lod, null), width, width);
+                bmp = new TransformedBitmap(bmp, new ScaleTransform(0.25, 0.25, 0.5, 0.5));
+            });
+            using var memStream = new MemoryStream();
+            memStream.SetLength(0);
+
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bmp));
+            encoder.Save(memStream);
+            return memStream.ToArray();
         }
 
         public Geometry() : base(AssetType.Mesh) { }
