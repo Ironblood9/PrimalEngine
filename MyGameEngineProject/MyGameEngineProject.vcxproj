@@ -30,6 +30,7 @@
     <ClInclude Include="AgilisAPI\GameEntity.h" />
     <ClInclude Include="AgilisAPI\TransformComponent.h" />
     <ClInclude Include="Content\LoadContent.h" />
+    <ClInclude Include="Graphics\GraphicsPlatformInterface.h" />
     <ClInclude Include="Graphics\Renderer.h" />
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Platform\PlatformTypes.h" />
@@ -45,6 +46,7 @@
     <ClCompile Include="Content\LoadContent.cpp" />
     <ClCompile Include="Core\Agilis.cpp" />
     <ClCompile Include="Core\Main.cpp" />
+    <ClCompile Include="Graphics\Renderer.cpp" />
     <ClCompile Include="Platform\Platform.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
