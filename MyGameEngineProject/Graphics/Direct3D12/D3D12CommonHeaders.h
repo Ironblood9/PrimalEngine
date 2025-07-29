@@ -35,4 +35,10 @@ if(FAILED(x)) {                                           \
 #endif // !DXCall
 #endif // _DEBUG
 
+#ifdef _DEBUG
+//Sets the name of the COM object and outputs a debug string int Visual Studios output panel
+#define NAME_D3D12_OBJECT(obj, name) obj->SetName(name); OutputDebugString(L"::D3D12 Object Created: "); OutputDebugString(name); OutputDebugString(L"\n");
+#else
+#define NAME_D3D12_OBJECT(x, name)
+#endif // _DEBUG
 

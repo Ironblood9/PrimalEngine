@@ -17,7 +17,7 @@ namespace primal::graphics::d3d12::core
 		}
 
 		IDXGIAdapter4*
-		determine_main_adapter()
+		  determine_main_adapter()
 		{
 			IDXGIAdapter4* adapter{ nullptr };
 			// get adapters in descending order of performance
@@ -34,6 +34,27 @@ namespace primal::graphics::d3d12::core
 			return nullptr;
 		}
 
+		D3D_FEATURE_LEVEL 
+			get_max_feature_level(IDXGIAdapter4* adapter)
+		{
+			constexpr D3D_FEATURE_LEVEL feature_levels[4]
+			{
+				D3D_FEATURE_LEVEL_11_0,
+				D3D_FEATURE_LEVEL_11_1,
+				D3D_FEATURE_LEVEL_12_0,
+				D3D_FEATURE_LEVEL_12_1,
+			};
+
+			D3D12_FEATURE_DATA_FEATURE_LEVELS feature_level_info{};
+			feature_level_info.NumFeatureLevels = _countof(feature_levels);
+			feature_level_info.pFeatureLevelsRequested = feature_levels;
+
+			ComPtr<ID3D12Device> device;
+			DXCall(D3D12CreateDevice(adapter, minimum_feature_level, IID_PPV_ARGS(&device)));
+			DXCall(device->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &feature_level_info, sizeof(feature_level_info)));
+			return feature_level_info.MaxSupportedFeatureLevel;
+		}
+
 	}//anonymous
 
 	bool initialize()
@@ -44,7 +65,14 @@ namespace primal::graphics::d3d12::core
 
 		u32 dxgi_factory_flags{ 0 };
 #ifdef _DEBUG
-		dxgi_factory_flags |= DXGI_CREATE_FACTORY_DEBUG;
+		// enable debugging layer
+		{
+			ComPtr<ID3D12Debug3> debug_interface;
+			DXCall(D3D12GetDebugInterface(IID_PPV_ARGS(&debug_interface)));
+			debug_interface->EnableDebugLayer();
+			dxgi_factory_flags |= DXGI_CREATE_FACTORY_DEBUG;
+		}
+
 #endif // _DEBUG
 
 		HRESULT hr{ S_OK };
@@ -56,5 +84,51 @@ namespace primal::graphics::d3d12::core
 		main_adapter.Attach(determine_main_adapter());
 
 		if (!main_adapter) return failed_init();
+
+		D3D_FEATURE_LEVEL max_feature_level{ get_max_feature_level(main_adapter.Get()) };
+		assert(max_feature_level >= minimum_feature_level);
+		if (max_feature_level < minimum_feature_level) return failed_init();
+
+		DXCall(hr = D3D12CreateDevice(main_adapter.Get(), max_feature_level, IID_PPV_ARGS(&main_device)));
+		if (FAILED(hr)) return failed_init();
+
+		NAME_D3D12_OBJECT(main_device, L"Main D3D12 Device");
+
+#ifdef _DEBUG
+		{
+			ComPtr<ID3D12InfoQueue> info_queue;
+			DXCall(main_device->QueryInterface(IID_PPV_ARGS(&info_queue)));
+			info_queue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+			info_queue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+			info_queue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		}
+#endif // _DEBUG
+
+
+		return true;
+	}
+
+	void shutdown()
+	{
+		release(dxgi_factory);
+
+#ifdef _DEBUG
+		{
+			{
+				ComPtr<ID3D12InfoQueue> info_queue;
+				DXCall(main_device->QueryInterface(IID_PPV_ARGS(&info_queue)));
+				info_queue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, false);
+				info_queue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, false);
+				info_queue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, false);
+			}
+			ComPtr<ID3D12DebugDevice2> debug_device;
+			DXCall(main_device->QueryInterface(IID_PPV_ARGS(&debug_device)));
+			release(main_device);
+			DXCall(debug_device->ReportLiveDeviceObjects(
+				D3D12_RLDO_SUMMARY | D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL));
+		}
+#endif // _DEBUG
+
+		release(main_device);
 	}
 }
