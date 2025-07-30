@@ -1,3 +1,6 @@
+#ifdef TEST_RENDERER
+ 
+
 
 #include "..\Platform\PlatformTypes.h"
 #include "..\Platform\Platform.h"
@@ -86,6 +89,7 @@ void agilis_test::shutdown()
 }
 
 
+#endif // TEST_RENDERER 
 
 
 
