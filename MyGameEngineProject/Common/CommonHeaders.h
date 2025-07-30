@@ -12,6 +12,10 @@
 #include <DirectXMath.h>
 #endif
 
+#ifndef DISABLE_COPY
+#define 
+#endif // DISABLE_COPY
+
 
 //Common headers
 #include "PrimitiveTypes.h"

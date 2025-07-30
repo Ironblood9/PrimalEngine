@@ -1,11 +1,9 @@
-#ifdef TEST_RENDERER
  
-
-
 #include "..\Platform\PlatformTypes.h"
 #include "..\Platform\Platform.h"
 #include "..\Graphics\Renderer.h"
 #include "TestRenderer.h"
+#if TEST_RENDERER
 
 
 using namespace primal;
