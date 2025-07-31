@@ -281,4 +281,11 @@ namespace primal::graphics::d3d12::core
 		ID3D12GraphicsCommandList6*  cmd_list{ gfx_command.command_list() };
 		gfx_command.end_frame();
 	}
+
+	ID3D12Device *const 
+	device()
+	{
+		return main_device;
+	}
+
 }

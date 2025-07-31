@@ -50,6 +50,7 @@ namespace primal::graphics::d3d12
 		D3D12_CPU_DESCRIPTOR_HANDLE        _cpu_start{};
 		D3D12_GPU_DESCRIPTOR_HANDLE        _gpu_start{};
 		std::unique_ptr<u32[]>             _free_handles{};
+		std::mutex                         _mutex{};
 		u32                                _capacity{ 0 };
 		u32                                _size{ 0 }; // keep count of how many descriptor have already been allocated
 		u32                                _descriptor_size{};
