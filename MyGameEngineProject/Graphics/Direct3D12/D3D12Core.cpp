@@ -56,7 +56,7 @@ namespace primal::graphics::d3d12::core
 
 		  ~d3d12_command()
 		  {
-			  assert(!_cmd_queue && !_cmd_list && _fence);
+			  assert(!_cmd_queue && !_cmd_list && !_fence);
 		  }
 
 		  void begin_frame()
@@ -135,7 +135,7 @@ namespace primal::graphics::d3d12::core
 
 			ID3D12CommandQueue*            _cmd_queue{ nullptr };
 			ID3D12GraphicsCommandList6*    _cmd_list{ nullptr };
-			ID3D12Fence1*                  _fence;
+			ID3D12Fence1*                  _fence{ nullptr };
 			u64                            _fence_value{ 0 };
 			command_frame                  _cmd_frames[frame_buffer_count]{};
 			HANDLE                         _fence_event{ nullptr };
@@ -251,6 +251,8 @@ namespace primal::graphics::d3d12::core
 
 	void shutdown()
 	{
+		gfx_command.release();
+
 		release(dxgi_factory);
 
 #ifdef _DEBUG
@@ -276,6 +278,7 @@ namespace primal::graphics::d3d12::core
 	void render()
 	{
 		gfx_command.begin_frame();
+		ID3D12GraphicsCommandList6*  cmd_list{ gfx_command.command_list() };
 		gfx_command.end_frame();
 	}
 }
