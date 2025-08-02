@@ -46,10 +46,12 @@ LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 void create_render_surface(graphics::render_surface& surface, platform::window_init_info info)
 {
 	surface.window = platform::create_window(&info);
+	surface.surface = graphics::create_surface(surface.window);
 }
 
 void destroy_render_surface(graphics::render_surface& surface)
 {
+	graphics::remove_surface(surface.surface.get_id());
 	platform::remove_window(surface.window.get_id());
 }
 
@@ -76,7 +78,13 @@ bool agilis_test::initialize()
 void agilis_test::run() 
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	graphics::render();
+	for (u32 i{ 0 }; i < _countof(_surfaces); i++)
+	{
+		if (_surfaces[i].surface.is_valid())
+		{
+			_surfaces[i].surface.render();
+		}
+	}
 }
 
 void agilis_test::shutdown()

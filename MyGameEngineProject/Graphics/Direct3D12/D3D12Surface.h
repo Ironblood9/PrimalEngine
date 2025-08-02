@@ -12,6 +12,32 @@ namespace primal::graphics::d3d12
 			assert(_window.handle());
 		}
 
+#if USE_STL_VECTOR
+		DISABLE_COPY(d3d12_surface);
+		constexpr d3d12_surface(d3d12_surface&& o)
+			: _swap_chain{ o._swap_chain }, _window{ o._window }, _current_bb_index{ o._current_bb_index },
+			_viewport{ o._viewport }, _scissor_rect{ o._scissor_rect }
+		{
+			for (u32 i{ 0 }; i < frame_buffer_count; i++)
+			{
+				_render_target_data[i].resource = o._render_target_data[i].resource;
+				_render_target_data[i].rtv = o._render_target_data[i].rtv;
+			}
+			o.reset();
+		}
+
+		constexpr d3d12_surface& operator=(d3d12_surface&& o)
+		{
+			assert(this != &o);
+			if (this != &o)
+			{
+				release();
+				move(o);
+			}
+			return *this;
+		}
+#endif // USE_STL_VECTOR
+
 		~d3d12_surface() { release(); }
 
 		void create_swap_chain(IDXGIFactory7* factory, ID3D12CommandQueue* cmd_queue, DXGI_FORMAT format);
@@ -28,6 +54,36 @@ namespace primal::graphics::d3d12
 	private:
 		void finalize();
 		void release();
+#if USE_STL_VECTOR
+		constexpr void move(d3d12_surface& o)
+		{
+			_swap_chain = o._swap_chain;
+			for (u32 i{ 0 }; i < frame_buffer_count; i++)
+			{
+				_render_target_data[i] = o._render_target_data[i];
+			}
+			_window = o._window;
+			_current_bb_index = o._current_bb_index;
+			_viewport = o._viewport;
+			_scissor_rect = o._scissor_rect;
+
+			o.reset();
+		}
+		constexpr void reset() 
+		{
+			_swap_chain = nullptr;
+			for (u32 i{ 0 }; i < frame_buffer_count; i++)
+			{
+				_render_target_data[i] = {};
+			}
+			_window = {};
+			_current_bb_index = 0;
+			_viewport = {};
+			_scissor_rect = {};
+		}
+#endif // USE_STL_VECTOR
+
+
 
 		struct render_target_data
 		{
