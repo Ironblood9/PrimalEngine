@@ -1,6 +1,7 @@
 
 #include "D3D12Resources.h"
 #include "D3D12Core.h"
+#include "D3D12Helpers.h"
 
 namespace primal::graphics::d3d12
 {
@@ -117,13 +118,31 @@ namespace primal::graphics::d3d12
 		auto *const device{ core::device() };
 		assert(device);
 
+		D3D12_CLEAR_VALUE *const clear_value
+		{
+			(info.desc &&
+			(info.desc->Flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET ||
+			info.desc->Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL))
+				? &info.clear_value : nullptr
+		};
+
 		if (info.resource)
 		{
+			assert(!info.heap);
 			_resource = info.resource;
 		}
-		else
+		else if (info.heap && info.desc)
 		{
 			assert(!info.resource);
+			DXCall(device->CreatePlacedResource(info.heap, info.allocation_info.Offset, info.desc, 
+				                                info.initial_state, clear_value, IID_PPV_ARGS(&_resource)));
+		}
+		else if(info.desc)
+		{
+			assert(!info.heap && !info.resource);
+
+			DXCall(device->CreateCommittedResource(&d3dx::heap_properties.default_heap, D3D12_HEAP_FLAG_NONE, info.desc, 
+				                                    info.initial_state, clear_value, IID_PPV_ARGS(&_resource)));
 		}
 
 		assert(_resource);
