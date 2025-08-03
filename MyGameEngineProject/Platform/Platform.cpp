@@ -17,7 +17,6 @@ namespace primal::platform {
 			bool is_fullscreen{ false };
 			bool is_closed{ false };
 
-			~window_info() { assert(!is_fullscreen); }
 		};
 		utl::free_list<window_info> windows;
 
