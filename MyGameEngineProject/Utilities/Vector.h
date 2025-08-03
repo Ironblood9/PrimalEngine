@@ -86,9 +86,9 @@ namespace primal::utl
 				reserve(((_capacity + 1) * 3) >> 1); // reserve %50 more
 			}
 			assert(_size < _capacity);
-			new(std::addressof(_data[_size])) T(std::forward<params>(p)...);
+			T *const item{ new(std::addressof(_data[_size])) T(std::forward<params>(p)...) };
 			++_size;
-			return _data[_size - 1];
+			return *item;
 		}
 
 
@@ -110,6 +110,7 @@ namespace primal::utl
 				{
 					destruct_range(new_size, _size);
 				}
+				_size = new_size;
 			}
 			// do nothing if new_size=_size
 			assert(new_size == _size);
@@ -133,6 +134,7 @@ namespace primal::utl
 				{
 					destruct_range(new_size, _size);
 				}
+				_size = new_size;
 			}
 			// do nothing if new_size=_size
 			assert(new_size == _size);
@@ -203,9 +205,9 @@ namespace primal::utl
 		{
 			if (this != std::addressof(o))
 			{
-				auto temp(o);
-				o = *this;
-				*this = temp;
+				auto temp(std::move(o));
+				o.move(*this);
+				move(temp);
 			}
 		}
 

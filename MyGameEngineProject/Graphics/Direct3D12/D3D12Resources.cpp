@@ -111,4 +111,28 @@ namespace primal::graphics::d3d12
 
 		handle = {};
 	}
+	///D3D12 TEXTURE ///
+	d3d12_texture::d3d12_texture(d3d12_texture_init_info info)
+	{
+		auto *const device{ core::device() };
+		assert(device);
+
+		if (info.resource)
+		{
+			_resource = info.resource;
+		}
+		else
+		{
+			assert(!info.resource);
+		}
+
+		assert(_resource);
+		_srv = core::srv_heap().allocate();
+		device->CreateShaderResourceView(_resource, info.srv_desc, _srv.cpu);
+	}
+	void d3d12_texture::release()
+	{
+		core::srv_heap().free(_srv);
+		core::deferred_release(_resource);
+	}
 }
