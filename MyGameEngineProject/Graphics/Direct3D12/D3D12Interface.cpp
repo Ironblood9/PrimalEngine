@@ -17,5 +17,7 @@ namespace primal::graphics::d3d12
 		pi.surface.height = core::surface_height;
 		pi.surface.render = core::render_surface;
 
+		pi.platform = graphics_platform::direct3d12;
+
 	}
 }

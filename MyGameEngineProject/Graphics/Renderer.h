@@ -36,6 +36,7 @@ namespace primal::graphics {
 
 	bool initialize(graphics_platform platform);
 	void shutdown();
+	const char* get_agilis_shaders_path();
 	surface create_surface(platform::window window);
 	void remove_surface(surface_id id);
 }

@@ -20,6 +20,8 @@ namespace primal::graphics
 			void(*render)(surface_id);
 
 		}surface;
+
+		graphics_platform platform = (graphics_platform)-1;
 	};
 }
 

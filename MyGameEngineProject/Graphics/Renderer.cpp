@@ -5,6 +5,12 @@
 namespace primal::graphics
 {
 	namespace {
+		constexpr const char* agilis_shader_paths[]
+		{
+			".\\shaders\\d3d12\\shaders.bin",
+
+		};
+
 		platform_interface gfx{};
 
 		bool set_platform_interface(graphics_platform platform)
@@ -17,6 +23,7 @@ namespace primal::graphics
 			default:
 				return false;
 			}
+			assert(gfx.platform == platform);
 			return true;
 		}
 
@@ -30,6 +37,12 @@ namespace primal::graphics
 	{
 		gfx.shutdown();
 	}
+
+	const char* get_agilis_shaders_path()
+	{
+		return agilis_shader_paths[(u32)gfx.platform];
+	}
+
 
 	surface create_surface(platform::window window)
 	{
