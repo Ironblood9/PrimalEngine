@@ -43,6 +43,11 @@ namespace primal::graphics
 		return agilis_shader_paths[(u32)gfx.platform];
 	}
 
+	const char* get_agilis_shaders_path(graphics_platform platform)
+	{
+		return agilis_shader_paths[(u32)platform];
+	}
+
 
 	surface create_surface(platform::window window)
 	{
