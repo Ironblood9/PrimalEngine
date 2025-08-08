@@ -1,11 +1,14 @@
-#include<d3d12shader.h>
-#include<dxcapi.h>
+#include "..\packages\DirectXShaderCompiler\inc\dxcapi.h"
+#include "..\packages\DirectXShaderCompiler\inc\d3d12shader.h"
 
-#include "Graphics/Direct3D12\D3D12Core.h"
-#include "Graphics/Direct3D12/D3D12Shaders.h"
+#include "Graphics\Direct3D12\D3D12Core.h"
+#include "Graphics\Direct3D12\D3D12Shaders.h"
 
-#include<fstream>
+#include <fstream>
 #include <filesystem>
+
+#pragma comment(lib, "../packages/DirectXShaderCompiler/lib/x64/dxcompiler.lib")
+
 using namespace primal;
 using namespace primal::graphics::d3d12::shaders;
 using namespace Microsoft::WRL;
@@ -28,6 +31,33 @@ namespace {
 	static_assert(_countof(shader_files) == agilis_shader::count);
 
 	constexpr const char* shaders_source_path{ "../../MyGameEngineProject/Graphics/Direct3D12/Shaders/" };
+
+	class shader_compiler
+	{
+	public:
+		shader_compiler()
+		{
+			HRESULT hr{ S_OK };
+			DXCall(hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&_compiler)));
+			if (FAILED(hr)) return;
+			DXCall(hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&_utils)));
+			if (FAILED(hr)) return;
+			DXCall(hr = _utils->CreateDefaultIncludeHandler(&_include_handler));
+			if (FAILED(hr)) return;
+		}
+
+		DISABLE_COPY_AND_MOVE(shader_compiler);
+
+		IDxcBlob* compile(shader_file_info info, std::filesystem::path full_path)
+		{
+			return nullptr;
+		}
+	private:
+		ComPtr<IDxcCompiler3>           _compiler{nullptr};
+		ComPtr<IDxcUtils>               _utils{nullptr};
+		ComPtr<IDxcIncludeHandler>      _include_handler{nullptr};
+		
+	};
 
 	decltype(auto)
 	get_agilis_shaders_path()
@@ -94,6 +124,8 @@ bool compile_shaders()
 	std::filesystem::path path{};
 	std::filesystem::path full_path{};
 
+	shader_compiler compiler{};
+
 	for (u32 i{ 0 }; i < agilis_shader::count; i++)
 	{
 		auto&  info = shader_files[i];
@@ -101,7 +133,7 @@ bool compile_shaders()
 		path += info.file;
 		full_path = std::filesystem::absolute(path);
 		if (!std::filesystem::exists(full_path)) return false;
-		ComPtr<IDxcBlob> compiled_shader{};
+		ComPtr<IDxcBlob> compiled_shader{ compiler.compile(info, full_path) };
 		if (compiled_shader->GetBufferPointer() && compiled_shader->GetBufferSize())
 		{
 			shaders.emplace_back(std::move(compiled_shader));
