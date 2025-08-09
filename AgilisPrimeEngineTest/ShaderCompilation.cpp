@@ -26,11 +26,22 @@ namespace {
 	constexpr shader_file_info shader_files[]
 	{
 		{"FullScreenTriangle.hlsl", "FullScreenTriangleVS", agilis_shader::fullscreen_triangle_vs, shader_type::vertex},
+		{"FillColor.hlsl", "FillColorPS", agilis_shader::fill_color_ps, shader_type::pixel},
 	};
 
 	static_assert(_countof(shader_files) == agilis_shader::count);
 
-	constexpr const char* shaders_source_path{ "../../MyGameEngineProject/Graphics/Direct3D12/Shaders/" };
+	constexpr const char* shaders_source_path{ "C:/Users/Msý/source/repos/PrimalEngine/MyGameEngineProject/Graphics/Direct3D12/Shaders/" };
+
+
+	std::wstring
+	to_wstring(const char* c)
+	{
+		std::string s{ c };
+		return{ s.begin(), s.end() };
+	}
+
+
 
 	class shader_compiler
 	{
@@ -50,9 +61,83 @@ namespace {
 
 		IDxcBlob* compile(shader_file_info info, std::filesystem::path full_path)
 		{
-			return nullptr;
+			assert(_compiler && _utils && _include_handler );
+			HRESULT hr{ S_OK };
+
+			ComPtr<IDxcBlobEncoding> source_blob{ nullptr };
+			DXCall(hr = _utils->LoadFile(full_path.c_str(), nullptr, &source_blob));
+			if (FAILED(hr)) return nullptr;
+			assert(source_blob && source_blob->GetBufferSize());
+
+			std::wstring file{ to_wstring(info.file) };
+			std::wstring func{ to_wstring(info.function) };
+			std::wstring prof{ to_wstring(_profile_strings[(u32)info.type]) };
+
+			LPCWSTR args[]
+			{
+				file.c_str(),
+				L"-E", func.c_str(),
+				L"-T", prof.c_str(),
+				DXC_ARG_ALL_RESOURCES_BOUND,
+#if _DEBUG
+				DXC_ARG_DEBUG,
+				DXC_ARG_SKIP_OPTIMIZATIONS,
+#else 
+				DXC_ARG_OPTIMIZATION_LEVEL3,
+
+#endif // _DEBUG
+				DXC_ARG_WARNINGS_ARE_ERRORS,
+				L"-Qstrip_reflect",
+				L"-Qstrip_debug",
+			};
+
+			OutputDebugStringA("Compiling ");
+			OutputDebugStringA(info.file);
+
+			return compile(source_blob.Get(), args, _countof(args));
 		}
+
+		IDxcBlob* compile(IDxcBlobEncoding* source_blob, LPCWSTR* args, u32 num_args)
+		{
+			DxcBuffer buffer{};
+			buffer.Encoding = DXC_CP_ACP;
+			buffer.Ptr = source_blob->GetBufferPointer();
+			buffer.Size = source_blob->GetBufferSize();
+			HRESULT hr{ S_OK };
+			ComPtr<IDxcResult> results{ nullptr };
+			DXCall(hr = _compiler->Compile(&buffer, args, num_args, _include_handler.Get(), IID_PPV_ARGS(&results)));
+			if (FAILED(hr)) return nullptr;
+
+			ComPtr<IDxcBlobUtf8> errors{ nullptr };
+			DXCall(hr = results->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&errors), nullptr));
+			if (FAILED(hr)) return nullptr;
+
+			if (errors && errors->GetStringLength())
+			{
+				OutputDebugStringA("\nShader compalition error: \n");
+				OutputDebugStringA(errors->GetStringPointer());
+			}
+			else
+			{
+				OutputDebugStringA(" [ Succeeded ]");
+			}
+			OutputDebugStringA("\n");
+
+			HRESULT status{ S_OK };
+			DXCall(hr = results->GetStatus(&status));
+			if (FAILED(hr) || FAILED(status)) return nullptr;
+
+			ComPtr<IDxcBlob> shader{ nullptr };
+			DXCall(hr = results->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shader), nullptr));
+			if (FAILED(hr)) return nullptr;
+
+			return shader.Detach();
+		}
+
 	private:
+		const char* _profile_strings[shader_type::count]{ "vs_6_5", "hs_6_5" , "ds_6_5", "gs_6_5", "ps_6_5", "cs_6_5", "as_6_5", "ms_6_5" };
+		static_assert(_countof(_profile_strings) == shader_type::count);
+
 		ComPtr<IDxcCompiler3>           _compiler{nullptr};
 		ComPtr<IDxcUtils>               _utils{nullptr};
 		ComPtr<IDxcIncludeHandler>      _include_handler{nullptr};
@@ -79,7 +164,7 @@ namespace {
 			auto&  info = shader_files[i];
 			path = shaders_source_path;
 			path += info.file;
-			full_path = std::filesystem::absolute(path);
+			full_path = std::filesystem::weakly_canonical(path);
 			if (!std::filesystem::exists(full_path)) return false;
 
 			auto shader_file_time = std::filesystem::last_write_time(full_path);
@@ -96,11 +181,14 @@ namespace {
 		auto agilis_shaders_path = get_agilis_shaders_path();
 		std::filesystem::create_directories(agilis_shaders_path.parent_path());
 		std::ofstream file(agilis_shaders_path, std::ios::out | std::ios::binary);
-		if (!file || !std::filesystem::exists(agilis_shaders_path))
+
+		// ? Buradaki exists kontrolünü kaldýr
+		if (!file)
 		{
-			file.close();
+			OutputDebugStringA("Error: Could not create shaders.bin file.\n");
 			return false;
 		}
+
 
 		for (auto& shader : shaders)
 		{
@@ -128,21 +216,29 @@ bool compile_shaders()
 
 	for (u32 i{ 0 }; i < agilis_shader::count; i++)
 	{
-		auto&  info = shader_files[i];
+		auto& info = shader_files[i];
 		path = shaders_source_path;
 		path += info.file;
 		full_path = std::filesystem::absolute(path);
-		if (!std::filesystem::exists(full_path)) return false;
-		ComPtr<IDxcBlob> compiled_shader{ compiler.compile(info, full_path) };
-		if (compiled_shader->GetBufferPointer() && compiled_shader->GetBufferSize())
+
+		if (!std::filesystem::exists(full_path))
 		{
-			shaders.emplace_back(std::move(compiled_shader));
-		}
-		else
-		{
+			OutputDebugStringA(("Error: Shader file not found: " + full_path.string() + "\n").c_str());
 			return false;
 		}
+
+		OutputDebugStringA(("Compiling shader: " + full_path.string() + "\n").c_str());
+		ComPtr<IDxcBlob> compiled_shader{ compiler.compile(info, full_path) };
+
+		if (!compiled_shader || !compiled_shader->GetBufferPointer() || !compiled_shader->GetBufferSize())
+		{
+			OutputDebugStringA(("Error: Failed to compile shader: " + std::string(info.file) + "\n").c_str());
+			return false;
+		}
+
+		shaders.emplace_back(std::move(compiled_shader));
 	}
+
 
 	return save_compiled_shaders(shaders);
 }

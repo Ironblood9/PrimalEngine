@@ -2,6 +2,7 @@
 #include "GraphicsPlatformInterface.h"
 #include "Direct3D12/D3D12Interface.h"
 
+
 namespace primal::graphics
 {
 	namespace {
@@ -35,8 +36,9 @@ namespace primal::graphics
 	}
 	void shutdown()
 	{
-		gfx.shutdown();
+    	gfx.shutdown();
 	}
+
 
 	const char* get_agilis_shaders_path()
 	{
