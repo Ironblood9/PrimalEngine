@@ -29,9 +29,9 @@ namespace primal::transform
 			positions.emplace_back(info.position);
 			scales.emplace_back(info.scale);
 		}
-		return component(transform_id{ (id::id_type)positions.size() - 1 });
+		return component{ transform_id{ entity.get_id() } };
 	}
-	void remove(component c)
+	void remove([[maybe_unused]] component c)
 	{
 		assert(c.is_valid());
 	}
