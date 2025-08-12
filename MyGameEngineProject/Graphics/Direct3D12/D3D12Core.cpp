@@ -2,6 +2,7 @@
 #include "D3D12Surface.h"
 #include "D3D12Shaders.h"
 #include "D3D12GPass.h"
+#include "D3D12PostProcess.h"
 
 using namespace Microsoft::WRL;
 
@@ -306,7 +307,7 @@ namespace primal::graphics::d3d12::core
 		new (&gfx_command) d3d12_command(main_device, D3D12_COMMAND_LIST_TYPE_DIRECT);
 		if (!gfx_command.command_queue()) return failed_init();
 
-		if (!(shaders::initialize() && gpass::initialize()))
+		if (!(shaders::initialize() && gpass::initialize() && fx::initialize()))
 			return failed_init();
 
 
@@ -330,6 +331,7 @@ namespace primal::graphics::d3d12::core
 		}
 
 		// shutdown modules
+		fx::shutdown();
 		gpass::shutdown();
 		shaders::shutdown();
 
@@ -432,6 +434,9 @@ namespace primal::graphics::d3d12::core
 		d3dx::d3d12_resource_barrier& barriers{ resource_barriers };
 
 		// Record commands
+		ID3D12DescriptorHeap *const heaps[]{srv_desc_heap.heap()};
+		cmd_list->SetDescriptorHeaps(1, &heaps[0]);
+
 		cmd_list->RSSetViewports(1, &surface.viewport());
 		cmd_list->RSSetScissorRects(1, &surface.scissor_rect());
 
@@ -455,14 +460,13 @@ namespace primal::graphics::d3d12::core
 		gpass::add_transitions_for_post_process(barriers);
 		barriers.apply(cmd_list);
 		// Will write to the current back buffer, so back buffer is a render target
-
+		fx::post_process(cmd_list, surface.rtv());
 		// after post process
 		d3dx::transition_resource(cmd_list, current_back_buffer,
 			D3D12_RESOURCE_STATE_RENDER_TARGET,
 			D3D12_RESOURCE_STATE_PRESENT);
 
-		// Presenting swap chain buffers happens in lockstep with frame buffers.
-		//surface.present();
+
 
 		// Done recording commands. Now execute commands.
 		

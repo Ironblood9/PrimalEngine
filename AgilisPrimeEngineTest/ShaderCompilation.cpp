@@ -27,6 +27,7 @@ namespace {
 	{
 		{"FullScreenTriangle.hlsl", "FullScreenTriangleVS", agilis_shader::fullscreen_triangle_vs, shader_type::vertex},
 		{"FillColor.hlsl", "FillColorPS", agilis_shader::fill_color_ps, shader_type::pixel},
+		{"PostProcess.hlsl", "PostProcessPS", agilis_shader::post_process_ps, shader_type::pixel},
 	};
 
 	static_assert(_countof(shader_files) == agilis_shader::count);

@@ -12,7 +12,10 @@ using namespace primal;
 graphics::render_surface _surfaces[4];
 time_it timer{};
 
+bool is_restarting{ false };
 void destroy_render_surface(graphics::render_surface& surface);
+bool test_initialize();
+void test_shutdown();
 
 LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -35,7 +38,7 @@ LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 				}
 			}
 		}
-		if (all_closed)
+		if (all_closed && !is_restarting)
 		{
 			PostQuitMessage(0);
 			return 0;
@@ -56,6 +59,12 @@ LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			PostMessage(hwnd, WM_CLOSE, 0, 0);
 			return 0;
 		}
+		else if(wparam == VK_F11)
+		{
+			is_restarting = true;
+			test_shutdown();
+			test_initialize();
+		}
 	}
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
@@ -74,8 +83,7 @@ void destroy_render_surface(graphics::render_surface& surface)
 	if(temp.window.is_valid()) platform::remove_window(temp.window.get_id());
 }
 
-
-bool agilis_test::initialize()
+bool test_initialize()
 {
 	while (!compile_shaders())
 	{
@@ -84,21 +92,35 @@ bool agilis_test::initialize()
 	}
 
 
-	if(!graphics::initialize(graphics::graphics_platform::direct3d12)) return false;
+	if (!graphics::initialize(graphics::graphics_platform::direct3d12)) return false;
 
 	platform::window_init_info info[]
 	{
-		{&win_proc, nullptr, L"Render window 1", 100, 100, 400, 800},
-		{&win_proc, nullptr, L"Render window 2", 150, 150, 800, 400},
-		{&win_proc, nullptr, L"Render window 3", 200, 200, 400, 400},
-		{&win_proc, nullptr, L"Render window 4", 250, 250, 800, 600},
+		{&win_proc, nullptr, L"Render window 1", 100 +300, 100, 400, 800},
+		{&win_proc, nullptr, L"Render window 2", 150 +300, 150, 800, 400},
+		{&win_proc, nullptr, L"Render window 3", 200 +300, 200, 400, 400},
+		{&win_proc, nullptr, L"Render window 4", 250 +300, 250, 800, 600},
 	};
 	static_assert(_countof(info) == _countof(_surfaces));
 
 	for (u32 i{ 0 }; i < _countof(_surfaces); i++)
 		create_render_surface(_surfaces[i], info[i]);
 
+	is_restarting = false;
 	return true;
+}
+
+void test_shutdown()
+{
+	for (u32 i{ 0 }; i < _countof(_surfaces); i++)
+		destroy_render_surface(_surfaces[i]);
+
+	graphics::shutdown();
+}
+
+bool agilis_test::initialize()
+{
+	return test_initialize();
 }
 void agilis_test::run() 
 {
@@ -116,10 +138,7 @@ void agilis_test::run()
 
 void agilis_test::shutdown()
 {
-	for (u32 i{ 0 }; i < _countof(_surfaces); i++)
-		destroy_render_surface(_surfaces[i]);
-
-	graphics::shutdown();
+   test_shutdown();
 }
 
 

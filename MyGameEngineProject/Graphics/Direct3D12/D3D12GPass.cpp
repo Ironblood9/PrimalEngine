@@ -127,6 +127,15 @@ namespace primal::graphics::d3d12::gpass {
         core::release(gpass_pso);
     }
 
+    const d3d12_render_texture& main_buffer()
+    {
+        return gpass_main_buffer;
+    }
+    const d3d12_depth_buffer& depth_buffer()
+    {
+        return gpass_depth_buffer;
+    }
+
     void set_size(math::u32v2 size)
     {
         math::u32v2& d{ dimensions };
