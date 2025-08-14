@@ -13,8 +13,8 @@
 #define J_MAX_ITERATION 1000
 float3 MapColor(float t)
 {
-    float3 ambient = float3(0.09f, 0.12f, 0.16f);
-    return float3(3.f * t, 5.f * t, 10.f * t) + ambient;
+    float3 ambient = float3(0.009f, 0.012f, 0.016f);
+    return float3(2.f * t, 4.f * t, 8.f * t) + ambient;
 }
 
 float2 ComplexSq(float2 c)
