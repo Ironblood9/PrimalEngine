@@ -28,8 +28,22 @@ public partial class MainWindow : Window
 
     private void OnMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-        Closing -= OnMainWindow_Closing;
-        NewProjectClass2.Current?.Unload();
+        if (DataContext == null)
+        {
+            e.Cancel = true;
+            Application.Current.MainWindow.Hide(); 
+            OpenProjectBrowserDialog();
+            if(DataContext != null)
+            {
+                Application.Current.MainWindow.Show();
+            }
+        }
+        else
+        {
+            Closing -= OnMainWindow_Closing;
+            NewProjectClass2.Current?.Unload();
+            DataContext = null; 
+        }
     }
 
     private void OnMainWindow_Loaded(object sender,RoutedEventArgs e)

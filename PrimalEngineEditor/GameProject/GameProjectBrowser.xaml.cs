@@ -21,6 +21,9 @@ namespace PrimalEngineEditor.GameProject
     public partial class GameProjectBrowser : Window
     {
         private readonly CubicEase _easing = new CubicEase() { EasingMode = EasingMode.EaseInOut };
+
+        public static bool GotoNewProjectTab { get; set; }
+
         public GameProjectBrowser()
         {
             InitializeComponent();
@@ -30,13 +33,16 @@ namespace PrimalEngineEditor.GameProject
         private void OnGameProjectBrowserLoaded(object sender, RoutedEventArgs e)
         {
             Loaded -= OnGameProjectBrowserLoaded;
-            if (!OpenProject.Projects.Any())
+            if (!OpenProject.Projects.Any() || GotoNewProjectTab)
             {
-                openProjectButton.IsEnabled = false;
-                openProjectWindow.Visibility = Visibility.Hidden;
+                if (!GotoNewProjectTab)
+                {
+                    openProjectButton.IsEnabled = false;
+                    openProjectWindow.Visibility = Visibility.Hidden;
+                }
                 OnToggleButton_Click(newProjectButton, new RoutedEventArgs());
             }
-            
+            GotoNewProjectTab = false;  
         }
 
 

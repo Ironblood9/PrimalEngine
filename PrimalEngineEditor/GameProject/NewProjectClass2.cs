@@ -17,14 +17,7 @@ using static System.Formats.Asn1.AsnWriter;
 
 
 namespace PrimalEngineEditor.GameProject
-{
-    enum BuildConfiguraiton
-    {
-        Debug,
-        DebugEditor,
-        Release,
-        ReleaseEditor,
-    }
+
     [DataContract(Name = "Game")]
     class NewProjectClass2 : ViewModelBase
     {
@@ -40,8 +33,6 @@ namespace PrimalEngineEditor.GameProject
         public string Solution => $@"{Path}{Name}.sln";
 
         public string ContentPath => $@"{Path}Content\";
-
-        private static readonly string[] _buildConfigurationNames = new string[] { "Debug", "DebugEditor", "Release", "ReleaseEditor" };
 
         private int _buildConfig;
         [DataMember]
@@ -156,7 +147,6 @@ namespace PrimalEngineEditor.GameProject
             OnPropertyChanged(nameof(BuildCommand));
         }
 
-        private static string GetConfigurationName(BuildConfiguraiton config) => _buildConfigurationNames[(int)config];
 
         private void AddNewSceneInternal(string sceneName)
         {

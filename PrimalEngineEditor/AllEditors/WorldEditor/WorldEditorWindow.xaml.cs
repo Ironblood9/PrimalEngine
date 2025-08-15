@@ -47,6 +47,27 @@ namespace PrimalEngineEditor.AllEditors
             var dlg = new PrimitiveMeshDialog();
             dlg.ShowDialog();
         }
+
+        private void OnNewProject(object sender, ExecutedRoutedEventArgs e)
+        {
+            GameProjectBrowser.GotoNewProjectTab = true;
+            NewProjectClass2.Current?.Unload();
+            Application.Current.MainWindow.DataContext = null;
+            Application.Current.MainWindow.Close();
+        }
+
+        private void OnOpenProject(object sender, ExecutedRoutedEventArgs e)
+        {
+            NewProjectClass2.Current?.Unload();
+            Application.Current.MainWindow.DataContext = null;  
+            Application.Current.MainWindow.Close();
+
+        }
+
+        private void OnEditorClose(object sender, ExecutedRoutedEventArgs e)
+        {
+            Application.Current.MainWindow.Close();
+        }
     }
 }
 
