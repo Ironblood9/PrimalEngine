@@ -17,12 +17,14 @@ namespace PrimalEngineEditor.GameDev
     }
     static class VisualStudio
     {
+        private static readonly ManualResetEventSlim _resetEventSlim = new ManualResetEventSlim(false);
+        private static readonly string _programID = "VisualStudio.DTE";
+        private static readonly object _lock = new object();
+        private static readonly string[] _buildConfigurationNames = new string[] { "Debug", "DebugEditor", "Release", "ReleaseEditor" };
+
+        private static EnvDTE80.DTE2 _vsInstance = null;
         public static bool BuildSucceeded { get; private set; } = true;
         public static bool BuildDone { get; private set; } = true;
-        private static EnvDTE80.DTE2 _vsInstance = null;
-        private static readonly string _programID = "VisualStudio.DTE";
-
-        private static readonly string[] _buildConfigurationNames = new string[] { "Debug", "DebugEditor", "Release", "ReleaseEditor" };
         public static string GetConfigurationName(BuildConfiguraiton config) => _buildConfigurationNames[(int)config];
 
 
@@ -49,7 +51,7 @@ namespace PrimalEngineEditor.GameDev
             thread.Join();
         }
 
-        public static void OpenVS(string solutionPath)
+        private static void OpenVS_Internal(string solutionPath)
         {
             IRunningObjectTable rot = null;
             IEnumMoniker monikerTable = null;
@@ -111,7 +113,12 @@ namespace PrimalEngineEditor.GameDev
                 if (bindCtx != null) Marshal.ReleaseComObject(bindCtx);
             }
         }
-        public static void CloseVS()
+
+        public static void OpenVS(string solutionPath)
+        {
+            lock (_lock) { OpenVS_Internal(solutionPath); }
+        }
+        private static void CloseVS_Internal()
         {
             CallOnSTAThread(() =>
             {
@@ -125,10 +132,14 @@ namespace PrimalEngineEditor.GameDev
             });
         }
 
-        public static bool AddFilesToSolution(string solution, string projectName, string[] files)
+        public static void CloseVS()
+        {
+            lock(_lock) {CloseVS_Internal(); }
+        }
+        private static bool AddFilesToSolution_Internal(string solution, string projectName, string[] files)
         {
             Debug.Assert(files?.Length > 0);
-            OpenVS(solution);
+            OpenVS_Internal(solution);
             try
             {
                 if (_vsInstance != null)
@@ -169,6 +180,10 @@ namespace PrimalEngineEditor.GameDev
             return true;
         }
 
+        public static bool AddFilesToSolution(string solution, string projectName, string[] files)
+        {
+            lock (_lock) { return AddFilesToSolution_Internal(solution, projectName, files); }
+        }
         private static void OnBuildSolutionDone(string project, string projectConfig, string platform, string solutionConfig, bool Success)
         {
             if (BuildDone) return;
@@ -177,6 +192,7 @@ namespace PrimalEngineEditor.GameDev
 
             BuildDone = true;
             BuildSucceeded = Success;
+            _resetEventSlim.Set();
         }
 
         private static void OnBuildSolutionBegin(string project, string projectConfig, string platform, string solutionConfig)
@@ -185,7 +201,7 @@ namespace PrimalEngineEditor.GameDev
             Logger.Log(MessageType.Info, $"Building {project}, {projectConfig}, {platform}, {solutionConfig}");
         }
 
-        public static bool IsDebugging()
+        private static bool IsDebugging_Internal()
         {
             bool result = false;
             CallOnSTAThread(() => {
@@ -195,14 +211,18 @@ namespace PrimalEngineEditor.GameDev
 
             return result;
         }
-        public static void BuildSolution(NewProjectClass2 project, BuildConfiguraiton buildConfig, bool showWindow = true)
+        public static bool IsDebugging()
         {
-            if (IsDebugging())
+            lock (_lock) { return IsDebugging_Internal(); }
+        }
+        private static void BuildSolution_Internal(NewProjectClass2 project, BuildConfiguraiton buildConfig, bool showWindow)
+        {
+            if (IsDebugging_Internal())
             {
                 Logger.Log(MessageType.Error, "Visual Studio is running a process.");
                 return;
             }
-            OpenVS(project.Solution);
+            OpenVS_Internal(project.Solution);
             BuildDone = BuildSucceeded = false;
 
             CallOnSTAThread(() => {
@@ -227,27 +247,42 @@ namespace PrimalEngineEditor.GameDev
             {
                 _vsInstance.Solution.SolutionBuild.SolutionConfigurations.Item(configName).Activate();
                 _vsInstance.ExecuteCommand("Build.BuildSolution");
+                _resetEventSlim.Wait();
+                _resetEventSlim.Reset();
             });
         }
-        public static void Run(NewProjectClass2 project, BuildConfiguraiton buildConfig, bool debug)
+        public static void BuildSolution(NewProjectClass2 project, BuildConfiguraiton buildConfig, bool showWindow = true)
+        {
+            lock(_lock) { BuildSolution_Internal(project, buildConfig, showWindow); }
+        }
+        private static void Run_Internal(NewProjectClass2 project, BuildConfiguraiton buildConfig, bool debug)
         {
             CallOnSTAThread(() =>
             {
-                if (_vsInstance != null && !IsDebugging() && BuildSucceeded)
+                if (_vsInstance != null && !IsDebugging_Internal() && BuildSucceeded)
                 {
                     _vsInstance.ExecuteCommand(debug ? "Debug.Start" : "Debug.StartWithoutDebugging");
                 }
             });
         }
-        public static void Stop()
+        public static void Run(NewProjectClass2 project, BuildConfiguraiton buildConfig, bool debug)
+        {
+            lock (_lock) {Run_Internal(project, buildConfig, debug); }
+        }
+        private static void Stop_Internal()
         {
             CallOnSTAThread(() =>
             {
-                if (_vsInstance != null && IsDebugging())
+                if (_vsInstance != null && IsDebugging_Internal())
                 {
                     _vsInstance.ExecuteCommand("Debug.StopDebugging");
                 }
             });
+        }
+
+        public static void Stop()
+        {
+            lock (_lock) { Stop_Internal(); }
         }
     }
 
