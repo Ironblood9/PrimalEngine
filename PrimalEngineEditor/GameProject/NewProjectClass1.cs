@@ -11,8 +11,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 using Path = System.IO.Path;
 
 
@@ -100,7 +102,7 @@ namespace PrimalEngineEditor.GameProject
             }
         }
 
-        private ObservableCollection<ProjectTemplate> _projectTemplates = new ObservableCollection<ProjectTemplate>();
+        private readonly ObservableCollection<ProjectTemplate> _projectTemplates = new ObservableCollection<ProjectTemplate>();
         public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
 
 
@@ -109,13 +111,15 @@ namespace PrimalEngineEditor.GameProject
             var path=ProjectPath;
             if (!Path.EndsInDirectorySeparator(path)) path += @"\";
             path += $@"{ProjectName}\";
+            var nameRegex = new Regex(@"^[A-Za-z_][A-za-z0-9_]*$");
+
             IsValid = false;
             if (string.IsNullOrWhiteSpace(ProjectName.Trim()))
             {
                 ErrorMessage = "Please type in a project name.";
 
             }
-            else if(ProjectName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+            else if(!nameRegex.IsMatch(ProjectName))
             {
                 ErrorMessage = "Invalid character(s) used in project name.";
             }
@@ -192,13 +196,13 @@ namespace PrimalEngineEditor.GameProject
             Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCSolution")));
             Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCProject")));
 
-            var agilisAPIPath = Path.Combine(MainWindow.AgilisPath, @"MyGameEngineProject\AgilisAPI\");
+            var agilisAPIPath = @"$(AGILIS_PATH)MyGameEngineProject\AgilisAPI\";
             Debug.Assert(Directory.Exists(agilisAPIPath));
 
             var _0 = ProjectName;
             var _1 = "{" + Guid.NewGuid().ToString().ToUpper() + "}";
             var _2 = agilisAPIPath;
-            var _3 = MainWindow.AgilisPath;
+            var _3 = "$(AGILIS_PATH)";
 
             var solution = File.ReadAllText(Path.Combine(template.TemplatePath, "MSVCSolution"));
             solution = string.Format(solution, _0, _1, "{" + Guid.NewGuid().ToString().ToUpper() + "}");
