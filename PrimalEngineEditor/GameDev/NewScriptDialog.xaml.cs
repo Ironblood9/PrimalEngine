@@ -72,7 +72,6 @@ private:
         {
             var projectName = NewProjectClass2.Current.Name.Trim();
             if(string.IsNullOrEmpty(projectName)) return string.Empty;
-            projectName = Regex.Replace(projectName, @"[^A-Za-z0-9_]", "");
             return projectName;
         }
 
@@ -191,11 +190,7 @@ private:
             }
             string[] files = new string[] { cpp, headerFile };
 
-            for (int i = 0; i < 3; i++)
-            {
-                if (!VisualStudio.AddFilesToSolution(solution, projectName, files)) System.Threading.Thread.Sleep(1000);
-                else break;
-            }
+            VisualStudio.AddFilesToSolution(solution, projectName, files);
            
         }
     }

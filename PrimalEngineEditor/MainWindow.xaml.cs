@@ -1,4 +1,6 @@
-﻿using PrimalEngineEditor.GameProject;
+﻿using PrimalEngineEditor.Content;
+using PrimalEngineEditor.GameProject;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -86,7 +88,10 @@ public partial class MainWindow : Window
         else
         {
             NewProjectClass2.Current?.Unload();
-            DataContext = projectBrowser.DataContext;
+            var project = projectBrowser.DataContext as NewProjectClass2;
+            Debug.Assert(project != null);
+            AssetRegistry.Reset(project.ContentPath);
+            DataContext = project;
         }
 
     }
