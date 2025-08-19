@@ -218,7 +218,7 @@ namespace PrimalEngineEditor.Content
 
             if (string.IsNullOrEmpty(_cacheFilePath))
             {
-                _cacheFilePath = $@"{project.Path}.PrimalEngine\ContentInfoCache.bin";
+                _cacheFilePath = $@"{project.Path}.Primal\ContentInfoCache.bin";
                 LoadInfoCache(_cacheFilePath);
             }
             _contentWatcher.Path = contentFolder;
