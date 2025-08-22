@@ -48,6 +48,7 @@ namespace PrimalEngineEditor.Content
         public static void Reset(string contentFolder, string projectPath)
         {
             _contentWatcher.EnableRaisingEvents = false;
+            ContentInfoCache.Reset(projectPath);
             if(!string.IsNullOrEmpty(contentFolder))
             {
                 Debug.Assert(Directory.Exists(contentFolder));
@@ -58,7 +59,7 @@ namespace PrimalEngineEditor.Content
         }
         private static async void OnContentModified(object sender, FileSystemEventArgs e)
         {
-            await Application.Current.Dispatcher.BeginInvoke(new Action(() => _refreshTimer.Trigger()));
+            await Application.Current.Dispatcher.BeginInvoke(new Action(() => _refreshTimer.Trigger(e)));
         }
 
         private static void Refresh(object sender, DelayEventTimerArgs e)

@@ -42,10 +42,7 @@ namespace PrimalEngineEditor.Content
 
     class ContentBrowser : ViewModelBase, IDisposable
     {
-        private static readonly object _lock = new object();
         private static readonly DelayEventTimer _refreshTimer = new DelayEventTimer(TimeSpan.FromMilliseconds(250));
-        private static string _cacheFilePath = string.Empty;
-        private static readonly Dictionary<string, ContentInfo>  _contentInfoCache = new Dictionary<string, ContentInfo>();
         public string ContentFolder { get; }
 
         private readonly ObservableCollection<ContentInfo> _folderContent = new ObservableCollection<ContentInfo>();
@@ -102,20 +99,10 @@ namespace PrimalEngineEditor.Content
                     folderContent.Add(new ContentInfo(dir));
                 }
                 // get files
-                lock (_lock)
+                foreach (var file in Directory.GetFiles(path, $"*{Asset.AssetFileExtension}"))
                 {
-                    foreach (var file in Directory.GetFiles(path, $"*{Asset.AssetFileExtension}"))
-                    {
-                        var fileInfo = new FileInfo(file);
-                        if (!_contentInfoCache.ContainsKey(file) || _contentInfoCache[file].DateModified.IsOlder(fileInfo.LastWriteTime))
-                        {
-                            var info = AssetRegistry.GetAssetInfo(file) ?? Asset.GetAssetInfo(file);
-                            Debug.Assert(info != null);
-                            _contentInfoCache[file] = new ContentInfo(file, info.Icon);
-                        }
-                        Debug.Assert(_contentInfoCache.ContainsKey(file));
-                        folderContent.Add(_contentInfoCache[file]);
-                    }
+                    var fileInfo = new FileInfo(file);
+                    folderContent.Add(ContentInfoCache.Add(file));
                 }
             }
             catch (IOException ex)
@@ -125,67 +112,12 @@ namespace PrimalEngineEditor.Content
             return folderContent;
         }
 
-        private static void SaveInfoCache(string file)
-        {
-            lock (_lock)
-            {
-                using var writer = new BinaryWriter(File.Open(file, FileMode.Create, FileAccess.Write));
-                writer.Write(_contentInfoCache.Keys.Count);
-                foreach (var key in _contentInfoCache.Keys)
-                {
-                    var info = _contentInfoCache[key];
-
-                    writer.Write(key);
-                    writer.Write(info.DateModified.ToBinary());
-                    writer.Write(info.Icon.Length);
-                    writer.Write(info.Icon);
-                }
-            }
-        }
-
-        private static void LoadInfoCache(string file)
-        {
-            if (!File.Exists(file)) return;
-
-            try
-            {
-                lock (_lock)
-                {
-                    using var reader = new BinaryReader(File.Open(file, FileMode.Open, FileAccess.Read));
-                    var numEntries = reader.ReadInt32();
-                    _contentInfoCache.Clear();
-
-                    for (int i = 0; i < numEntries; ++i)
-                    {
-                        var assetFile = reader.ReadString();
-                        var date = DateTime.FromBinary(reader.ReadInt64());
-                        var iconSize = reader.ReadInt32();
-                        var icon = reader.ReadBytes(iconSize);
-
-                        // Cache only the files that still exist.
-                        if (File.Exists(assetFile))
-                        {
-                            _contentInfoCache[assetFile] = new ContentInfo(assetFile, icon, null, date);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                Logger.Log(MessageType.Warning, "Failed to read Content Browser cache file!!!!!");
-                _contentInfoCache.Clear();
-            }
-        }
+        
 
         public void Dispose()
         {
             ContentWatcher.ContentModified -= OnContentModified;
-            if (!string.IsNullOrEmpty(_cacheFilePath))
-            {
-                SaveInfoCache(_cacheFilePath);
-                _cacheFilePath = string.Empty;
-            }
+            ContentInfoCache.Save();
         }
 
         public ContentBrowser(NewProjectClass2 project)
@@ -204,12 +136,6 @@ namespace PrimalEngineEditor.Content
 
             ContentWatcher.ContentModified += OnContentModified;
             _refreshTimer.Triggered += Refresh;
-
-            if (string.IsNullOrEmpty(_cacheFilePath))
-            {
-                _cacheFilePath = $@"{project.Path}.Primal\ContentInfoCache.bin";
-                LoadInfoCache(_cacheFilePath);
-            }
            
         }
     }
