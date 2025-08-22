@@ -20,6 +20,7 @@
     <Color x:Key="Editor.CyanColor">#00FFFF</Color>
     <Color x:Key="Editor.FullyTransparentBlackColor">#00000000</Color>
     <Color x:Key="Editor.Selected.BackGroundColor">#ff3c67b6</Color>
+    <Color x:Key="Editor.MouseOver.BorderColor">#ff7eb4ea</Color>
     
     <SolidColorBrush Color="{DynamicResource Editor.Window.GrayColor1}" x:Key="Editor.Window.GrayBrush1"/>
     <SolidColorBrush Color="{DynamicResource Editor.Window.GrayColor2}" x:Key="Editor.Window.GrayBrush2"/>
@@ -35,5 +36,6 @@
     <SolidColorBrush Color="{DynamicResource Editor.BlueColor}" x:Key="Editor.BlueBrush"/>
     <SolidColorBrush Color="{DynamicResource Editor.OrangeColor}" x:Key="Editor.OrangeBrush"/>
     <SolidColorBrush Color="{DynamicResource Editor.Selected.BackGroundColor}" x:Key="Editor.Selected.BackGroundBrush"/>
+    <SolidColorBrush Color="{DynamicResource Editor.MouseOver.BorderColor}" x:Key="Editor.MouseOver.BorderBrush"/>
 
 </ResourceDictionary>

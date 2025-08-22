@@ -26,8 +26,11 @@
   <ItemGroup>
     <None Remove="Resources\ContentBrowser\FolderLarge.png" />
     <None Remove="Resources\ContentBrowser\FolderSmall.png" />
+    <None Remove="Resources\ContentBrowser\grid-view.png" />
     <None Remove="Resources\ContentBrowser\LargeFolder.png" />
     <None Remove="Resources\ContentBrowser\SmallFolder.png" />
+    <None Remove="Resources\ContentBrowser\tile-view.png" />
+    <None Remove="Resources\ContentBrowser\view-list.png" />
     <None Remove="Resources\PrimitiveMeshWindow\CheckerMap.png" />
     <None Remove="Resources\PrimitiveMeshWindow\PlaneTexture.png" />
   </ItemGroup>
@@ -87,6 +90,8 @@
   <ItemGroup>
     <Resource Include="Resources\ContentBrowser\LargeFolder.png" />
     <Resource Include="Resources\ContentBrowser\SmallFolder.png" />
+    <Resource Include="Resources\ContentBrowser\tile-view.png" />
+    <Resource Include="Resources\ContentBrowser\view-list.png" />
     <Resource Include="Resources\PrimitiveMeshWindow\CheckerMap.png" />
     <Resource Include="Resources\PrimitiveMeshWindow\PlaneTexture.png" />
   </ItemGroup>

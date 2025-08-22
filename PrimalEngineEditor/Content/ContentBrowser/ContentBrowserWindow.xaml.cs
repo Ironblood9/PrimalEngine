@@ -216,7 +216,7 @@ namespace PrimalEngineEditor.Content
         private void OnContent_Item_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var info = (sender as FrameworkElement).DataContext as ContentInfo;
-            ExecutreSelection(info);
+            ExecuteSelection(info);
         }
 
         private void OnContent_Item_KeyDown(object sender, KeyEventArgs e)
@@ -224,11 +224,11 @@ namespace PrimalEngineEditor.Content
             if(e.Key == Key.Enter)
             {
                 var info = (sender as FrameworkElement).DataContext as ContentInfo;
-                ExecutreSelection(info);
+                ExecuteSelection(info);
             }
         }
 
-        private void ExecutreSelection(ContentInfo info)
+        private void ExecuteSelection(ContentInfo info)
         {
             if (info == null) return;
 

@@ -280,6 +280,33 @@
                 </Style>
             </local:PlainView.ItemContainerStyle>
         </local:PlainView>
+        <Style TargetType="{x:Type ToggleButton}" x:Key="ListViewToggleButtonStyle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Editor.Window.GrayBrush4}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <Image x:Name="image" Source="pack://application:,,,/Resources/ContentBrowser/view-list.png" Width="16" Opacity="0.8"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Source" TargetName="image" Value="pack://application:,,,/Resources/ContentBrowser/tile-view.png"/>
+                                <Setter Property="ToolTip" TargetName="border" Value="Tile view"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource Editor.MouseOver.BorderBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid Background="{StaticResource Editor.Window.GrayBrush2}">
         <Grid.RowDefinitions>
@@ -293,7 +320,13 @@
                 <Style TargetType="{x:Type ListView}">
                     <Setter Property="Background" Value="{StaticResource Editor.Window.GrayBrush2}"/>
                     <Setter Property="ListBox.BorderThickness" Value="0"/>
-                    <Setter Property="View" Value="{StaticResource tileView}"/>
+                    <Setter Property="View" Value="{StaticResource gridView}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsChecked, ElementName=listViewToggle}" Value="False">
+                            <Setter Property="View" Value="{StaticResource tileView}"/>
+
+                        </DataTrigger>
+                    </Style.Triggers>
                 </Style>
             </ListView.Style>
         </ListView>
@@ -303,7 +336,12 @@
                 <DropShadowEffect Opacity="0.3" BlurRadius="10" ShadowDepth="0"/>
             </Border.Effect>
             <DockPanel>
-                <TextBlock DockPanel.Dock="Top" Text="THIS IS A PLACEHOLDER" Margin="5" Height="32"/>
+                <DockPanel Margin="5" DockPanel.Dock="Top">
+                    <ToggleButton DockPanel.Dock="Right" Style="{StaticResource ListViewToggleButtonStyle}"
+                                  x:Name="listViewToggle"/>
+
+                    <TextBox/>
+                </DockPanel> 
                 <StackPanel Orientation="Horizontal" x:Name="pathStack" Margin="0,0,0,5">
                     <StackPanel.Resources>
                         <Style TargetType="{x:Type Button}" x:Key="{x:Type Button}">
@@ -370,7 +408,6 @@
                         </Style>
                         <Style TargetType="{x:Type Path}" x:Key="{x:Type Path}">
                             <Setter Property="Margin" Value="0,3,0,0"/>
-                            <Setter Property="Grid.Column" Value="1"/>
                             <Setter Property="Data" Value="M0,0 L1.5,0 L4.5,3 L1.5,6 L0,6 L3,3 z"/>
                             <Setter Property="Fill" Value="{StaticResource Editor.FontBrush}"/>
                             <Setter Property="HorizontalAlignment" Value="Center"/>

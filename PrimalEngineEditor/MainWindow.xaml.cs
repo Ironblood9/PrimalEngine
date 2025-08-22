@@ -90,7 +90,7 @@ public partial class MainWindow : Window
             NewProjectClass2.Current?.Unload();
             var project = projectBrowser.DataContext as NewProjectClass2;
             Debug.Assert(project != null);
-            AssetRegistry.Reset(project.ContentPath);
+            ContentWatcher.Reset(project.ContentPath, project.Path);
             DataContext = project;
         }
 

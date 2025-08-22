@@ -35,7 +35,7 @@ namespace PrimalEngineEditor.Content
             Size = IsDirectory ? (long?)null : info.Length;
 
             Icon = icon;
-            IconSmall = IconSmall ?? icon;
+            IconSmall = smallIcon ?? icon;
             FullPath = fullPath;
         }
     }
@@ -44,17 +44,6 @@ namespace PrimalEngineEditor.Content
     {
         private static readonly object _lock = new object();
         private static readonly DelayEventTimer _refreshTimer = new DelayEventTimer(TimeSpan.FromMilliseconds(250));
-        private static readonly FileSystemWatcher _contentWatcher = new FileSystemWatcher()
-        {
-            IncludeSubdirectories = true,
-            Filter = "",
-
-            NotifyFilter = NotifyFilters.CreationTime |
-                           NotifyFilters.DirectoryName |
-                           NotifyFilters.FileName |
-                           NotifyFilters.LastWrite
-        };
-
         private static string _cacheFilePath = string.Empty;
         private static readonly Dictionary<string, ContentInfo>  _contentInfoCache = new Dictionary<string, ContentInfo>();
         public string ContentFolder { get; }
@@ -73,14 +62,24 @@ namespace PrimalEngineEditor.Content
                     _selectedFolder = value;
                     if(!string.IsNullOrEmpty(_selectedFolder))
                     {
-                        GetFolderContent();
+                        _ = GetFolderContent();
                     }
                     OnPropertyChanged(nameof(SelectedFolder));
                 }
             }
         }
+        private void OnContentModified(object sender, ContentModifiedEventArgs e)
+        {
+            if (Path.GetDirectoryName(e.FullPath) != SelectedFolder) return;
+            _refreshTimer.Trigger();
+        }
 
-        private async void GetFolderContent()
+        private void Refresh(object sender, DelayEventTimerArgs e)
+        {
+           _ = GetFolderContent();
+        }
+
+        private async Task GetFolderContent()
         {
             var folderContent = new List<ContentInfo>();
             await Task.Run(() => { 
@@ -124,19 +123,6 @@ namespace PrimalEngineEditor.Content
                 Debug.WriteLine(ex.Message);
             }
             return folderContent;
-        }
-
-        private async void OnContentModified(object sender, FileSystemEventArgs e)
-        {
-            if (Path.GetDirectoryName(e.FullPath) != SelectedFolder) return;
-
-            await Application.Current.Dispatcher.BeginInvoke(new Action(() => { 
-                _refreshTimer.Trigger();
-            }));
-        }
-        private void Refresh(object sender, DelayEventTimerArgs e)
-        {
-           GetFolderContent();
         }
 
         private static void SaveInfoCache(string file)
@@ -194,8 +180,8 @@ namespace PrimalEngineEditor.Content
 
         public void Dispose()
         {
-           ((IDisposable)_contentWatcher).Dispose();
-            if(!string.IsNullOrEmpty(_cacheFilePath))
+            ContentWatcher.ContentModified -= OnContentModified;
+            if (!string.IsNullOrEmpty(_cacheFilePath))
             {
                 SaveInfoCache(_cacheFilePath);
                 _cacheFilePath = string.Empty;
@@ -216,20 +202,15 @@ namespace PrimalEngineEditor.Content
 
             FolderContent = new ReadOnlyObservableCollection<ContentInfo>(_folderContent);
 
+            ContentWatcher.ContentModified += OnContentModified;
+            _refreshTimer.Triggered += Refresh;
+
             if (string.IsNullOrEmpty(_cacheFilePath))
             {
                 _cacheFilePath = $@"{project.Path}.Primal\ContentInfoCache.bin";
                 LoadInfoCache(_cacheFilePath);
             }
-            _contentWatcher.Path = contentFolder;
-            _contentWatcher.Changed += OnContentModified;
-            _contentWatcher.Created += OnContentModified;
-            _contentWatcher.Deleted += OnContentModified;
-            _contentWatcher.Renamed += OnContentModified;
-            _contentWatcher.EnableRaisingEvents = true;
-
-            _refreshTimer.Triggered += Refresh;
+           
         }
-
     }
 }
