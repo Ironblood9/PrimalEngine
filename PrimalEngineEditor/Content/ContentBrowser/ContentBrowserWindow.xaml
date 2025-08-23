@@ -296,7 +296,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Source" TargetName="image" Value="pack://application:,,,/Resources/ContentBrowser/tile-view.png"/>
+                                <Setter Property="Source" TargetName="image" Value="/PrimalEngineEditor;component/Resources/ContentBrowser/tile-view.png"/>
                                 <Setter Property="ToolTip" TargetName="border" Value="Tile view"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -315,12 +315,14 @@
         </Grid.RowDefinitions>
 
         <ListView ItemsSource="{Binding FolderContent}" Grid.Row="1" x:Name="folderListView"
-              IsTextSearchEnabled="True" TextSearch.TextPath="FileName">
+              IsTextSearchEnabled="True" TextSearch.TextPath="FileName"
+                  SelectionChanged="OnFolderContent_ListView_SelectionChanged">
             <ListView.Style>
                 <Style TargetType="{x:Type ListView}">
                     <Setter Property="Background" Value="{StaticResource Editor.Window.GrayBrush2}"/>
                     <Setter Property="ListBox.BorderThickness" Value="0"/>
                     <Setter Property="View" Value="{StaticResource gridView}"/>
+                    <Setter Property="SelectionMode" Value="{Binding Path=SelectionMode, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ContentBrowserWindow}}}"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Path=IsChecked, ElementName=listViewToggle}" Value="False">
                             <Setter Property="View" Value="{StaticResource tileView}"/>
