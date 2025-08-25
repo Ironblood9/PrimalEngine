@@ -4,9 +4,11 @@
     <ClInclude Include="ToolsCommon.h" />
     <ClInclude Include="MeshPrimitives.h" />
     <ClInclude Include="GeometryCommon.h" />
+    <ClInclude Include="FbxImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshPrimitive.cpp" />
     <ClCompile Include="GeometryCommon.cpp" />
+    <ClCompile Include="FbxImporter.cpp" />
   </ItemGroup>
 </Project>
