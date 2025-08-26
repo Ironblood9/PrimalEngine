@@ -122,6 +122,132 @@ namespace primal::tools {
 
     }
 
+    bool fbx_context::get_mesh_data(FbxMesh* fbx_mesh, mesh& m)
+    {
+        assert(fbx_mesh);
+
+        const i32 num_polys{ fbx_mesh->GetPolygonCount() };
+        if (num_polys <= 0) return false;
+        // Get vertices
+        const i32 num_vertices{ fbx_mesh->GetControlPointsCount() };
+        FbxVector4* vertices{ fbx_mesh->GetControlPoints() };
+        const i32 num_indices{ fbx_mesh->GetPolygonVertexCount() };
+        i32* indices{ fbx_mesh->GetPolygonVertices() };
+
+        assert(num_vertices > 0 && vertices && num_indices > 0 && indices);
+        if (!(num_vertices > 0 && vertices && num_indices > 0 && indices)) return false;
+
+        m.raw_indices.resize(num_indices);
+        utl::vector vertex_ref(num_vertices, u32_invalid_id);
+
+        for (i32 i{ 0 }; i < num_indices; ++i)
+        {
+            const u32 v_idx{ (u32)indices[i] };
+            // Did we encounter this vertex before? If so, just add its index.
+            // If not, add the vertex and a new index.
+            if (vertex_ref[v_idx] != u32_invalid_id)
+            {
+                m.raw_indices[i] = vertex_ref[v_idx];
+            }
+            else
+            {
+                FbxVector4 v = vertices[v_idx] * _scene_scale;
+                m.raw_indices[i] = (u32)m.positions.size();
+                vertex_ref[v_idx] = m.raw_indices[i];
+                m.positions.emplace_back((f32)v[0], (f32)v[1], (f32)v[2]);
+            }
+        }
+
+        assert(m.raw_indices.size() % 3 == 0);
+
+        //get meterial index 
+        assert(num_polys > 0);
+        FbxLayerElementArrayTemplate<i32>* mtl_indices;
+        if (fbx_mesh->GetMaterialIndices(&mtl_indices))
+        {
+            for (i32 i{ 0 }; i < num_polys; i++)
+            {
+                const i32 mtl_index{ mtl_indices->GetAt(i) };
+                assert(mtl_index >= 0);
+                m.material_indices.emplace_back((u32)mtl_index);
+                if (std::find(m.material_used.begin(), m.material_used.end(), (u32)mtl_index) == m.material_used.end())
+                {
+                    m.material_used.emplace_back((u32)mtl_index);
+                }
+            }
+        }
+
+        const bool import_normals{ !_scene_data->settings.calculate_normals };
+
+        const bool import_tangents{ !_scene_data->settings.calculate_tangents };
+
+        //Import Normals
+
+        if (import_normals)
+        {
+            FbxArray<FbxVector4> normals;
+
+            if (fbx_mesh->GenerateNormals() &&
+                fbx_mesh->GetPolygonVertexNormals(normals) && normals.Size() > 0)
+            {
+                const i32 num_normals{ normals.Size() };
+                for (i32 i{ 0 }; i < num_normals; i++)
+                {
+                    m.normals.emplace_back((f32)normals[i][0], (f32)normals[i][1], (f32)normals[i][2]);
+                }
+            }
+            else
+            {
+                _scene_data->settings.calculate_normals = true;
+            }
+        }
+        //Import tangents
+        if (import_tangents)
+        {
+            FbxLayerElementArrayTemplate<FbxVector4>* tangents{ nullptr };
+
+            if (fbx_mesh->GenerateTangentsData() &&
+                fbx_mesh->GetTangents(&tangents) &&
+                tangents && tangents->GetCount() > 0)
+            {
+                const i32 num_tangent{ tangents->GetCount() };
+                for (i32 i{ 0 }; i < num_tangent; ++i)
+                {
+                    FbxVector4 t{ tangents->GetAt(i) };
+                    m.tangents.emplace_back((f32)t[0], (f32)t[1], (f32)t[2], (f32)t[3]);
+                }
+            }
+            else
+            {
+                // something went wrong with importing tangents from FBX.
+                // Fall back to our own tangent calculation method.
+                _scene_data->settings.calculate_tangents = true;
+            }
+
+            // Get UVs
+            FbxStringList uv_names;
+            fbx_mesh->GetUVSetNames(uv_names);
+            const i32 uv_set_count{ uv_names.GetCount() };
+            // NOTE: it's ok if we don't have a uv set. For example, some emissive objects don't need a uv map
+            m.uv_sets.resize(uv_set_count);
+
+            for (i32 i{ 0 }; i < uv_set_count; ++i)
+            {
+                FbxArray<FbxVector2> uvs;
+                if (fbx_mesh->GetPolygonVertexUVs(uv_names.GetStringAt(i), uvs))
+                {
+                    const i32 num_uvs{ uvs.Size() };
+                    for (i32 j{ 0 }; j < num_uvs; ++j)
+                    {
+                        m.uv_sets[i].emplace_back((f32)uvs[j][0], (f32)uvs[j][1]);
+                    }
+                }
+            }
+
+            return true;
+        }
+    }
+
     EDITOR_INTERFACE void ImportFbx(const char* file, scene_data* data)
     {
         assert(file && data);
