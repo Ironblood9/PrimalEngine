@@ -119,6 +119,34 @@ namespace primal::tools {
 
     void fbx_context::get_lod_group(FbxNode* node)
     {
+        assert(node);
+
+        if (FbxLODGroup * lod_grp{ node->GetLodGroup() })
+        {
+            lod_group lod{};
+            lod.name = (node->GetName()[0] != '\0') ? node->GetName() : lod_grp->GetName();
+
+            // NOTE: number of LODs is exclusive the base mesh (LOD 0)
+            const i32 num_lods{ lod_grp->GetNumThresholds() };
+            const i32 num_nodes{ node->GetChildCount() };
+            assert(num_lods > 0 && num_nodes > 0);
+
+            for (i32 i{ 0 }; i < num_nodes; ++i)
+            {
+                get_mesh(node->GetChild(i), lod.meshes);
+
+                if (lod.meshes.size() > 1 && lod.meshes.size() <= num_lods + 1 &&
+                    lod.meshes.back().lod_threshold < 0.f)
+                {
+                    FbxDistance threshold;
+                    lod_grp->GetThreshold((u32)lod.meshes.size() - 2, threshold);
+                    lod.meshes.back().lod_threshold = threshold.value() * _scene_scale;
+                }
+            }
+
+            if (lod.meshes.size())
+                _scene->lod_groups.emplace_back(lod);
+        }
 
     }
 
@@ -259,7 +287,7 @@ namespace primal::tools {
             fbx_context fbx_context{ file, &scene, data };
             if (fbx_context.is_valid())
             {
-
+                fbx_context.get_scene();
             }
             else
             {
