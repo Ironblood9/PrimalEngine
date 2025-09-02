@@ -21,6 +21,7 @@
             <local:ContentBrowserWindow x:Name="contentBrowserView"
                                         SelectionMode="Single"
                                         FileAccess="Write"
+                                        AllowDrop="False"
                                         MouseDoubleClick="OnContentBrowser_Mouse_Double_Click"/>
 
         </Border>

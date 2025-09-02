@@ -1,4 +1,5 @@
 ﻿using EnvDTE;
+using PrimalEngineEditor.AllEditors;
 using PrimalEngineEditor.GameProject;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using Window = System.Windows.Window;
+
 
 namespace PrimalEngineEditor.Content
 {
@@ -146,6 +149,7 @@ namespace PrimalEngineEditor.Content
             DataContext = null;
             InitializeComponent();
             Loaded += OnContentBrowserLoaded;
+            AllowDrop = true;
         }
 
         private void OnContentBrowserLoaded(object sender, RoutedEventArgs e)
@@ -276,7 +280,90 @@ namespace PrimalEngineEditor.Content
                 var vm = DataContext as ContentBrowser;
                 vm.SelectedFolder = info.FullPath;
             }
+            else if(FileAccess.HasFlag(FileAccess.Read))
+            {
+                var assetInfo = Asset.GetAssetInfo(info.FullPath);
+                if(assetInfo != null)
+                {
+                    OpenAssetEditor(assetInfo);
+                }
+            }
         }
+
+        private IAssetEditor OpenAssetEditor(AssetInfo info)
+        {
+            IAssetEditor editor = null;
+            try
+            {
+                switch (info.Type)
+                {
+                    case AssetType.Animation:
+                        break;
+                    case AssetType.Audio:
+                        break;
+                    case AssetType.Material:
+                        break;
+                    case AssetType.Mesh:
+                        editor = OpenEditorPanel<GeometryEditorWindow>(info, info.Guid, "GeometryEditor");
+                        break;
+                    case AssetType.Skeleton:
+                        break;
+                    case AssetType.Texture:
+                       break;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return editor;
+        }
+
+        private IAssetEditor OpenEditorPanel<T>(AssetInfo info, Guid guid, string title)
+            where T : FrameworkElement, new()
+        {
+            foreach(Window window in Application.Current.Windows)
+            {
+                if(window.Content is FrameworkElement content && content.DataContext is IAssetEditor editor && 
+                    editor.Asset.Guid == info.Guid)
+                {
+                    window.Activate();
+                    return editor;
+                }
+            }
+            var newEditor = new T();
+            Debug.Assert(newEditor.DataContext is IAssetEditor);
+            (newEditor.DataContext as IAssetEditor).SetAsset(info);
+
+            var win = new Window()
+            {
+                Content = newEditor,
+                Title = title,
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Style = Application.Current.FindResource("AgilisWindowStyle") as Style
+            };
+
+            win.Show();
+            return newEditor.DataContext as IAssetEditor;
+        }
+
+        private void OnFolderContent_ListView_Drop(object sender, DragEventArgs e)
+        {
+            var vm = DataContext as ContentBrowser;
+
+            if (vm.SelectedFolder != null && e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files?.Length > 0 && Directory.Exists(vm.SelectedFolder))
+                {
+                    _ = ContentHelper.ImportFilesAsync(files, vm.SelectedFolder);
+                    e.Handled = true;
+                }
+            }
+        }
+
 
         private void OnPathStack_Button_Click(object sender, RoutedEventArgs e)
         {

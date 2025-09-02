@@ -83,11 +83,13 @@ namespace primal::tools {
                     lod.name = lod.meshes[0].name;
                     _scene->lod_groups.emplace_back(lod);
                 }
-                else if(node->GetLodGroup())
-                {
-                    get_lod_group(node);
-                }
-
+            }
+            else if (node->GetLodGroup())
+            {
+                get_lod_group(node);
+            }
+            else
+            {
                 get_scene(node);
             }
         }
@@ -115,6 +117,8 @@ namespace primal::tools {
                 meshes.emplace_back(m);
             }
         }
+
+        get_scene(node);
     }
 
     void fbx_context::get_lod_group(FbxNode* node)

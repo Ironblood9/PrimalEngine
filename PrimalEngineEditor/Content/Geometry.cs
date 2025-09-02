@@ -1,4 +1,6 @@
-﻿using PrimalEngineEditor.Utilities;
+﻿using PrimalEngineEditor.DllWrappers;
+using PrimalEngineEditor.GameProject;
+using PrimalEngineEditor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -255,6 +257,16 @@ namespace PrimalEngineEditor.Content
             writer.Write(ImportEmbeddedTextures);
             writer.Write(ImportAnimations);
         }
+
+        public void FromBinary(BinaryReader reader)
+        {
+            CalculateNormals        = reader.ReadBoolean();
+            CalculateTangents       = reader.ReadBoolean();
+            SmoothingAngle          = reader.ReadSingle();
+            ReverseHandedness       = reader.ReadBoolean();
+            ImportEmbeddedTextures  = reader.ReadBoolean();
+            ImportAnimations        = reader.ReadBoolean();
+        }
     }
 
 
@@ -262,6 +274,7 @@ namespace PrimalEngineEditor.Content
     class Geometry : Asset
     {
         private readonly List<LODGroup> _lodGroups = new List<LODGroup>();
+        private readonly object _lock = new object();
 
         public GeometryImportSetting ImportSettings { get; } = new GeometryImportSetting();
         public LODGroup GetLODGroup(int lodGroup = 0)
@@ -364,6 +377,91 @@ namespace PrimalEngineEditor.Content
 
         }
 
+        public override void Import(string file)
+        {
+            Debug.Assert(File.Exists(file));
+            Debug.Assert(!string.IsNullOrEmpty(FullPath));
+
+            var ext = Path.GetExtension(file).ToLower();
+            SourcePath = file;
+
+            try
+            {
+                if(ext == ".fbx")
+                {
+                    ImportFbx(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                var msg = $"Failed to read {file} for import.";
+                Debug.WriteLine(msg);
+                Logger.Log(MessageType.Error, msg);
+            }
+        }
+
+        private void ImportFbx(string file)
+        {
+           Logger.Log(MessageType.Info, $"Importing Fbx file {file}");
+            var tempPath = Application.Current.Dispatcher.Invoke(() => NewProjectClass2.Current.TempFolder);
+            if (string.IsNullOrEmpty(tempPath)) return;
+            
+            lock(_lock)
+            {
+                if(!Directory.Exists(tempPath))
+                {
+                    Directory.CreateDirectory(tempPath);
+                }
+            }
+
+            var tempFile = $"{tempPath}{ContentHelper.GetRandomString()}.fbx";
+            File.Copy(file, tempFile, true);
+            ContentToolsAPI.ImportFbx(tempFile, this);
+        }
+
+        public override void Load(string file)
+        {
+            Debug.Assert(File.Exists(file));
+            Debug.Assert(Path.GetExtension(file).ToLower() == AssetFileExtension);
+
+            try
+            {
+                byte[] data = null;
+                using (var reader = new BinaryReader(File.Open(file, FileMode.Open, FileAccess.Read)))
+                {
+                   ReadAssetFileHeader(reader);
+                    ImportSettings.FromBinary(reader);
+                    int dataLength = reader.ReadInt32();
+                    Debug.Assert(dataLength > 0);
+                    data = reader.ReadBytes(dataLength);
+                }
+
+                Debug.Assert(data.Length > 0);
+                using (var reader = new BinaryReader(new MemoryStream(data)))
+                {
+                    LODGroup lodGroup = new LODGroup();
+                    lodGroup.Name = reader.ReadString();
+                    var lodGroupCount = reader.ReadInt32();
+
+                    for (int i = 0; i < lodGroupCount; i++)
+                    {
+                        lodGroup.LODs.Add(BinaryToLOD(reader));
+
+                    }
+                    _lodGroups.Clear();
+                    _lodGroups.Add(lodGroup);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                Logger.Log(MessageType.Error, $"Failed to load geometry asset from file: {file}");
+            }
+        }
+
+
         public override IEnumerable<string> Save(string file)
         {
             Debug.Assert(_lodGroups.Any());
@@ -442,22 +540,47 @@ namespace PrimalEngineEditor.Content
 
         }
 
+        private MeshLOD BinaryToLOD(BinaryReader reader)
+        {
+            var lod = new MeshLOD();
+            lod.Name = reader.ReadString();
+            lod.LodThreshold = reader.ReadSingle();
+            var meshCount =  reader.ReadInt32();
+
+            for (int i = 0; i < meshCount; i++)
+            {
+                var mesh = new Mesh()
+                {
+                    VertexSize = reader.ReadInt32(),
+                    VertexCount = reader.ReadInt32(),
+                    IndexSize = reader.ReadInt32(),
+                    IndexCount = reader.ReadInt32(),
+                };
+                mesh.Vertices = reader.ReadBytes(mesh.VertexSize * mesh.VertexCount);
+                mesh.Indices = reader.ReadBytes(mesh.IndexSize * mesh.IndexCount);
+
+                lod.Meshes.Add(mesh);
+            }
+            return lod;
+        }
+
         private byte[] GenerateIcon(MeshLOD lod)
         {
-            var width = 90 * 4;
+            var width = ContentInfo.IconWidth * 4;
             BitmapSource bmp = null;
 
+            using var memStream = new MemoryStream();
             Application.Current.Dispatcher.Invoke(() =>
             {
                 bmp = AllEditors.GeometryWindow.RenderToBitmap(new AllEditors.MeshRenderer(lod, null), width, width);
                 bmp = new TransformedBitmap(bmp, new ScaleTransform(0.25, 0.25, 0.5, 0.5));
-            });
-            using var memStream = new MemoryStream();
-            memStream.SetLength(0);
+                memStream.SetLength(0);
 
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bmp));
-            encoder.Save(memStream);
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bmp));
+                encoder.Save(memStream);
+            });
+
             return memStream.ToArray();
         }
 

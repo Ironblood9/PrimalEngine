@@ -1,4 +1,3 @@
-
 # usage: powershell -ExecutionPolicy Bypass -File GetDXC.ps1 PathToFolder
 $SaveFolder = $args[0]
 if ($args.count -lt 1)

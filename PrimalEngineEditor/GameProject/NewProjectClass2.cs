@@ -33,6 +33,8 @@ namespace PrimalEngineEditor.GameProject
         public string Solution => $@"{Path}{Name}.sln";
 
         public string ContentPath => $@"{Path}Content\";
+        public string TempFolder => $@"{Path}.Primal\Temp\";
+
 
         private int _buildConfig;
         [DataMember]
@@ -180,7 +182,17 @@ namespace PrimalEngineEditor.GameProject
             VisualStudio.CloseVS();
             UndoRedo.Reset();
             Logger.Clear();
+            DeleteTempFolder();
         }
+
+        private void DeleteTempFolder()
+        {
+            if(Directory.Exists(TempFolder))
+            {
+                Directory.Delete(TempFolder, true);
+            }
+        }
+
         private static void Save(NewProjectClass2 project)
         {
             Serializer.ToFile(project, project.FullPath);

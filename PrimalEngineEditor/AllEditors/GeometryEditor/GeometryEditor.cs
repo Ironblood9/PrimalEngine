@@ -282,5 +282,23 @@ namespace PrimalEngineEditor.AllEditors
                 MeshRenderer = new MeshRenderer(Geometry.GetLODGroup().LODs[0], MeshRenderer);
             }
         }
+
+        public async void SetAsset(AssetInfo info)
+        {
+            try
+            {
+                Debug.Assert(info != null && File.Exists(info.FullPath));
+                var geometry = new Content.Geometry();
+                await Task.Run(() => { 
+                    geometry.Load(info.FullPath);
+                });
+                SetAsset(geometry);
+            }
+            catch (Exception ex)
+            {
+
+                Debug.WriteLine(ex.Message);
+            }
+        }
     }
 }
