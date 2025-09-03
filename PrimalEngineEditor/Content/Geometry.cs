@@ -280,7 +280,7 @@ namespace PrimalEngineEditor.Content
         public LODGroup GetLODGroup(int lodGroup = 0)
         {
             Debug.Assert(lodGroup >= 0 && lodGroup < _lodGroups.Count);
-            return _lodGroups.Any() ? _lodGroups[lodGroup] : null;
+            return (lodGroup < _lodGroups.Count) ? _lodGroups[lodGroup] : null;
         }
 
         public void FromRawData(byte[] data)
@@ -481,7 +481,7 @@ namespace PrimalEngineEditor.Content
                         path + fileName + "_" + lodGroup.LODs[0].Name + AssetFileExtension :
                         path + fileName + AssetFileExtension);
                     // we have to make a different id for each new asset file
-                    Guid = Guid.NewGuid();
+                    Guid = TryGetAssetInfo(meshFileName) is AssetInfo info && info.Type == Type ? info.Guid : Guid.NewGuid();
                     byte[] data = null;
                     using(var writer = new BinaryWriter(new MemoryStream()))
                     {
@@ -506,6 +506,8 @@ namespace PrimalEngineEditor.Content
                         writer.Write(data.Length);
                         writer.Write(data);
                     }
+
+                    Logger.Log(MessageType.Info, $"Saved geometry to {meshFileName}");
                     savedFiles.Add(meshFileName);
                 }
             }

@@ -84,6 +84,10 @@ namespace PrimalEngineEditor.Content
             return info;
         }
 
+        public static AssetInfo TryGetAssetInfo(string file) => 
+            File.Exists(file) && Path.GetExtension(file) == AssetFileExtension ? AssetRegistry.GetAssetInfo(file) ?? GetAssetInfo(file) : null;
+
+
         public static AssetInfo GetAssetInfo(string file)
         {
             Debug.Assert(File.Exists(file) && Path.GetExtension(file) == AssetFileExtension);
