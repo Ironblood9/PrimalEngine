@@ -17,6 +17,35 @@ namespace PrimalEngineEditor.AllEditors
     // the purpose of this class is to enable 3d geometry in WPF while we don't have a graphics renderer
     class MeshRendererVertexData : ViewModelBase
     {
+        private bool _isHighlighted;
+        public bool IsHighlighted
+        {
+            get => _isHighlighted;
+            set
+            {
+                if (_isHighlighted != value)
+                {
+                    _isHighlighted = value;
+                    OnPropertyChanged(nameof(IsHighlighted));
+                    OnPropertyChanged(nameof(Diffuse));
+                }
+            }
+        }
+
+        private bool _isIsolated;
+        public bool IsIsolated
+        {
+            get => _isIsolated;
+            set
+            {
+                if (_isIsolated != value)
+                {
+                    _isIsolated = value;
+                    OnPropertyChanged(nameof(IsIsolated));
+                }
+            }
+        }
+
         private Brush _specular = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ff111111"));
         public Brush Specular
         {
@@ -34,7 +63,7 @@ namespace PrimalEngineEditor.AllEditors
         private Brush _diffuse = Brushes.White;
         public Brush Diffuse
         {
-            get => _diffuse;
+            get => _isHighlighted ? Brushes.Crimson : _diffuse;
             set
             {
                 if (_diffuse != value)
@@ -44,6 +73,8 @@ namespace PrimalEngineEditor.AllEditors
                 }
             }
         }
+
+        public string Name { get; set; }
         public Point3DCollection Positions { get; } = new Point3DCollection();
         public Vector3DCollection Normals { get; } = new Vector3DCollection();
         public PointCollection UVs { get; } = new PointCollection();
@@ -174,7 +205,7 @@ namespace PrimalEngineEditor.AllEditors
 
             foreach (var mesh in lod.Meshes)
             {
-                var vertexData = new MeshRendererVertexData();
+                var vertexData = new MeshRendererVertexData() { Name = mesh.Name };
                 // Unpack all vertices
                 using (var reader = new BinaryReader(new MemoryStream(mesh.Vertices)))
                     for(int i = 0; i < mesh.VertexCount; i++)
@@ -220,6 +251,18 @@ namespace PrimalEngineEditor.AllEditors
             {
                 CameraTarget = old.CameraTarget;
                 CameraPosition = old.CameraPosition;
+
+
+                foreach (var mesh in old.Meshes)
+                {
+                    mesh.IsHighlighted = false;
+                }
+
+
+                foreach (var mesh in Meshes)
+                {
+                    mesh.Diffuse = old.Meshes.First().Diffuse;
+                }
             }
             else
             {
