@@ -125,27 +125,230 @@ namespace primal::tools {
 
 		}
 
-		void pack_vertices_static(mesh& mesh)
+		u64	get_vertex_element_size(elements::elements_type::type elements_type)
 		{
-			const u32 num_vertices{ (u32)mesh.vertices.size() };
-			assert(num_vertices);
-			mesh.packed_vertices_static.reserve(num_vertices);
-
-			for (u32 i{ 0 }; i < num_vertices; i++)
+			using namespace elements;
+			switch (elements_type)
 			{
-				vertex& vertex{ mesh.vertices[i] };
-				const u8 signs{ (u8)((vertex.normal.z > 0.f) << 1) };
-				const u16 normal_x{ (u16)pack_float<16>(vertex.normal.x, -1.f, 1.f) };
-				const u16 normal_y{ (u16)pack_float<16>(vertex.normal.y, -1.f, 1.f) };
+			case elements_type::static_normal:               return sizeof(static_normal);
+			case elements_type::static_normal_texture:       return sizeof(static_normal_texture);
+			case elements_type::static_color:                return sizeof(static_color);
+			case elements_type::skeletal:                    return sizeof(skeletal);
+			case elements_type::skeletal_color:              return sizeof(skeletal_color);
+			case elements_type::skeletal_normal:             return sizeof(skeletal_normal);
+			case elements_type::skeletal_normal_color:       return sizeof(skeletal_normal_color);
+			case elements_type::skeletal_normal_texture:     return sizeof(skeletal_normal_texture);
+			case elements_type::skeletal_normal_texture_color:return sizeof(skeletal_normal_texture_color);
+			}
 
-				mesh.packed_vertices_static.emplace_back(packed_vertex::vertex_static
-					{
-						vertex.position, {0, 0, 0}, signs,
-						{normal_x, normal_y}, {},
-						vertex.uv
-					});
+			return 0;
+		}
+
+		void pack_vertices(mesh& m)
+		{
+			const u32 num_vertices{ (u32)m.vertices.size() };
+			assert(num_vertices);
+
+			m.position_buffer.resize(sizeof(math::v3) * num_vertices);
+			math::v3 *const position_buffer{ (math::v3 *const)m.position_buffer.data() };
+
+			for (u32 i{ 0 }; i < num_vertices; ++i)
+			{
+				position_buffer[i] = m.vertices[i].position;
+			}
+
+			struct u16v2 { u16 x, y; };
+			struct u8v3 { u8 x, y, z; };
+
+			utl::vector<u8> t_signs(num_vertices);
+			utl::vector<u16v2> normals(num_vertices);
+			utl::vector<u16v2> tangents(num_vertices);
+			utl::vector<u8v3> joint_weights(num_vertices);
+
+			if (m.elements_type & elements::elements_type::static_normal)
+			{
+				// normals only
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					t_signs[i] = (u8)((v.normal.z > 0.f) << 1);
+					normals[i] = { (u16)pack_float<16>(v.normal.x, -1.f, 1.f),
+								   (u16)pack_float<16>(v.normal.y, -1.f, 1.f) };
+				}
+			}
+
+			if (m.elements_type & elements::elements_type::static_normal_texture)
+			{
+				// full T-space
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					t_signs[i] |= (u8)((v.tangent.w > 0.f) && (v.tangent.z > 0.f));
+					tangents[i] = { (u16)pack_float<16>(v.tangent.x, -1.f, 1.f),
+									(u16)pack_float<16>(v.tangent.y, -1.f, 1.f) };
+				}
+			}
+
+			if (m.elements_type & elements::elements_type::skeletal)
+			{
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					// pack joint weights (from [0.0, 1.0] to [0..255])
+					joint_weights[i] = {
+						(u8)pack_unit_float<8>(v.joint_weights.x),
+						(u8)pack_unit_float<8>(v.joint_weights.y),
+						(u8)pack_unit_float<8>(v.joint_weights.z)
+					};
+				}
+			}
+
+			m.element_buffer.resize(get_vertex_element_size(m.elements_type) * num_vertices);
+			using namespace elements;
+
+			switch (m.elements_type)
+			{
+			case elements_type::static_color:
+			{
+				static_color *const element_buffer{ (static_color *const)m.element_buffer.data() };
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					element_buffer[i] = { {v.red, v.green, v.blue}, {} };
+				}
+			}
+			break;
+			case elements_type::static_normal:
+			{
+				static_normal *const element_buffer{ (static_normal *const)m.element_buffer.data() };
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					element_buffer[i] = { {v.red, v.green, v.blue}, t_signs[i],
+										  {normals[i].x, normals[i].y} };
+				}
+			}
+			break;
+			case elements_type::static_normal_texture:
+			{
+				static_normal_texture *const element_buffer{ (static_normal_texture *const)m.element_buffer.data() };
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					element_buffer[i] = { {v.red, v.green, v.blue}, t_signs[i],
+										  {normals[i].x, normals[i].y}, {tangents[i].x, tangents[i].y},
+										   v.uv };
+				}
+			}
+			break;
+			case elements_type::skeletal:
+			{
+				skeletal *const element_buffer{ (skeletal *const)m.element_buffer.data() };
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					const u16 indices[4]{ (u16)v.joint_indices.x, (u16)v.joint_indices.y , (u16)v.joint_indices.z, (u16)v.joint_indices.w };
+					element_buffer[i] = { {joint_weights[i].x, joint_weights[i].y, joint_weights[i].z}, {},
+										   {indices[0], indices[1], indices[2], indices[3]} };
+				}
+			}
+			break;
+			case elements_type::skeletal_color:
+			{
+				skeletal_color *const element_buffer{ (skeletal_color *const)m.element_buffer.data() };
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					const u16 indices[4]{ (u16)v.joint_indices.x, (u16)v.joint_indices.y , (u16)v.joint_indices.z, (u16)v.joint_indices.w };
+					element_buffer[i] = { {joint_weights[i].x, joint_weights[i].y, joint_weights[i].z}, {},
+										   {indices[0], indices[1], indices[2], indices[3]},
+											{v.red, v.green, v.blue}, {} };
+				}
+			}
+			break;
+
+			case elements_type::skeletal_normal:
+			{
+				skeletal_normal *const element_buffer{ (skeletal_normal *const)m.element_buffer.data() };
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					const u16 indices[4]{ (u16)v.joint_indices.x, (u16)v.joint_indices.y,
+										  (u16)v.joint_indices.z, (u16)v.joint_indices.w };
+					element_buffer[i] = { {joint_weights[i].x, joint_weights[i].y, joint_weights[i].z}, t_signs[i],
+										  {indices[0], indices[1], indices[2], indices[3]},
+										  {normals[i].x, normals[i].y} };
+				}
+			}
+			break;
+			case elements_type::skeletal_normal_color:
+			{
+				skeletal_normal_color *const element_buffer{ (skeletal_normal_color *const)m.element_buffer.data() };
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					const u16 indices[4]{ (u16)v.joint_indices.x, (u16)v.joint_indices.y,
+										  (u16)v.joint_indices.z, (u16)v.joint_indices.w };
+					element_buffer[i] = { {joint_weights[i].x, joint_weights[i].y, joint_weights[i].z}, t_signs[i],
+										  {indices[0], indices[1], indices[2], indices[3]},
+										  {normals[i].x, normals[i].y}, {v.red, v.green, v.blue}, {} };
+				}
+			}
+			break;
+			case elements_type::skeletal_normal_texture:
+			{
+				skeletal_normal_texture *const element_buffer{ (skeletal_normal_texture *const)m.element_buffer.data() };
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					const u16 indices[4]{ (u16)v.joint_indices.x, (u16)v.joint_indices.y,
+										  (u16)v.joint_indices.z, (u16)v.joint_indices.w };
+					element_buffer[i] = { {joint_weights[i].x, joint_weights[i].y, joint_weights[i].z}, t_signs[i],
+										  {indices[0], indices[1], indices[2], indices[3]},
+										  {normals[i].x, normals[i].y}, { tangents[i].x, tangents[i].y }, v.uv };
+				}
+			}
+			break;
+			case elements_type::skeletal_normal_texture_color:
+			{
+				skeletal_normal_texture_color *const element_buffer{ (skeletal_normal_texture_color *const)m.element_buffer.data() };
+				for (u32 i{ 0 }; i < num_vertices; ++i)
+				{
+					vertex& v{ m.vertices[i] };
+					const u16 indices[4]{ (u16)v.joint_indices.x, (u16)v.joint_indices.y,
+										  (u16)v.joint_indices.z, (u16)v.joint_indices.w };
+					element_buffer[i] = { {joint_weights[i].x, joint_weights[i].y, joint_weights[i].z}, t_signs[i],
+										  {indices[0], indices[1], indices[2], indices[3]},
+										  {normals[i].x, normals[i].y}, { tangents[i].x, tangents[i].y }, v.uv,
+										  {v.red, v.green, v.blue}, {} };
+				}
+			}
+			break;
 			}
 		}
+
+
+
+		void determine_elements_type(mesh& m)
+		{
+			using namespace elements;
+			if (m.normals.size())
+			{
+				if (m.uv_sets.size() && m.uv_sets[0].size())
+				{
+					m.elements_type = elements_type::static_normal_texture;
+				}
+				else
+				{
+					m.elements_type = elements_type::static_normal;
+				}
+			}
+			else if (m.colors.size())
+			{
+				m.elements_type = elements_type::static_color;
+			}
+		}
+
 
 
 		void process_vertices(mesh& mesh, const geometry_import_settings& settings)
@@ -161,8 +364,11 @@ namespace primal::tools {
 			{
 				process_uvs(mesh);
 			}
-			pack_vertices_static(mesh);
+
+			determine_elements_type(mesh);
+			pack_vertices(mesh);
 		}
+
 		u64 get_mesh_size(const mesh& mesh)
 		{
 			const u64 num_vertices{ mesh.vertices.size() };
