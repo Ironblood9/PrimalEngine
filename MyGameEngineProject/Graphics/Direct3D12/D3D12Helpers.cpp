@@ -1,5 +1,6 @@
 #include "D3D12Helpers.h"
 #include "D3D12Core.h"
+#include "D3D12Upload.h"
 
 namespace primal::graphics::d3d12::d3dx
 {
@@ -74,7 +75,7 @@ namespace primal::graphics::d3d12::d3dx
 		return create_pipeline_state(desc);
 	}
 
-	ID3D12Resource* create_buffer(u32 buffer_size, void* data, bool is_cpu_accessible,
+	ID3D12Resource* create_buffer(const void* data, u32 buffer_size, bool is_cpu_accessible,
 		D3D12_RESOURCE_STATES state, D3D12_RESOURCE_FLAGS  flags,
 		ID3D12Heap* heap, u64 heap_offset)
 	{
@@ -117,7 +118,7 @@ namespace primal::graphics::d3d12::d3dx
 		{
 			if (is_cpu_accessible)
 			{
-				D3D12_RANGE range{};
+				const D3D12_RANGE range{};
 				void* cpu_address{ nullptr };
 				DXCall(resource->Map(0, &range, reinterpret_cast<void**>(&cpu_address)));
 				assert(cpu_address);
@@ -126,9 +127,14 @@ namespace primal::graphics::d3d12::d3dx
 			}
 			else
 			{
-
+				upload::d3d12_upload_context context{ buffer_size };
+				memcpy(context.cpu_address(), data, buffer_size);
+				context.command_list()->CopyResource(resource, context.upload_buffer());
+				context.end_upload();
 			}
 		}
+		assert(resource);
+		return resource;
 	}
 }
 
