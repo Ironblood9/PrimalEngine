@@ -86,5 +86,15 @@ namespace primal::graphics
 		gfx.surface.render(_id);
 
 	}
+
+
+	id::id_type add_submesh(const u8*& data)
+	{
+
+	}
+	void remove_submesh(id::id_type id)
+	{
+
+	}
 }
 
