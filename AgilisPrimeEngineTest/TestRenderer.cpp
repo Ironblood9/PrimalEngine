@@ -2,12 +2,52 @@
 #include "..\Platform\PlatformTypes.h"
 #include "..\Platform\Platform.h"
 #include "..\Graphics\Renderer.h"
+#include "..\Graphics\Direct3D12\D3D12Core.h"
 #include "TestRenderer.h"
 #include "ShaderCompilation.h"
 #if TEST_RENDERER
 
 
 using namespace primal;
+
+//Multithreading test worker spawn code///////////////////////////////////
+#define ENABLE_TEST_WORKERS 1
+
+constexpr u32 num_threads{ 8 };
+bool shutdown{ false };
+std::thread workers[num_threads];
+
+utl::vector<u8> buffer(1024 * 1024, 0);
+
+// Test worker for upload context
+void buffer_test_worker()
+{
+	while (!shutdown)
+	{
+		auto* resource = graphics::d3d12::d3dx::create_buffer(buffer.data(), (u32)buffer.size());
+		graphics::d3d12::core::deferred_release(resource);
+	}
+}
+
+template<class FnPtr, class... Args>
+void init_test_workers(FnPtr&& fnPtr, Args&&... args)
+{
+#if ENABLE_TEST_WORKERS
+	shutdown = false;
+	for (auto& w : workers)
+		w = std::thread(std::forward<FnPtr>(fnPtr), std::forward<Args>(args)...);
+#endif
+}
+
+void joint_test_workers()
+{
+#if ENABLE_TEST_WORKERS
+	shutdown = true;
+	for (auto& w : workers) w.join();
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 graphics::render_surface _surfaces[4];
 time_it timer{};
@@ -127,12 +167,15 @@ bool test_initialize()
 	for (u32 i{ 0 }; i < _countof(_surfaces); i++)
 		create_render_surface(_surfaces[i], info[i]);
 
+	init_test_workers(buffer_test_worker);
+
 	is_restarting = false;
 	return true;
 }
 
 void test_shutdown()
 {
+	joint_test_workers();
 	for (u32 i{ 0 }; i < _countof(_surfaces); i++)
 		destroy_render_surface(_surfaces[i]);
 

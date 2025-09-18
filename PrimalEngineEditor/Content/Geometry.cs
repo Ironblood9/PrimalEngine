@@ -35,6 +35,14 @@ namespace PrimalEngineEditor.Content
         Colors = 0x08
     }
 
+    enum PrimitiveTopology
+    {
+       PointList = 1,
+       LineList,
+       LineStrip,
+       TriangleList,
+       TriangleStrip,
+    }
 
     class Mesh : ViewModelBase
     {
