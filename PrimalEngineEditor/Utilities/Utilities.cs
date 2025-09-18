@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace PrimalEngineEditor.Utilities
     }
     public static class MathUtility
     {
-        public static float Epsilon=> 0.00001f;
+        public static float Epsilon => 0.00001f;
         public static bool IsTheSameAs(this float value, float other)
         {
             return Math.Abs(value - other) < Epsilon;
@@ -25,6 +26,23 @@ namespace PrimalEngineEditor.Utilities
                 return false;
             return Math.Abs(value.Value - other.Value) < Epsilon;
         }
+
+        public static long AlignSizeUp(long size, long alignment)
+        {
+            Debug.Assert(alignment > 0, "Alignment must be a non-zero");
+            long mask = alignment - 1;
+            Debug.Assert((alignment & mask) == 0, "Alignment should be a power of 2");
+            return ((size + mask) & ~mask);
+        }
+
+        public static long AlignSizeDown(long size, long alignment)
+        {
+            Debug.Assert(alignment > 0, "Alignment must be a non-zero");
+            long mask = alignment - 1;
+            Debug.Assert((alignment & mask) == 0, "Alignment should be a power of 2");
+            return (size & ~mask);
+        }
+
     }
 
     class DelayEventTimerArgs : EventArgs

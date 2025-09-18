@@ -62,6 +62,7 @@ namespace PrimalEngineEditor.Content
         public abstract void Load(string file);
 
         public abstract IEnumerable<string> Save(string file);
+        public abstract byte[] PackforEngine();
 
         private static AssetInfo GetAssetInfo(BinaryReader reader)
         {

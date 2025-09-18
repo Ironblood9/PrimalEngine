@@ -119,6 +119,8 @@ namespace PrimalEngineEditor.Content
         }
 
         public ElementsType ElementsType { get; set; }
+
+        public PrimitiveTopology PrimitiveTopology { get; set; }
         public byte[] Positions { get; set; }
         public byte[] Elements { get; set; }
         public byte[] Indices { get; set; }
@@ -388,6 +390,7 @@ namespace PrimalEngineEditor.Content
             var lodId = reader.ReadInt32();
             mesh.ElementSize = reader.ReadInt32();
             mesh.ElementsType = (ElementsType)reader.ReadInt32();
+            mesh.PrimitiveTopology = PrimitiveTopology.TriangleList;
             mesh.VertexCount = reader.ReadInt32();
             mesh.IndexSize = reader.ReadInt32();
             mesh.IndexCount = reader.ReadInt32();
@@ -492,6 +495,9 @@ namespace PrimalEngineEditor.Content
                     _lodGroups.Add(lodGroup);
                 }
 
+                // testing
+                //PackforEngine();
+                //
             }
             catch (Exception ex)
             {
@@ -558,6 +564,54 @@ namespace PrimalEngineEditor.Content
             return savedFiles;
         }
 
+        public override byte[] PackforEngine()
+        {
+            using var writer = new BinaryWriter(new MemoryStream());
+            writer.Write(GetLODGroup().LODs.Count);
+            foreach (var lod in GetLODGroup().LODs)
+            {
+                writer.Write(lod.LodThreshold);
+                writer.Write(lod.Meshes.Count);
+                var sizeOfSubmeshesPosition = writer.BaseStream.Position;
+                writer.Write(0);
+                foreach (var mesh in lod.Meshes)
+                {
+                    writer.Write(mesh.ElementSize);
+                    writer.Write(mesh.VertexCount);
+                    writer.Write(mesh.IndexCount);
+                    writer.Write((int)mesh.ElementsType);
+                    writer.Write((int)mesh.PrimitiveTopology);
+
+                    var alignedPositionBuffer = new byte[MathUtility.AlignSizeUp(mesh.Positions.Length, 4)];
+                    Array.Copy(mesh.Positions, alignedPositionBuffer, mesh.Positions.Length);
+
+                    var alignedElementBuffer = new byte[MathUtility.AlignSizeUp(mesh.Elements.Length, 4)];
+                    Array.Copy(mesh.Elements, alignedElementBuffer, mesh.Elements.Length);
+
+                    writer.Write(alignedPositionBuffer);
+                    writer.Write(alignedElementBuffer);
+                    writer.Write(mesh.Indices);
+                }
+
+                var endOfSubmeshes = writer.BaseStream.Position;
+                var sizeOfSubmeshes = (int)(endOfSubmeshes - sizeOfSubmeshesPosition - sizeof(int)); //sizeof(int)= writer.Write(0);
+
+                writer.BaseStream.Position = sizeOfSubmeshesPosition;
+                writer.Write(sizeOfSubmeshes);
+                writer.BaseStream.Position = endOfSubmeshes;
+            }
+
+            writer.Flush();
+            var data = (writer.BaseStream as MemoryStream)?.ToArray();
+            Debug.Assert(data?.Length > 0);
+
+            using (var fs = new FileStream(@"..\..\AgilisPrimeEngineTest\model.model", FileMode.Create))
+            {
+                fs.Write(data, 0, data.Length);
+            }
+            return data;
+        }
+
         private void LODToBinary(MeshLOD lod, BinaryWriter writer, out byte[] hash)
         {
             writer.Write(lod.Name);
@@ -570,6 +624,7 @@ namespace PrimalEngineEditor.Content
                 writer.Write(mesh.Name);
                 writer.Write(mesh.ElementSize);
                 writer.Write((int)mesh.ElementsType);
+                writer.Write((int)mesh.PrimitiveTopology);
                 writer.Write(mesh.VertexCount);
                 writer.Write(mesh.IndexSize);
                 writer.Write(mesh.IndexCount);
@@ -598,6 +653,7 @@ namespace PrimalEngineEditor.Content
                     Name = reader.ReadString(),
                     ElementSize = reader.ReadInt32(),
                     ElementsType = (ElementsType)reader.ReadInt32(),
+                    PrimitiveTopology = (PrimitiveTopology)reader.ReadInt32(),
                     VertexCount = reader.ReadInt32(),
                     IndexSize = reader.ReadInt32(),
                     IndexCount = reader.ReadInt32(),
