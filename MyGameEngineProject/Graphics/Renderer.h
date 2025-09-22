@@ -30,6 +30,29 @@ namespace primal::graphics {
 		surface surface{};
 	};
 
+	struct camera_parameter{
+		enum parameter :u32
+		{
+			up_vector,
+			field_of_view,
+			aspect_ratio,
+			view_width,
+			view_height,
+			near_z,
+			far_z,
+			view,
+			projection,
+			inverse_projection,
+			view_projection,
+			inverse_view_projection,
+			type,
+			entity_id,
+
+			count
+		};
+	};
+	
+
 	struct camera_init_info
 	{
 		id::id_type         entity_id{ id::invalid_id };

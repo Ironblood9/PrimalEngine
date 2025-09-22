@@ -36,6 +36,7 @@
     <ClInclude Include="Graphics\Direct3D12\D3D12Content.h" />
     <ClInclude Include="Content\ContentToEngine.h" />
     <ClInclude Include="AgilisAPI\Camera.h" />
+    <ClInclude Include="Graphics\Direct3D12\D3D12Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Components\Entity.cpp" />
@@ -57,5 +58,6 @@
     <ClCompile Include="Graphics\Direct3D12\D3D12Upload.cpp" />
     <ClCompile Include="Graphics\Direct3D12\D3D12Content.cpp" />
     <ClCompile Include="Content\ContentToEngine.cpp" />
+    <ClCompile Include="Graphics\Direct3D12\D3D12Camera.cpp" />
   </ItemGroup>
 </Project>

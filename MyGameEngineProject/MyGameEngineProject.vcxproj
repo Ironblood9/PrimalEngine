@@ -32,6 +32,7 @@
     <ClInclude Include="AgilisAPI\TransformComponent.h" />
     <ClInclude Include="Content\ContentToEngine.h" />
     <ClInclude Include="Content\LoadContent.h" />
+    <ClInclude Include="Graphics\Direct3D12\D3D12Camera.h" />
     <ClInclude Include="Graphics\Direct3D12\D3D12CommonHeaders.h" />
     <ClInclude Include="Graphics\Direct3D12\D3D12Content.h" />
     <ClInclude Include="Graphics\Direct3D12\D3D12Core.h" />
@@ -63,6 +64,7 @@
     <ClCompile Include="Content\LoadContent.cpp" />
     <ClCompile Include="Core\Agilis.cpp" />
     <ClCompile Include="Core\Main.cpp" />
+    <ClCompile Include="Graphics\Direct3D12\D3D12Camera.cpp" />
     <ClCompile Include="Graphics\Direct3D12\D3D12Content.cpp" />
     <ClCompile Include="Graphics\Direct3D12\D3D12GPass.cpp" />
     <ClCompile Include="Graphics\Direct3D12\D3D12Helpers.cpp" />
