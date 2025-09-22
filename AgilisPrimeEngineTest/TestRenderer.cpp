@@ -15,7 +15,7 @@
 using namespace primal;
 
 //Multithreading test worker spawn code///////////////////////////////////
-#define ENABLE_TEST_WORKERS 1
+#define ENABLE_TEST_WORKERS 0
 
 constexpr u32 num_threads{ 8 };
 bool shutdown{ false };

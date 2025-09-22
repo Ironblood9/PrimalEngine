@@ -1,9 +1,9 @@
 #include"CommonDll.h"
 #include"CommonHeaders.h"
-#include "..\MyGameEngineProject\Components\Script.h"
-#include"..\Graphics\Renderer.h"
-#include"..\Platform\PlatformTypes.h"
-#include"..\Platform\Platform.h"
+#include"MyGameEngineProject/Components/Script.h"
+#include"Graphics/Renderer.h"
+#include"Platform/PlatformTypes.h"
+#include"Platform/Platform.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN

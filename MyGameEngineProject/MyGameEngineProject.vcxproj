@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AgilisAPI\Camera.h" />
     <ClInclude Include="AgilisAPI\ScriptComponent.h" />
     <ClInclude Include="Common\CommonHeaders.h" />
     <ClInclude Include="Common\Id.h" />

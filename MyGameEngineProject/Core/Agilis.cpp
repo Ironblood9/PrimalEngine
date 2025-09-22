@@ -1,10 +1,10 @@
 
 #if !defined(SHIPPING)
-#include"..\Content\LoadContent.h"
-#include"..\Components\Script.h"
-#include"..\Platform\PlatformTypes.h"
-#include "..\Platform\Platform.h"
-#include"..\Graphics\Renderer.h"
+#include"Content/LoadContent.h"
+#include"Components/Script.h"
+#include"Platform/PlatformTypes.h"
+#include"Platform/Platform.h"
+#include"Graphics/Renderer.h"
 
 #include<thread>
 

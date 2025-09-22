@@ -1,3 +1,3 @@
 #pragma once
-#include "..\Common\CommonHeaders.h"
-#include "..\AgilisAPI\GameEntity.h"
+#include "Common/CommonHeaders.h"
+#include "AgilisAPI/GameEntity.h"

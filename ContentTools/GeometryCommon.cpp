@@ -1,5 +1,5 @@
 #include "GeometryCommon.h"
-#include "..\Utilities\IOStream.h"
+#include "Utilities/IOStream.h"
 
 namespace primal::tools {
 	namespace {

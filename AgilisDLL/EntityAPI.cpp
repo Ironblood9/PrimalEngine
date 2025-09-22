@@ -1,9 +1,9 @@
 #include "CommonHeaders.h"
 #include "Id.h"
 #include "CommonDll.h"
-#include "..\MyGameEngineProject\Components\Entity.h"
-#include "..\MyGameEngineProject\Components\Transform.h"
-#include"..\MyGameEngineProject\Components\Script.h"
+#include "MyGameEngineProject/Components/Entity.h"
+#include "MyGameEngineProject/Components/Transform.h"
+#include"MyGameEngineProject/Components/Script.h"
 
 using namespace primal;
 

@@ -70,7 +70,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)MyGameEngineProject\Common;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)MyGameEngineProject;$(SolutionDir)MyGameEngineProject\Common;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -91,7 +91,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)MyGameEngineProject\Common;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)MyGameEngineProject;$(SolutionDir)MyGameEngineProject\Common;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
