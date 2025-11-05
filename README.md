@@ -1,5 +1,5 @@
 **AgilisPrimalEngine** is my personal attempt at creating a custom game engine.  
-Although the project is unfinished, it includes several working systems such as  
+It includes several working systems such as  
 **animated UI transitions**, **dark mode**, and **primitive mesh generation**.  
 
 The main goal was to build a modern editor that allows creating entities, primitives, and scripts interactively.
